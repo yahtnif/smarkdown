@@ -1,0 +1,12 @@
+![](example.png)
+![](example.png "title")
+![alt](example.png)
+![alt](example.png "title")
+[![image with link](a.png)](#link)
+
+
+<p><img src="example.png" alt="">
+<img src="example.png" alt="" title="title">
+<img src="example.png" alt="alt">
+<img src="example.png" alt="alt" title="title">
+<a href="#link"><img src="a.png" alt="image with link"></a></p>

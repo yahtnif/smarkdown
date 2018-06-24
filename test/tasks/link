@@ -1,0 +1,4 @@
+autolink: <http://example.com>
+
+
+<p>autolink: <a href="http://example.com">http://example.com</a></p>

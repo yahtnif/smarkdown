@@ -1,0 +1,4 @@
+Text format: **Bold**, *Italic*, ***Bold and Italic***.
+
+
+<p>Text format: <strong>Bold</strong>, <em>Italic</em>, <strong><em>Bold and Italic</em></strong>.</p>

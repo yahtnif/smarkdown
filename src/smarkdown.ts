@@ -8,13 +8,20 @@ import {
   TokenType,
   LexerReturns,
   SimpleRenderer,
-  InlineRuleOption,
-  DebugReturns
+  InlineRuleOption
 } from './interfaces'
 
 export class Smarkdown {
   static options = new SmarkdownOptions()
   protected static simpleRenderers: SimpleRenderer[] = []
+
+  static getOptions(options: SmarkdownOptions) {
+    if (options && typeof options.renderer === 'function') {
+      options.renderer = new (<any>options.renderer)(this.options)
+    }
+
+    return options ? Object.assign({}, this.options, options) : this.options
+  }
 
   /**
    * Merges the default options with options that will be set.
@@ -22,11 +29,7 @@ export class Smarkdown {
    * @param options Hash of options.
    */
   static setOptions(options: SmarkdownOptions) {
-    if (typeof options.renderer === 'function') {
-      options.renderer = new (<any>options.renderer)(this.options)
-    }
-
-    Object.assign(this.options, options)
+    this.options = this.getOptions(options)
     return this
   }
 
@@ -65,9 +68,9 @@ export class Smarkdown {
    */
   static inlineParse(
     src: string,
-    options: SmarkdownOptions = this.options
+    options: SmarkdownOptions
   ): string {
-    return new InlineLexer(InlineLexer, {}, options).output(src)
+    return new InlineLexer(InlineLexer, {}, this.getOptions(options)).output(src)
   }
 
   /**
@@ -77,10 +80,11 @@ export class Smarkdown {
    * @param options Hash of options. They replace, but do not merge with the default options.
    * If you want the merging, you can to do this via `Smarkdown.setOptions()`.
    */
-  static parse(src: string, options: SmarkdownOptions = this.options): string {
+  static parse(src: string, options: SmarkdownOptions): string {
     try {
-      const { tokens, links } = this.callBlockLexer(src, options)
-      return this.callParser(tokens, links, options)
+      const opts = this.getOptions(options)
+      const { tokens, links } = this.callBlockLexer(src, opts)
+      return this.callParser(tokens, links, opts)
     } catch (e) {
       return this.callMe(e)
     }

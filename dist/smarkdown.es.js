@@ -1520,16 +1520,19 @@ var Parser = /** @class */ (function () {
 var Smarkdown = /** @class */ (function () {
     function Smarkdown() {
     }
+    Smarkdown.getOptions = function (options) {
+        if (options && typeof options.renderer === 'function') {
+            options.renderer = new options.renderer(this.options);
+        }
+        return options ? Object.assign({}, this.options, options) : this.options;
+    };
     /**
      * Merges the default options with options that will be set.
      *
      * @param options Hash of options.
      */
     Smarkdown.setOptions = function (options) {
-        if (typeof options.renderer === 'function') {
-            options.renderer = new options.renderer(this.options);
-        }
-        Object.assign(this.options, options);
+        this.options = this.getOptions(options);
         return this;
     };
     /**
@@ -1561,8 +1564,7 @@ var Smarkdown = /** @class */ (function () {
      * If you want the merging, you can to do this via `Smarkdown.setOptions()`.
      */
     Smarkdown.inlineParse = function (src, options) {
-        if (options === void 0) { options = this.options; }
-        return new InlineLexer(InlineLexer, {}, options).output(src);
+        return new InlineLexer(InlineLexer, {}, this.getOptions(options)).output(src);
     };
     /**
      * Accepts Markdown text and returns text in HTML format.
@@ -1572,10 +1574,10 @@ var Smarkdown = /** @class */ (function () {
      * If you want the merging, you can to do this via `Smarkdown.setOptions()`.
      */
     Smarkdown.parse = function (src, options) {
-        if (options === void 0) { options = this.options; }
         try {
-            var _a = this.callBlockLexer(src, options), tokens = _a.tokens, links = _a.links;
-            return this.callParser(tokens, links, options);
+            var opts = this.getOptions(options);
+            var _a = this.callBlockLexer(src, opts), tokens = _a.tokens, links = _a.links;
+            return this.callParser(tokens, links, opts);
         }
         catch (e) {
             return this.callMe(e);

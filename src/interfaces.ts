@@ -227,10 +227,6 @@ export interface LexerReturns {
   links: Links
 }
 
-export interface DebugReturns extends LexerReturns {
-  result: string
-}
-
 export interface Replacements {
   [key: string]: string
 }

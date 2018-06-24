@@ -47,7 +47,7 @@ Example setting options with default values:
 import { Smarkdown, Renderer } from 'smarkdown'
 
 Smarkdown.setOptions({
-  renderer: new Renderer(),
+  renderer: Renderer,
   gfm: true,
   tables: true,
   breaks: false,
@@ -109,7 +109,7 @@ class MyRenderer extends Renderer {
   }
 }
 
-Smarkdown.setOptions({ renderer: new MyRenderer() })
+Smarkdown.setOptions({ renderer: MyRenderer })
 
 console.log(Smarkdown.parse('# heading {my-custom-hash}'))
 ```

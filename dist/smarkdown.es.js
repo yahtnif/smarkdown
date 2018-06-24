@@ -1526,6 +1526,9 @@ var Smarkdown = /** @class */ (function () {
      * @param options Hash of options.
      */
     Smarkdown.setOptions = function (options) {
+        if (typeof options.renderer === 'function') {
+            options.renderer = new options.renderer(this.options);
+        }
         Object.assign(this.options, options);
         return this;
     };
@@ -1578,36 +1581,6 @@ var Smarkdown = /** @class */ (function () {
             return this.callMe(e);
         }
     };
-    /**
-     * Accepts Markdown text and returns object with text in HTML format,
-     * tokens and links from `BlockLexer.parser()`.
-     *
-     * @param src String of markdown source to be compiled.
-     * @param options Hash of options. They replace, but do not merge with the default options.
-     * If you want the merging, you can to do this via `Smarkdown.setOptions()`.
-     */
-    Smarkdown.debug = function (src, options) {
-        if (options === void 0) { options = this.options; }
-        var _a = this.callBlockLexer(src, options), tokens = _a.tokens, links = _a.links;
-        var origin = tokens.slice();
-        var parser = new Parser(options);
-        parser.simpleRenderers = this.simpleRenderers;
-        var result = parser.debug(links, tokens);
-        /**
-         * Translates a token type into a readable form,
-         * and moves `line` field to a first place in a token object.
-         */
-        origin = origin.map(function (token) {
-            token.type = TokenType[token.type] || token.type;
-            var line = token.line;
-            delete token.line;
-            if (line)
-                return __assign({ line: line }, token);
-            else
-                return token;
-        });
-        return { tokens: origin, links: links, result: result };
-    };
     Smarkdown.callBlockLexer = function (src, options) {
         if (src === void 0) { src = ''; }
         if (typeof src != 'string')
@@ -1643,18 +1616,5 @@ var Smarkdown = /** @class */ (function () {
     Smarkdown.simpleRenderers = [];
     return Smarkdown;
 }());
-
-/**
- * @license
- *
- * Copyright (c) 2011-2018, Christopher Jeffrey. (MIT Licensed)
- * https://github.com/markedjs/marked
- *
- * Copyright (c) 2018, Костя Третяк. (MIT Licensed)
- * https://github.com/KostyaTretyak/marked-ts
- *
- * Copyright (c) 2018, Yahtnif. (MIT Licensed)
- * https://github.com/yahtnif/smarkdown
- */
 
 export { BlockLexer, escape, unescape, slug, resolveUrl, noop, ExtendRegexp, InlineLexer, TokenType, SmarkdownOptions, Smarkdown, Parser, Renderer, TextRenderer };

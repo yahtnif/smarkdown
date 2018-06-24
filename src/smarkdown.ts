@@ -22,6 +22,10 @@ export class Smarkdown {
    * @param options Hash of options.
    */
   static setOptions(options: SmarkdownOptions) {
+    if (typeof options.renderer === 'function') {
+      options.renderer = new (<any>options.renderer)(this.options)
+    }
+
     Object.assign(this.options, options)
     return this
   }
@@ -80,40 +84,6 @@ export class Smarkdown {
     } catch (e) {
       return this.callMe(e)
     }
-  }
-
-  /**
-   * Accepts Markdown text and returns object with text in HTML format,
-   * tokens and links from `BlockLexer.parser()`.
-   *
-   * @param src String of markdown source to be compiled.
-   * @param options Hash of options. They replace, but do not merge with the default options.
-   * If you want the merging, you can to do this via `Smarkdown.setOptions()`.
-   */
-  static debug(
-    src: string,
-    options: SmarkdownOptions = this.options
-  ): DebugReturns {
-    const { tokens, links } = this.callBlockLexer(src, options)
-    let origin = tokens.slice()
-    const parser = new Parser(options)
-    parser.simpleRenderers = this.simpleRenderers
-    const result = parser.debug(links, tokens)
-
-    /**
-     * Translates a token type into a readable form,
-     * and moves `line` field to a first place in a token object.
-     */
-    origin = origin.map((token) => {
-      token.type = (<any>TokenType)[token.type] || token.type
-
-      const line = token.line
-      delete token.line
-      if (line) return { ...{ line }, ...token }
-      else return token
-    })
-
-    return { tokens: origin, links, result }
   }
 
   protected static callBlockLexer(

@@ -3,7 +3,6 @@ import { InlineLexer } from './inline-lexer'
 import {
   SmarkdownOptions,
   Token,
-  Align,
   Links,
   TokenType,
   SimpleRenderer

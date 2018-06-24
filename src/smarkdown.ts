@@ -5,7 +5,6 @@ import {
   SmarkdownOptions,
   Token,
   Links,
-  TokenType,
   LexerReturns,
   SimpleRenderer,
   InlineRuleOption

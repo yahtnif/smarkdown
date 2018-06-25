@@ -1,3 +1,8 @@
+/*!
+ * smarkdown v0.1.2
+ * (c) 2018-present Yahtnif <yahtnif@gmail.com>
+ * Released under the MIT License.
+ */
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -369,9 +374,9 @@ var BlockLexer = /** @class */ (function () {
         this.options.disabledRules.forEach(function (rule) {
             _this.rules[rule] = _this.options.noop;
         });
-        this.hasRulesGfm = this.rules.fences !== undefined;
-        this.hasRulesTables = this.rules.table !== undefined;
-        this.hasRulesExtra = this.rules.footnote !== undefined;
+        this.isGfm = this.rules.fences !== undefined;
+        this.isTable = this.rules.table !== undefined;
+        this.isExtra = this.rules.footnote !== undefined;
     };
     /**
      * Lexing.
@@ -400,7 +405,7 @@ var BlockLexer = /** @class */ (function () {
                 continue;
             }
             // fences code (gfm)
-            if (this.hasRulesGfm &&
+            if (this.isGfm &&
                 (execArr = this.rules.fences.exec(nextPart))) {
                 nextPart = nextPart.substring(execArr[0].length);
                 this.tokens.push({
@@ -411,7 +416,7 @@ var BlockLexer = /** @class */ (function () {
                 continue;
             }
             // footnote
-            if (this.hasRulesExtra &&
+            if (this.isExtra &&
                 (execArr = this.rules.footnote.exec(nextPart))) {
                 nextPart = nextPart.substring(execArr[0].length);
                 var item = {
@@ -435,7 +440,7 @@ var BlockLexer = /** @class */ (function () {
             }
             // table no leading pipe (gfm)
             if (top &&
-                this.hasRulesTables &&
+                this.isTable &&
                 (execArr = this.rules.nptable.exec(nextPart))) {
                 var item = {
                     type: TokenType.table,
@@ -512,7 +517,7 @@ var BlockLexer = /** @class */ (function () {
                     // Remove the list item's bullet, so it is seen as the next token.
                     space = item.length;
                     item = item.replace(/^ *([*+-]|\d+\.) +/, '');
-                    if (this.hasRulesGfm &&
+                    if (this.isGfm &&
                         (execArr = this.rules.checkbox.exec(item))) {
                         checked = execArr[1] !== ' ';
                         item = item.replace(this.rules.checkbox, '');
@@ -587,7 +592,7 @@ var BlockLexer = /** @class */ (function () {
             }
             // table (gfm)
             if (top &&
-                this.hasRulesTables &&
+                this.isTable &&
                 (execArr = this.rules.table.exec(nextPart))) {
                 var item = {
                     type: TokenType.table,
@@ -1088,8 +1093,8 @@ var InlineLexer = /** @class */ (function () {
         this.options.disabledRules.forEach(function (rule) {
             _this.rules[rule] = _this.options.noop;
         });
-        this.hasRulesGfm = this.rules.url !== undefined;
-        this.hasRulesExtra = this.rules.fnref !== undefined;
+        this.isGfm = this.rules.url !== undefined;
+        this.isExtra = this.rules.fnref !== undefined;
     };
     InlineLexer.prototype.escapes = function (text) {
         return text ? text.replace(this.rules._escapes, '$1') : text;
@@ -1142,7 +1147,7 @@ var InlineLexer = /** @class */ (function () {
             }
             // url (gfm)
             if (!this.inLink &&
-                this.hasRulesGfm &&
+                this.isGfm &&
                 (execArr = this.rules.url.exec(nextPart))) {
                 var text = void 0, href = void 0;
                 execArr[0] = this.rules._backpedal.exec(execArr[0])[0];
@@ -1206,7 +1211,7 @@ var InlineLexer = /** @class */ (function () {
                 continue;
             }
             // fnref
-            if (this.hasRulesExtra &&
+            if (this.isExtra &&
                 (execArr = this.rules.fnref.exec(nextPart))) {
                 nextPart = nextPart.substring(execArr[0].length);
                 out += this.renderer.fnref(this.options.slug(execArr[1]));
@@ -1253,7 +1258,7 @@ var InlineLexer = /** @class */ (function () {
                 continue;
             }
             // del (gfm)
-            if (this.hasRulesGfm &&
+            if (this.isGfm &&
                 (execArr = this.rules.del.exec(nextPart))) {
                 nextPart = nextPart.substring(execArr[0].length);
                 out += this.renderer.del(this.output(execArr[1]));

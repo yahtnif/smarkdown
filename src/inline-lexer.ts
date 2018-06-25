@@ -47,8 +47,8 @@ export class InlineLexer {
     | RulesInlineExtra
   protected renderer: Renderer
   protected inLink: boolean
-  protected hasRulesGfm: boolean
-  protected hasRulesExtra: boolean
+  protected isGfm: boolean
+  protected isExtra: boolean
   protected ruleCallbacks: RulesInlineCallback[]
 
   constructor(
@@ -251,8 +251,8 @@ export class InlineLexer {
       }
     )
 
-    this.hasRulesGfm = (<RulesInlineGfm>this.rules).url !== undefined
-    this.hasRulesExtra = (<RulesInlineExtra>this.rules).fnref !== undefined
+    this.isGfm = (<RulesInlineGfm>this.rules).url !== undefined
+    this.isExtra = (<RulesInlineExtra>this.rules).fnref !== undefined
   }
 
   protected escapes (text: string) {
@@ -315,7 +315,7 @@ export class InlineLexer {
       // url (gfm)
       if (
         !this.inLink &&
-        this.hasRulesGfm &&
+        this.isGfm &&
         (execArr = (<RulesInlineGfm>this.rules).url.exec(nextPart))
       ) {
         let text: string, href: string
@@ -386,7 +386,7 @@ export class InlineLexer {
 
       // fnref
       if (
-        this.hasRulesExtra &&
+        this.isExtra &&
         (execArr = (<RulesInlineExtra>this.rules).fnref.exec(nextPart))
       ) {
         nextPart = nextPart.substring(execArr[0].length)
@@ -447,7 +447,7 @@ export class InlineLexer {
 
       // del (gfm)
       if (
-        this.hasRulesGfm &&
+        this.isGfm &&
         (execArr = (<RulesInlineGfm>this.rules).del.exec(nextPart))
       ) {
         nextPart = nextPart.substring(execArr[0].length)

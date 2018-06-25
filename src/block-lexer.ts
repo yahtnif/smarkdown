@@ -40,9 +40,9 @@ export class BlockLexer<T extends typeof BlockLexer> {
   protected options: SmarkdownOptions
   protected links: Links = {}
   protected tokens: Token[] = []
-  protected hasRulesGfm: boolean
-  protected hasRulesTables: boolean
-  protected hasRulesExtra: boolean
+  protected isGfm: boolean
+  protected isTable: boolean
+  protected isExtra: boolean
 
   constructor(protected staticThis: typeof BlockLexer, options?: object) {
     this.options = options
@@ -260,9 +260,9 @@ export class BlockLexer<T extends typeof BlockLexer> {
       }
     )
 
-    this.hasRulesGfm = (<RulesBlockGfm>this.rules).fences !== undefined
-    this.hasRulesTables = (<RulesBlockTables>this.rules).table !== undefined
-    this.hasRulesExtra = (<RulesBlockExtra>this.rules).footnote !== undefined
+    this.isGfm = (<RulesBlockGfm>this.rules).fences !== undefined
+    this.isTable = (<RulesBlockTables>this.rules).table !== undefined
+    this.isExtra = (<RulesBlockExtra>this.rules).footnote !== undefined
   }
 
   /**
@@ -298,7 +298,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
 
       // fences code (gfm)
       if (
-        this.hasRulesGfm &&
+        this.isGfm &&
         (execArr = (<RulesBlockGfm>this.rules).fences.exec(nextPart))
       ) {
         nextPart = nextPart.substring(execArr[0].length)
@@ -313,7 +313,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
 
       // footnote
       if (
-        this.hasRulesExtra &&
+        this.isExtra &&
         (execArr = (<RulesBlockExtra>this.rules).footnote.exec(nextPart))
       ) {
         nextPart = nextPart.substring(execArr[0].length)
@@ -343,7 +343,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
       // table no leading pipe (gfm)
       if (
         top &&
-        this.hasRulesTables &&
+        this.isTable &&
         (execArr = (<RulesBlockTables>this.rules).nptable.exec(nextPart))
       ) {
         const item: Token = {
@@ -436,7 +436,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
           item = item.replace(/^ *([*+-]|\d+\.) +/, '')
 
           if (
-            this.hasRulesGfm &&
+            this.isGfm &&
             (execArr = (<RulesBlockGfm>this.rules).checkbox.exec(item))
           ) {
             checked = execArr[1] !== ' '
@@ -531,7 +531,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
       // table (gfm)
       if (
         top &&
-        this.hasRulesTables &&
+        this.isTable &&
         (execArr = (<RulesBlockTables>this.rules).table.exec(nextPart))
       ) {
         const item: Token = {

@@ -18,15 +18,9 @@
   "scripts": {
     "build": "bili",
     "test": "mocha --inline-diffs",
-    "pass": "yarn build && yarn test && bundlesize",
+    "pass": "yarn build && yarn test",
     "precommit": "lint-staged"
   },
-  "bundlesize": [
-    {
-      "path": "./dist/smarkdown.min.js",
-      "maxSize": "9 kB"
-    }
-  ],
   "lint-staged": {
     "{src|test}/*.{js,ts,tsx}": [
       "prettier --write",
@@ -40,7 +34,6 @@
   },
   "devDependencies": {
     "bili": "^3.1.2",
-    "bundlesize": "^0.17.0",
     "chai": "^4.1.2",
     "fs-extra": "^6.0.1",
     "husky": "^0.14.3",

@@ -1,4 +1,4 @@
-import { Replacements, Obj } from './interfaces'
+import { Replacements } from './interfaces'
 
 const escapeTest = /[&<>"']/
 const escapeReplace = /[&<>"']/g

@@ -1,8 +1,6 @@
 import { Renderer } from './renderer'
 import { escape, unescape, slug, resolveUrl, noop } from './helpers'
 
-export type Obj = { [key: string]: any }
-
 export interface RulesBlockBase {
   newline: RegExp
   code: RegExp
@@ -96,10 +94,6 @@ export interface Token {
   footnote?: string
   refname?: string
   footnotes?: string[]
-  /**
-   * Used for debugging. Identifies the line number in the resulting HTML file.
-   */
-  line?: number
 }
 
 export interface RulesInlineBase {

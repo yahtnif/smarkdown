@@ -1376,26 +1376,6 @@
             this.renderer._headings = [];
             return out;
         };
-        Parser.prototype.debug = function (links, tokens) {
-            this.inlineLexer = new InlineLexer(InlineLexer, links, this.options, this.renderer);
-            this.inlineTextLexer = new InlineLexer(InlineLexer, links, Object.assign({}, this.options, {
-                renderer: new TextRenderer()
-            }));
-            this.tokens = tokens.reverse();
-            var out = '';
-            while (this.next()) {
-                var outToken = this.tok();
-                this.token.line = this.line += outToken.split('\n').length - 1;
-                out += outToken;
-            }
-            if (Object.keys(this.footnotes).length) {
-                out += this.renderer.footnote(this.footnotes);
-                this.footnotes = {};
-            }
-            // Remove cached
-            this.renderer._headings = [];
-            return out;
-        };
         Parser.prototype.next = function () {
             return (this.token = this.tokens.pop());
         };

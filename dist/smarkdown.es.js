@@ -214,7 +214,7 @@ var SmarkdownOptions = /** @class */ (function () {
 var BlockLexer = /** @class */ (function () {
     function BlockLexer(staticThis, options) {
         this.staticThis = staticThis;
-        this.links = {};
+        this.links = Object.create(null);
         this.tokens = [];
         this.options = options;
         this.setRules();

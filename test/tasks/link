@@ -1,4 +1,9 @@
 autolink: <http://example.com>
 
+Link: [constructor][].
+
+[constructor]: https://example.org/
+
 
 <p>autolink: <a href="http://example.com">http://example.com</a></p>
+<p>Link: <a href="https://example.org/">constructor</a>.</p>

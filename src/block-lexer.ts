@@ -38,7 +38,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
     | RulesBlockTables
     | RulesBlockExtra
   protected options: SmarkdownOptions
-  protected links: Links = {}
+  protected links: Links = Object.create(null)
   protected tokens: Token[] = []
   protected isGfm: boolean
   protected isTable: boolean

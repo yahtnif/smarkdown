@@ -457,26 +457,29 @@
                             ? execArr[3].replace(/\n$/, '').split('\n')
                             : []
                     };
-                    for (var i = 0; i < item.align.length; i++) {
-                        if (/^ *-+: *$/.test(item.align[i])) {
-                            item.align[i] = 'right';
+                    if (item.header.length === item.align.length) {
+                        nextPart = nextPart.substring(execArr[0].length);
+                        for (var i = 0; i < item.align.length; i++) {
+                            if (/^ *-+: *$/.test(item.align[i])) {
+                                item.align[i] = 'right';
+                            }
+                            else if (/^ *:-+: *$/.test(item.align[i])) {
+                                item.align[i] = 'center';
+                            }
+                            else if (/^ *:-+ *$/.test(item.align[i])) {
+                                item.align[i] = 'left';
+                            }
+                            else {
+                                item.align[i] = null;
+                            }
                         }
-                        else if (/^ *:-+: *$/.test(item.align[i])) {
-                            item.align[i] = 'center';
+                        var td = execArr[3].replace(/\n$/, '').split('\n');
+                        for (var i = 0; i < td.length; i++) {
+                            item.cells[i] = this.splitCells(td[i], item.header.length);
                         }
-                        else if (/^ *:-+ *$/.test(item.align[i])) {
-                            item.align[i] = 'left';
-                        }
-                        else {
-                            item.align[i] = null;
-                        }
+                        this.tokens.push(item);
+                        continue;
                     }
-                    var td = execArr[3].replace(/\n$/, '').split('\n');
-                    for (var i = 0; i < td.length; i++) {
-                        item.cells[i] = this.splitCells(td[i], item.header.length);
-                    }
-                    this.tokens.push(item);
-                    continue;
                 }
                 // hr
                 if ((execArr = this.rules.hr.exec(nextPart))) {
@@ -609,26 +612,29 @@
                             ? execArr[3].replace(/(?: *\| *)?\n$/, '').split('\n')
                             : []
                     };
-                    for (var i = 0; i < item.align.length; i++) {
-                        if (/^ *-+: *$/.test(item.align[i])) {
-                            item.align[i] = 'right';
+                    if (item.header.length === item.align.length) {
+                        nextPart = nextPart.substring(execArr[0].length);
+                        for (var i = 0; i < item.align.length; i++) {
+                            if (/^ *-+: *$/.test(item.align[i])) {
+                                item.align[i] = 'right';
+                            }
+                            else if (/^ *:-+: *$/.test(item.align[i])) {
+                                item.align[i] = 'center';
+                            }
+                            else if (/^ *:-+ *$/.test(item.align[i])) {
+                                item.align[i] = 'left';
+                            }
+                            else {
+                                item.align[i] = null;
+                            }
                         }
-                        else if (/^ *:-+: *$/.test(item.align[i])) {
-                            item.align[i] = 'center';
+                        var td = execArr[3].replace(/(?: *\| *)?\n$/, '').split('\n');
+                        for (var i = 0; i < td.length; i++) {
+                            item.cells[i] = this.splitCells(td[i].replace(/^ *\| *| *\| *$/g, ''), item.header.length);
                         }
-                        else if (/^ *:-+ *$/.test(item.align[i])) {
-                            item.align[i] = 'left';
-                        }
-                        else {
-                            item.align[i] = null;
-                        }
+                        this.tokens.push(item);
+                        continue;
                     }
-                    var td = execArr[3].replace(/(?: *\| *)?\n$/, '').split('\n');
-                    for (var i = 0; i < td.length; i++) {
-                        item.cells[i] = this.splitCells(td[i].replace(/^ *\| *| *\| *$/g, ''), item.header.length);
-                    }
-                    this.tokens.push(item);
-                    continue;
                 }
                 // simple rules
                 if (this.staticThis.simpleRules.length) {

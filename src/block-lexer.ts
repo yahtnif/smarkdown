@@ -357,26 +357,30 @@ export class BlockLexer<T extends typeof BlockLexer> {
             : []
         }
 
-        for (let i = 0; i < item.align.length; i++) {
-          if (/^ *-+: *$/.test(item.align[i])) {
-            item.align[i] = 'right'
-          } else if (/^ *:-+: *$/.test(item.align[i])) {
-            item.align[i] = 'center'
-          } else if (/^ *:-+ *$/.test(item.align[i])) {
-            item.align[i] = 'left'
-          } else {
-            item.align[i] = null
+        if (item.header.length === item.align.length) {
+          nextPart = nextPart.substring(execArr[0].length)
+
+          for (let i = 0; i < item.align.length; i++) {
+            if (/^ *-+: *$/.test(item.align[i])) {
+              item.align[i] = 'right'
+            } else if (/^ *:-+: *$/.test(item.align[i])) {
+              item.align[i] = 'center'
+            } else if (/^ *:-+ *$/.test(item.align[i])) {
+              item.align[i] = 'left'
+            } else {
+              item.align[i] = null
+            }
           }
+
+          let td: string[] = execArr[3].replace(/\n$/, '').split('\n')
+
+          for (let i = 0; i < td.length; i++) {
+            item.cells[i] = this.splitCells(td[i], item.header.length)
+          }
+
+          this.tokens.push(item)
+          continue
         }
-
-        let td: string[] = execArr[3].replace(/\n$/, '').split('\n')
-
-        for (let i = 0; i < td.length; i++) {
-          item.cells[i] = this.splitCells(td[i], item.header.length)
-        }
-
-        this.tokens.push(item)
-        continue
       }
 
       // hr
@@ -545,29 +549,33 @@ export class BlockLexer<T extends typeof BlockLexer> {
             : []
         }
 
-        for (let i = 0; i < item.align.length; i++) {
-          if (/^ *-+: *$/.test(item.align[i])) {
-            item.align[i] = 'right'
-          } else if (/^ *:-+: *$/.test(item.align[i])) {
-            item.align[i] = 'center'
-          } else if (/^ *:-+ *$/.test(item.align[i])) {
-            item.align[i] = 'left'
-          } else {
-            item.align[i] = null
+        if (item.header.length === item.align.length) {
+          nextPart = nextPart.substring(execArr[0].length)
+
+          for (let i = 0; i < item.align.length; i++) {
+            if (/^ *-+: *$/.test(item.align[i])) {
+              item.align[i] = 'right'
+            } else if (/^ *:-+: *$/.test(item.align[i])) {
+              item.align[i] = 'center'
+            } else if (/^ *:-+ *$/.test(item.align[i])) {
+              item.align[i] = 'left'
+            } else {
+              item.align[i] = null
+            }
           }
+
+          const td = execArr[3].replace(/(?: *\| *)?\n$/, '').split('\n')
+
+          for (let i = 0; i < td.length; i++) {
+            item.cells[i] = this.splitCells(
+              td[i].replace(/^ *\| *| *\| *$/g, ''),
+              item.header.length
+            )
+          }
+
+          this.tokens.push(item)
+          continue
         }
-
-        const td = execArr[3].replace(/(?: *\| *)?\n$/, '').split('\n')
-
-        for (let i = 0; i < td.length; i++) {
-          item.cells[i] = this.splitCells(
-            td[i].replace(/^ *\| *| *\| *$/g, ''),
-            item.header.length
-          )
-        }
-
-        this.tokens.push(item)
-        continue
       }
 
       // simple rules

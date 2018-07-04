@@ -57,8 +57,8 @@ export class InlineLexer {
     protected options: SmarkdownOptions,
     renderer?: Renderer
   ) {
-    this.renderer =
-      renderer || this.options.renderer || new Renderer(this.options)
+    this.renderer = renderer || this.options.renderer || new Renderer(this.options)
+    this.renderer.options = this.options
 
     this.setRules()
   }

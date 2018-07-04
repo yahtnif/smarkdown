@@ -15,11 +15,17 @@ export class Smarkdown {
   protected static simpleRenderers: SimpleRenderer[] = []
 
   static getOptions(options: SmarkdownOptions) {
-    if (options && typeof options.renderer === 'function') {
+    if (!options) {
+      return this.options
+    }
+
+    if (typeof options.renderer === 'function') {
       options.renderer = new (<any>options.renderer)(this.options)
     }
 
-    return options ? Object.assign({}, this.options, options) : this.options
+    this.options = Object.assign({}, this.options, options)
+
+    return this.options
   }
 
   /**
@@ -28,7 +34,7 @@ export class Smarkdown {
    * @param options Hash of options.
    */
   static setOptions(options: SmarkdownOptions) {
-    this.options = this.getOptions(options)
+    this.getOptions(options)
     return this
   }
 

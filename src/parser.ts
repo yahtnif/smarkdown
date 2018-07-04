@@ -29,6 +29,7 @@ export class Parser {
     this.footnotes = {}
     this.options = options
     this.renderer = this.options.renderer || new Renderer(this.options)
+    this.renderer.options = this.options
   }
 
   static parse(tokens: Token[], links: Links, options?: SmarkdownOptions): string {

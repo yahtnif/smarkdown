@@ -752,7 +752,7 @@ var BlockLexer = /** @class */ (function () {
 
 var Renderer = /** @class */ (function () {
     function Renderer(options) {
-        this.options = options;
+        this.options = options || {};
         this._headings = [];
         this._footnotes = [];
     }
@@ -956,8 +956,8 @@ var InlineLexer = /** @class */ (function () {
         this.staticThis = staticThis;
         this.links = links;
         this.options = options;
-        this.renderer =
-            renderer || this.options.renderer || new Renderer(this.options);
+        this.renderer = renderer || this.options.renderer || new Renderer(this.options);
+        this.renderer.options = this.options;
         this.setRules();
     }
     /**
@@ -1360,6 +1360,7 @@ var Parser = /** @class */ (function () {
         this.footnotes = {};
         this.options = options;
         this.renderer = this.options.renderer || new Renderer(this.options);
+        this.renderer.options = this.options;
     }
     Parser.parse = function (tokens, links, options) {
         var parser = new this(options);
@@ -1513,10 +1514,14 @@ var Smarkdown = /** @class */ (function () {
     function Smarkdown() {
     }
     Smarkdown.getOptions = function (options) {
-        if (options && typeof options.renderer === 'function') {
+        if (!options) {
+            return this.options;
+        }
+        if (typeof options.renderer === 'function') {
             options.renderer = new options.renderer(this.options);
         }
-        return options ? Object.assign({}, this.options, options) : this.options;
+        this.options = Object.assign({}, this.options, options);
+        return this.options;
     };
     /**
      * Merges the default options with options that will be set.
@@ -1524,7 +1529,7 @@ var Smarkdown = /** @class */ (function () {
      * @param options Hash of options.
      */
     Smarkdown.setOptions = function (options) {
-        this.options = this.getOptions(options);
+        this.getOptions(options);
         return this;
     };
     /**

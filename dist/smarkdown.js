@@ -1,5 +1,5 @@
 /*!
- * smarkdown v0.1.2
+ * smarkdown v0.1.3
  * (c) 2018-present Yahtnif <yahtnif@gmail.com>
  * Released under the MIT License.
  */
@@ -180,7 +180,7 @@
             this.langPrefix = 'language-';
             this.langAttribute = false;
             this.smartypants = false;
-            this.headerId = '';
+            this.headerId = false;
             this.headerPrefix = '';
             /**
              * Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.)
@@ -786,7 +786,8 @@
         Renderer.prototype.heading = function (text, level, raw, ends) {
             var headerId = this.options.headerId;
             var idHtml = '';
-            if ((headerId === 'off' && ends) ||
+            if ((headerId === true) ||
+                (headerId === 'off' && ends) ||
                 (headerId === 'on' && !ends)) {
                 var id = this.options.slug(raw);
                 var count = this._headings.filter(function (h) { return h === raw; }).length;

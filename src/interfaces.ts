@@ -158,7 +158,7 @@ export class SmarkdownOptions {
   langPrefix?: string = 'language-'
   langAttribute?: boolean = false
   smartypants?: boolean = false
-  headerId?: string = ''
+  headerId?: boolean | string = false
   headerPrefix?: string = ''
   /**
    * An object containing functions to render tokens to HTML. Default: `new Renderer()`

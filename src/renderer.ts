@@ -50,6 +50,7 @@ ${quote}</blockquote>
     const { headerId } = this.options
     let idHtml = ''
     if (
+      (headerId === true) ||
       (headerId === 'off' && ends) ||
       (headerId === 'on' && !ends)
     ) {

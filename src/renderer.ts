@@ -112,9 +112,10 @@ ${content}</tr>
     content: string,
     flags: { header?: boolean; align?: Align }
   ): string {
-    const type = flags.header ? 'th' : 'td'
-    const tag = flags.align
-      ? '<' + type + ' align="' + flags.align + '">'
+    const { header, align } = flags
+    const type = header ? 'th' : 'td'
+    const tag = align
+      ? '<' + type + ' align="' + align + '">'
       : '<' + type + '>'
     return tag + content + '</' + type + '>\n'
   }

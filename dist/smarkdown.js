@@ -1,5 +1,5 @@
 /*!
- * smarkdown v0.1.3
+ * smarkdown v0.1.4
  * (c) 2018-present Yahtnif <yahtnif@gmail.com>
  * Released under the MIT License.
  */
@@ -822,9 +822,10 @@
             return "<tr>\n" + content + "</tr>\n";
         };
         Renderer.prototype.tablecell = function (content, flags) {
-            var type = flags.header ? 'th' : 'td';
-            var tag = flags.align
-                ? '<' + type + ' align="' + flags.align + '">'
+            var header = flags.header, align = flags.align;
+            var type = header ? 'th' : 'td';
+            var tag = align
+                ? '<' + type + ' align="' + align + '">'
                 : '<' + type + '>';
             return tag + content + '</' + type + '>\n';
         };

@@ -169,7 +169,7 @@ export class InlineLexer {
 
     const _backpedal = /(?:[^?!.,:;*_~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_~)]+(?!$))+/
 
-    const del = /^~~(?=\S)([\s\S]*?\S)~~/
+    const del = /^~+(?=\S)([\s\S]*?\S)~+/
 
     const text = new ExtendRegexp(base.text)
       .setGroup(']|', '~]|')

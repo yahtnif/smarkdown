@@ -1049,7 +1049,7 @@ var InlineLexer = /** @class */ (function () {
             .setGroup('email', base._email)
             .getRegex();
         var _backpedal = /(?:[^?!.,:;*_~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_~)]+(?!$))+/;
-        var del = /^~~(?=\S)([\s\S]*?\S)~~/;
+        var del = /^~+(?=\S)([\s\S]*?\S)~+/;
         var text = new ExtendRegexp(base.text)
             .setGroup(']|', '~]|')
             .setGroup('|', "|https?://|ftp://|www\\.|[a-zA-Z0-9.!#$%&'*+/=?^_`{\\|}~-]+@|")

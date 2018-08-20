@@ -318,8 +318,11 @@ export class InlineLexer {
         this.isGfm &&
         (execArr = (<RulesInlineGfm>this.rules).url.exec(nextPart))
       ) {
-        let text: string, href: string
-        execArr[0] = (<RulesInlineGfm>this.rules)._backpedal.exec(execArr[0])[0]
+        let text: string, href: string, prevCapZero: string
+        do {
+          prevCapZero = execArr[0]
+          execArr[0] = (<RulesInlineGfm>this.rules)._backpedal.exec(execArr[0])[0]
+        } while (prevCapZero !== execArr[0])
         nextPart = nextPart.substring(execArr[0].length)
         text = this.options.escape(execArr[0])
         if (execArr[2] === '@') {

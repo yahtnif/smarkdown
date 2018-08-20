@@ -1,5 +1,5 @@
 /*!
- * smarkdown v0.1.4
+ * smarkdown v0.1.5
  * (c) 2018-present Yahtnif <yahtnif@gmail.com>
  * Released under the MIT License.
  */
@@ -531,13 +531,16 @@ var BlockLexer = /** @class */ (function () {
                 nextPart = nextPart.substring(execArr[0].length);
                 var bull = execArr[2];
                 var isordered = bull.length > 1;
-                this.tokens.push({
+                var listStart = {
                     type: TokenType.listStart,
                     ordered: isordered,
-                    start: isordered ? +bull : ''
-                });
+                    start: isordered ? +bull : '',
+                    loose: false
+                };
+                this.tokens.push(listStart);
                 // Get each top-level item.
                 var str = execArr[0].match(this.rules.item);
+                var listItems = [];
                 var length_1 = str.length;
                 var next = false, space = void 0, blockBullet = void 0, loose = void 0;
                 for (var i = 0; i < length_1; i++) {
@@ -546,6 +549,7 @@ var BlockLexer = /** @class */ (function () {
                     // Remove the list item's bullet, so it is seen as the next token.
                     space = item.length;
                     item = item.replace(/^ *([*+-]|\d+\.) +/, '');
+                    // Check for task list items
                     if (this.isGfm &&
                         (execArr = this.rules.checkbox.exec(item))) {
                         checked = execArr[1] !== ' ';
@@ -579,15 +583,28 @@ var BlockLexer = /** @class */ (function () {
                         if (!loose)
                             loose = next;
                     }
-                    this.tokens.push({
+                    if (loose) {
+                        listStart.loose = true;
+                    }
+                    var t = {
+                        loose: loose,
                         checked: checked,
                         type: loose ? TokenType.looseItemStart : TokenType.listItemStart
-                    });
+                    };
+                    listItems.push(t);
+                    this.tokens.push(t);
                     // Recurse.
                     this.getTokens(item, false);
                     this.tokens.push({
                         type: TokenType.listItemEnd
                     });
+                }
+                if (listStart.loose) {
+                    var l = listItems.length;
+                    var i = 0;
+                    for (; i < l; i++) {
+                        listItems[i].loose = true;
+                    }
                 }
                 this.tokens.push({
                     type: TokenType.listEnd
@@ -989,15 +1006,15 @@ var InlineLexer = /** @class */ (function () {
             link: /^!?\[(label)\]\(href(?:\s+(title))?\s*\)/,
             reflink: /^!?\[(label)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
             nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
-            strong: /^__([^\s][\s\S]*?[^\s])__(?!_)|^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)|^__([^\s])__(?!_)|^\*\*([^\s])\*\*(?!\*)/,
-            em: /^_([^\s][\s\S]*?[^\s_])_(?!_)|^_([^\s_][\s\S]*?[^\s])_(?!_)|^\*([^\s][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*][\s\S]*?[^\s])\*(?!\*)|^_([^\s_])_(?!_)|^\*([^\s*])\*(?!\*)/,
+            strong: /^__([^\s])__(?!_)|^\*\*([^\s])\*\*(?!\*)|^__([^\s][\s\S]*?[^\s])__(?!_)|^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)/,
+            em: /^_([^\s_])_(?!_)|^\*([^\s*"<\[])\*(?!\*)|^_([^\s][\s\S]*?[^\s_])_(?!_)|^_([^\s_][\s\S]*?[^\s])_(?!_)|^\*([^\s"<\[][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*"<\[][\s\S]*?[^\s])\*(?!\*)/,
             code: /^(`+)\s*([\s\S]*?[^`]?)\s*\1(?!`)/,
-            br: /^ {2,}\n(?!\s*$)/,
+            br: /^( {2,}|\\)\n(?!\s*$)/,
             text: /^[\s\S]+?(?=[\\<!\[`*]|\b_| {2,}\n|$)/,
             _scheme: /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/,
             _email: /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/,
             _label: /(?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|[^\[\]\\])*?/,
-            _href: /\s*(<(?:\\[<>]?|[^\s<>\\])*>|(?:\\[()]?|\([^\s\x00-\x1f()\\]*\)|[^\s\x00-\x1f()\\])*?)/,
+            _href: /\s*(<(?:\\[<>]?|[^\s<>\\])*>|(?:\\[()]?|\([^\s\x00-\x1f\\]*\)|[^\s\x00-\x1f()\\])*?)/,
             _title: /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/,
             _escapes: /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g,
             _attribute: /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/
@@ -1158,8 +1175,11 @@ var InlineLexer = /** @class */ (function () {
             if (!this.inLink &&
                 this.isGfm &&
                 (execArr = this.rules.url.exec(nextPart))) {
-                var text = void 0, href = void 0;
-                execArr[0] = this.rules._backpedal.exec(execArr[0])[0];
+                var text = void 0, href = void 0, prevCapZero = void 0;
+                do {
+                    prevCapZero = execArr[0];
+                    execArr[0] = this.rules._backpedal.exec(execArr[0])[0];
+                } while (prevCapZero !== execArr[0]);
                 nextPart = nextPart.substring(execArr[0].length);
                 text = this.options.escape(execArr[0]);
                 if (execArr[2] === '@') {
@@ -1430,20 +1450,12 @@ var Parser = /** @class */ (function () {
             }
             case TokenType.listItemStart: {
                 var body = '';
+                var loose = this.token.loose;
                 var checked = this.token.checked;
                 while (this.next().type != TokenType.listItemEnd) {
-                    body +=
-                        this.token.type == TokenType.text
-                            ? this.parseText()
-                            : this.tok();
-                }
-                return this.renderer.listitem(body, checked);
-            }
-            case TokenType.looseItemStart: {
-                var body = '';
-                var checked = this.token.checked;
-                while (this.next().type != TokenType.listItemEnd) {
-                    body += this.tok();
+                    body += !loose && this.token.type === TokenType.text
+                        ? this.parseText()
+                        : this.tok();
                 }
                 return this.renderer.listitem(body, checked);
             }

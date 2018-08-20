@@ -84,6 +84,7 @@ export interface Token {
   execArr?: RegExpExecArray
   ends?: string
   start?: string | number
+  loose?: boolean
   /**
    * GFM
    */

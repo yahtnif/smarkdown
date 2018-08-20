@@ -416,14 +416,18 @@ export class BlockLexer<T extends typeof BlockLexer> {
         const bull: string = execArr[2]
         const isordered = bull.length > 1
 
-        this.tokens.push({
+        const listStart = {
           type: TokenType.listStart,
           ordered: isordered,
-          start: isordered ? +bull : ''
-        })
+          start: isordered ? +bull : '',
+          loose: false
+        }
+
+        this.tokens.push(listStart)
 
         // Get each top-level item.
         const str = execArr[0].match(this.rules.item)
+        const listItems = []
         const length = str.length
 
         let next: boolean = false,
@@ -439,6 +443,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
           space = item.length
           item = item.replace(/^ *([*+-]|\d+\.) +/, '')
 
+          // Check for task list items
           if (
             this.isGfm &&
             (execArr = (<RulesBlockGfm>this.rules).checkbox.exec(item))
@@ -482,16 +487,32 @@ export class BlockLexer<T extends typeof BlockLexer> {
             if (!loose) loose = next
           }
 
-          this.tokens.push({
+          if (loose) {
+            listStart.loose = true
+          }
+
+          const t = {
+            loose,
             checked,
             type: loose ? TokenType.looseItemStart : TokenType.listItemStart
-          })
+          }
+
+          listItems.push(t)
+          this.tokens.push(t)
 
           // Recurse.
           this.getTokens(item, false)
           this.tokens.push({
             type: TokenType.listItemEnd
           })
+        }
+
+        if (listStart.loose) {
+          const l = listItems.length
+          let i = 0
+          for (; i < l; i++) {
+            listItems[i].loose = true
+          }
         }
 
         this.tokens.push({

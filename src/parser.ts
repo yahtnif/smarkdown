@@ -130,23 +130,13 @@ export class Parser {
       }
       case TokenType.listItemStart: {
         let body = ''
+        const loose = this.token.loose
         const checked = this.token.checked
 
         while (this.next().type != TokenType.listItemEnd) {
-          body +=
-            this.token.type == <any>TokenType.text
-              ? this.parseText()
-              : this.tok()
-        }
-
-        return this.renderer.listitem(body, checked)
-      }
-      case TokenType.looseItemStart: {
-        let body = ''
-        const checked = this.token.checked
-
-        while (this.next().type != TokenType.listItemEnd) {
-          body += this.tok()
+          body += !loose && this.token.type === <any>TokenType.text
+            ? this.parseText()
+            : this.tok()
         }
 
         return this.renderer.listitem(body, checked)

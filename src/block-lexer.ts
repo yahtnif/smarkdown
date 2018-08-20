@@ -291,7 +291,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
 
         this.tokens.push({
           type: TokenType.code,
-          text: !this.options.pedantic ? this.rtrim(code, '\n') : code
+          text: !this.options.pedantic ? this.options.rtrim(code, '\n') : code
         })
         continue
       }
@@ -677,31 +677,5 @@ export class BlockLexer<T extends typeof BlockLexer> {
       cells[i] = cells[i].trim().replace(/\\\|/g, '|')
     }
     return cells
-  }
-
-  // Remove trailing 'c's. Equivalent to str.replace(/c*$/, '').
-  // /c*$/ is vulnerable to REDOS.
-  // invert: Remove suffix of non-c chars instead. Default falsey.
-  protected rtrim(str: string, c: string, invert: boolean = false) {
-    if (str.length === 0) {
-      return ''
-    }
-
-    // Length of suffix matching the invert condition.
-    let suffLen = 0
-
-    // Step left until we fail to match the invert condition.
-    while (suffLen < str.length) {
-      const currChar = str.charAt(str.length - suffLen - 1)
-      if (currChar === c && !invert) {
-        suffLen++
-      } else if (currChar !== c && invert) {
-        suffLen++
-      } else {
-        break
-      }
-    }
-
-    return str.substr(0, str.length - suffLen)
   }
 }

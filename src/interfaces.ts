@@ -1,5 +1,5 @@
 import { Renderer } from './renderer'
-import { escape, unescape, slug, resolveUrl, noop } from './helpers'
+import { escape, unescape, slug, rtrim, resolveUrl, noop } from './helpers'
 
 export interface RulesBlockBase {
   newline: RegExp
@@ -189,6 +189,7 @@ export class SmarkdownOptions {
    * By default using inner helper.
    */
   noop?: Function = noop
+  rtrim?: (str: string, c: string, invert?: boolean) => string = rtrim
   /**
    * The function that will be using to render image/link URLs relative to a base url.
    * By default using inner helper.

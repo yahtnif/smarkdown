@@ -68,6 +68,32 @@ export function slug(str: string) {
   )
 }
 
+// Remove trailing 'c's. Equivalent to str.replace(/c*$/, '').
+// /c*$/ is vulnerable to REDOS.
+// invert: Remove suffix of non-c chars instead. Default falsey.
+export function rtrim(str: string, c: string, invert: boolean = false) {
+  if (str.length === 0) {
+    return ''
+  }
+
+  // Length of suffix matching the invert condition.
+  let suffLen = 0
+
+  // Step left until we fail to match the invert condition.
+  while (suffLen < str.length) {
+    const currChar = str.charAt(str.length - suffLen - 1)
+    if (currChar === c && !invert) {
+      suffLen++
+    } else if (currChar !== c && invert) {
+      suffLen++
+    } else {
+      break
+    }
+  }
+
+  return str.substr(0, str.length - suffLen)
+}
+
 const originIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i
 const noLastSlashUrl = /^[^:]+:\/*[^/]*$/
 const baseUrls: any = {}
@@ -85,7 +111,7 @@ export function resolveUrl(base: string, href: string) {
     if (noLastSlashUrl.test(base)) {
       baseUrls[baseUrlsKey] = base + '/'
     } else {
-      baseUrls[baseUrlsKey] = base.replace(/[^/]*$/, '')
+      baseUrls[baseUrlsKey] = rtrim(base, '/', true)
     }
   }
 

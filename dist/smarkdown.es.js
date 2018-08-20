@@ -78,6 +78,31 @@ function slug(str) {
         // Make the whole thing lowercase
         .toLowerCase());
 }
+// Remove trailing 'c's. Equivalent to str.replace(/c*$/, '').
+// /c*$/ is vulnerable to REDOS.
+// invert: Remove suffix of non-c chars instead. Default falsey.
+function rtrim(str, c, invert) {
+    if (invert === void 0) { invert = false; }
+    if (str.length === 0) {
+        return '';
+    }
+    // Length of suffix matching the invert condition.
+    var suffLen = 0;
+    // Step left until we fail to match the invert condition.
+    while (suffLen < str.length) {
+        var currChar = str.charAt(str.length - suffLen - 1);
+        if (currChar === c && !invert) {
+            suffLen++;
+        }
+        else if (currChar !== c && invert) {
+            suffLen++;
+        }
+        else {
+            break;
+        }
+    }
+    return str.substr(0, str.length - suffLen);
+}
 var originIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i;
 var noLastSlashUrl = /^[^:]+:\/*[^/]*$/;
 var baseUrls = {};
@@ -94,7 +119,7 @@ function resolveUrl(base, href) {
             baseUrls[baseUrlsKey] = base + '/';
         }
         else {
-            baseUrls[baseUrlsKey] = base.replace(/[^/]*$/, '');
+            baseUrls[baseUrlsKey] = rtrim(base, '/', true);
         }
     }
     base = baseUrls[baseUrlsKey];
@@ -202,6 +227,7 @@ var SmarkdownOptions = /** @class */ (function () {
          * By default using inner helper.
          */
         this.noop = noop;
+        this.rtrim = rtrim;
         /**
          * The function that will be using to render image/link URLs relative to a base url.
          * By default using inner helper.
@@ -400,7 +426,7 @@ var BlockLexer = /** @class */ (function () {
                 var code = execArr[0].replace(/^ {4}/gm, '');
                 this.tokens.push({
                     type: TokenType.code,
-                    text: !this.options.pedantic ? this.rtrim(code, '\n') : code
+                    text: !this.options.pedantic ? this.options.rtrim(code, '\n') : code
                 });
                 continue;
             }
@@ -720,31 +746,6 @@ var BlockLexer = /** @class */ (function () {
             cells[i] = cells[i].trim().replace(/\\\|/g, '|');
         }
         return cells;
-    };
-    // Remove trailing 'c's. Equivalent to str.replace(/c*$/, '').
-    // /c*$/ is vulnerable to REDOS.
-    // invert: Remove suffix of non-c chars instead. Default falsey.
-    BlockLexer.prototype.rtrim = function (str, c, invert) {
-        if (invert === void 0) { invert = false; }
-        if (str.length === 0) {
-            return '';
-        }
-        // Length of suffix matching the invert condition.
-        var suffLen = 0;
-        // Step left until we fail to match the invert condition.
-        while (suffLen < str.length) {
-            var currChar = str.charAt(str.length - suffLen - 1);
-            if (currChar === c && !invert) {
-                suffLen++;
-            }
-            else if (currChar !== c && invert) {
-                suffLen++;
-            }
-            else {
-                break;
-            }
-        }
-        return str.substr(0, str.length - suffLen);
     };
     BlockLexer.simpleRules = [];
     return BlockLexer;
@@ -1617,4 +1618,4 @@ var Smarkdown = /** @class */ (function () {
     return Smarkdown;
 }());
 
-export { BlockLexer, escape, unescape, slug, resolveUrl, noop, ExtendRegexp, InlineLexer, TokenType, SmarkdownOptions, Smarkdown, Parser, Renderer, TextRenderer };
+export { BlockLexer, escape, unescape, slug, rtrim, resolveUrl, noop, ExtendRegexp, InlineLexer, TokenType, SmarkdownOptions, Smarkdown, Parser, Renderer, TextRenderer };

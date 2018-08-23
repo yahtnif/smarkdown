@@ -1537,8 +1537,7 @@ var Smarkdown = /** @class */ (function () {
         if (typeof options.renderer === 'function') {
             options.renderer = new options.renderer(this.options);
         }
-        this.options = Object.assign({}, this.options, options);
-        return this.options;
+        return Object.assign({}, this.options, options);
     };
     /**
      * Merges the default options with options that will be set.
@@ -1546,7 +1545,7 @@ var Smarkdown = /** @class */ (function () {
      * @param options Hash of options.
      */
     Smarkdown.setOptions = function (options) {
-        this.getOptions(options);
+        this.options = this.getOptions(options);
         return this;
     };
     /**

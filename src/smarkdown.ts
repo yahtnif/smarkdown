@@ -23,9 +23,7 @@ export class Smarkdown {
       options.renderer = new (<any>options.renderer)(this.options)
     }
 
-    this.options = Object.assign({}, this.options, options)
-
-    return this.options
+    return Object.assign({}, this.options, options)
   }
 
   /**
@@ -34,7 +32,7 @@ export class Smarkdown {
    * @param options Hash of options.
    */
   static setOptions(options: SmarkdownOptions) {
-    this.getOptions(options)
+    this.options = this.getOptions(options)
     return this
   }
 

@@ -4,6 +4,14 @@
 
 This is fork of [marked](https://github.com/markedjs/marked) and [marked-ts](https://github.com/KostyaTretyak/marked-ts).
 
+## Size Comparison
+
+| | Smarkdown | Marked | markdown-it |
+| - | - | - | - |
+| Uncompressed | 76.6 KB | 38.8 KB | 258.5 KB |
+| Minified | 30.1 KB | 21.5 KB | 106.3 KB |
+| Minified & Gzipped | 9.34 KB | 7.18 KB | 34 KB |
+
 ## Table of contents
 
 * [Install](#install)

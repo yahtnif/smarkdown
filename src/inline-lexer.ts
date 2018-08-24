@@ -269,10 +269,10 @@ export class InlineLexer {
     const preParts = [nextPart, nextPart]
     const simpleRules = this.staticThis.simpleRules || []
     const simpleRulesBefore = simpleRules.filter(
-      (rule) => rule.options.priority === 'before'
-    )
+      (rule) => rule.options.priority
+    ).sort((a, b) => b.options.priority - a.options.priority)
     const simpleRulesAfter = simpleRules.filter(
-      (rule) => rule.options.priority !== 'before'
+      (rule) => !rule.options.priority
     )
 
     mainLoop: while (nextPart) {

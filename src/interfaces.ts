@@ -236,6 +236,6 @@ export interface RulesInlineCallback {
 export type SimpleRenderer = (execArr?: RegExpExecArray) => string
 
 export type InlineRuleOption = {
-  priority?: string
+  priority?: number
   checkPreChar?: Function
 }

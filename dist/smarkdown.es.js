@@ -1,5 +1,5 @@
 /*!
- * smarkdown v0.1.5
+ * smarkdown v0.1.6
  * (c) 2018-present Yahtnif <yahtnif@gmail.com>
  * Released under the MIT License.
  */
@@ -1137,8 +1137,8 @@ var InlineLexer = /** @class */ (function () {
         var out = '';
         var preParts = [nextPart, nextPart];
         var simpleRules = this.staticThis.simpleRules || [];
-        var simpleRulesBefore = simpleRules.filter(function (rule) { return rule.options.priority === 'before'; });
-        var simpleRulesAfter = simpleRules.filter(function (rule) { return rule.options.priority !== 'before'; });
+        var simpleRulesBefore = simpleRules.filter(function (rule) { return rule.options.priority; }).sort(function (a, b) { return b.options.priority - a.options.priority; });
+        var simpleRulesAfter = simpleRules.filter(function (rule) { return !rule.options.priority; });
         mainLoop: while (nextPart) {
             // escape
             if ((execArr = this.rules.escape.exec(nextPart))) {

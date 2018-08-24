@@ -239,3 +239,7 @@ export type InlineRuleOption = {
   priority?: number
   checkPreChar?: Function
 }
+
+export type BlockRuleOption = {
+  priority?: number
+}

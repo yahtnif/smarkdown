@@ -10,11 +10,16 @@ import {
   RulesBlockGfm,
   RulesBlockPedantic,
   RulesBlockTables,
-  RulesBlockExtra
+  RulesBlockExtra,
+  BlockRuleOption
 } from './interfaces'
 
 export class BlockLexer<T extends typeof BlockLexer> {
-  static simpleRules: RegExp[] = []
+  static simpleRules: {
+    id: string
+    rule: RegExp
+    options: BlockRuleOption
+  }[] = []
   protected static rulesBase: RulesBlockBase
   /**
    * Pedantic Block Grammar.
@@ -271,6 +276,13 @@ export class BlockLexer<T extends typeof BlockLexer> {
   protected getTokens(src: string, top?: boolean): LexerReturns {
     let nextPart = src
     let execArr: RegExpExecArray
+    const simpleRules = this.staticThis.simpleRules || []
+    const simpleRulesBefore = simpleRules.filter(
+      (rule) => rule.options.priority
+    ).sort((a, b) => b.options.priority - a.options.priority)
+    const simpleRulesAfter = simpleRules.filter(
+      (rule) => !rule.options.priority
+    )
 
     mainLoop: while (nextPart) {
       // newline
@@ -281,6 +293,18 @@ export class BlockLexer<T extends typeof BlockLexer> {
           this.tokens.push({
             type: TokenType.space
           })
+        }
+      }
+
+      // simple rules before
+      for (const sr of simpleRulesBefore) {
+        if ((execArr = sr.rule.exec(nextPart))) {
+          nextPart = nextPart.substring(execArr[0].length)
+          this.tokens.push({
+            type: sr.id,
+            execArr: execArr
+          })
+          continue mainLoop
         }
       }
 
@@ -600,18 +624,14 @@ export class BlockLexer<T extends typeof BlockLexer> {
       }
 
       // simple rules
-      if (this.staticThis.simpleRules.length) {
-        const simpleRules = this.staticThis.simpleRules
-        for (let i = 0; i < simpleRules.length; i++) {
-          if ((execArr = simpleRules[i].exec(nextPart))) {
-            nextPart = nextPart.substring(execArr[0].length)
-            const type = 'simpleRule' + (i + 1)
-            this.tokens.push({
-              type: type,
-              execArr: execArr
-            })
-            continue mainLoop
-          }
+      for (const sr of simpleRulesAfter) {
+        if ((execArr = sr.rule.exec(nextPart))) {
+          nextPart = nextPart.substring(execArr[0].length)
+          this.tokens.push({
+            type: sr.id,
+            execArr: execArr
+          })
+          continue mainLoop
         }
       }
 

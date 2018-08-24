@@ -7,12 +7,17 @@ import {
   Links,
   LexerReturns,
   SimpleRenderer,
-  InlineRuleOption
+  InlineRuleOption,
+  BlockRuleOption
 } from './interfaces'
 
 export class Smarkdown {
   static options = new SmarkdownOptions()
-  protected static simpleRenderers: SimpleRenderer[] = []
+  protected static simpleRenderers: {
+    renderer: SimpleRenderer
+    id: string
+  }[] = []
+  protected static blockRuleCount = 0
 
   static getOptions(options: SmarkdownOptions) {
     if (!options) {
@@ -39,9 +44,23 @@ export class Smarkdown {
   /**
    * Setting simple block rule.
    */
-  static setBlockRule(regexp: RegExp, renderer: SimpleRenderer = () => '') {
-    BlockLexer.simpleRules.push(regexp)
-    this.simpleRenderers.push(renderer)
+  static setBlockRule(
+    regexp: RegExp,
+    renderer: SimpleRenderer = () => '',
+    options: BlockRuleOption = {}
+  ) {
+    const id = 'SimpleBlockRule-' + (++this.blockRuleCount)
+
+    BlockLexer.simpleRules.push({
+      rule: regexp,
+      options,
+      id
+    })
+
+    this.simpleRenderers.push({
+      renderer,
+      id
+    })
     return this
   }
 

@@ -12,7 +12,6 @@ import {
  * Parsing & Compiling.
  */
 export class Parser {
-  simpleRenderers: SimpleRenderer[] = []
   protected tokens: Token[]
   protected token: Token
   protected footnotes: { [key: string]: string }
@@ -22,6 +21,10 @@ export class Parser {
   protected renderer: Renderer
   protected textRenderer: TextRenderer
   protected line: number = 0
+  simpleRenderers: {
+    renderer: SimpleRenderer
+    id: string
+  }[] = []
 
   constructor(options?: SmarkdownOptions) {
     this.tokens = []
@@ -205,9 +208,9 @@ export class Parser {
         return this.renderer.html(this.token.text);
       }
       default: {
-        for (let i = 0; i < this.simpleRenderers.length; i++) {
-          if (this.token.type === 'simpleRule' + (i + 1)) {
-            return this.simpleRenderers[i].call(
+        for (const sr of this.simpleRenderers) {
+          if (this.token.type === sr.id) {
+            return sr.renderer.call(
               this.renderer,
               this.token.execArr
             )

@@ -413,6 +413,9 @@ var BlockLexer = /** @class */ (function () {
     BlockLexer.prototype.getTokens = function (src, top) {
         var nextPart = src;
         var execArr;
+        var simpleRules = this.staticThis.simpleRules || [];
+        var simpleRulesBefore = simpleRules.filter(function (rule) { return rule.options.priority; }).sort(function (a, b) { return b.options.priority - a.options.priority; });
+        var simpleRulesAfter = simpleRules.filter(function (rule) { return !rule.options.priority; });
         mainLoop: while (nextPart) {
             // newline
             if ((execArr = this.rules.newline.exec(nextPart))) {
@@ -421,6 +424,18 @@ var BlockLexer = /** @class */ (function () {
                     this.tokens.push({
                         type: TokenType.space
                     });
+                }
+            }
+            // simple rules before
+            for (var _i = 0, simpleRulesBefore_1 = simpleRulesBefore; _i < simpleRulesBefore_1.length; _i++) {
+                var sr = simpleRulesBefore_1[_i];
+                if ((execArr = sr.rule.exec(nextPart))) {
+                    nextPart = nextPart.substring(execArr[0].length);
+                    this.tokens.push({
+                        type: sr.id,
+                        execArr: execArr
+                    });
+                    continue mainLoop;
                 }
             }
             // code
@@ -678,18 +693,15 @@ var BlockLexer = /** @class */ (function () {
                 }
             }
             // simple rules
-            if (this.staticThis.simpleRules.length) {
-                var simpleRules = this.staticThis.simpleRules;
-                for (var i = 0; i < simpleRules.length; i++) {
-                    if ((execArr = simpleRules[i].exec(nextPart))) {
-                        nextPart = nextPart.substring(execArr[0].length);
-                        var type = 'simpleRule' + (i + 1);
-                        this.tokens.push({
-                            type: type,
-                            execArr: execArr
-                        });
-                        continue mainLoop;
-                    }
+            for (var _a = 0, simpleRulesAfter_1 = simpleRulesAfter; _a < simpleRulesAfter_1.length; _a++) {
+                var sr = simpleRulesAfter_1[_a];
+                if ((execArr = sr.rule.exec(nextPart))) {
+                    nextPart = nextPart.substring(execArr[0].length);
+                    this.tokens.push({
+                        type: sr.id,
+                        execArr: execArr
+                    });
+                    continue mainLoop;
                 }
             }
             // lheading
@@ -1378,8 +1390,8 @@ var InlineLexer = /** @class */ (function () {
  */
 var Parser = /** @class */ (function () {
     function Parser(options) {
-        this.simpleRenderers = [];
         this.line = 0;
+        this.simpleRenderers = [];
         this.tokens = [];
         this.token = null;
         this.footnotes = {};
@@ -1509,9 +1521,10 @@ var Parser = /** @class */ (function () {
                 return this.renderer.html(this.token.text);
             }
             default: {
-                for (var i = 0; i < this.simpleRenderers.length; i++) {
-                    if (this.token.type === 'simpleRule' + (i + 1)) {
-                        return this.simpleRenderers[i].call(this.renderer, this.token.execArr);
+                for (var _i = 0, _a = this.simpleRenderers; _i < _a.length; _i++) {
+                    var sr = _a[_i];
+                    if (this.token.type === sr.id) {
+                        return sr.renderer.call(this.renderer, this.token.execArr);
                     }
                 }
                 var errMsg = "Token with \"" + this.token.type + "\" type was not found.";
@@ -1551,10 +1564,19 @@ var Smarkdown = /** @class */ (function () {
     /**
      * Setting simple block rule.
      */
-    Smarkdown.setBlockRule = function (regexp, renderer) {
+    Smarkdown.setBlockRule = function (regexp, renderer, options) {
         if (renderer === void 0) { renderer = function () { return ''; }; }
-        BlockLexer.simpleRules.push(regexp);
-        this.simpleRenderers.push(renderer);
+        if (options === void 0) { options = {}; }
+        var id = 'SimpleBlockRule-' + (++this.blockRuleCount);
+        BlockLexer.simpleRules.push({
+            rule: regexp,
+            options: options,
+            id: id
+        });
+        this.simpleRenderers.push({
+            renderer: renderer,
+            id: id
+        });
         return this;
     };
     /**
@@ -1629,6 +1651,7 @@ var Smarkdown = /** @class */ (function () {
     };
     Smarkdown.options = new SmarkdownOptions();
     Smarkdown.simpleRenderers = [];
+    Smarkdown.blockRuleCount = 0;
     return Smarkdown;
 }());
 

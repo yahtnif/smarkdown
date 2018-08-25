@@ -11,6 +11,12 @@ export class Renderer {
     this._footnotes = []
   }
 
+  blockquote(quote: string): string {
+    return `<blockquote>
+${quote}</blockquote>
+`
+  }
+
   code(code: string, lang?: string, escaped?: boolean): string {
     if (this.options.highlight) {
       const out = this.options.highlight(code, lang)
@@ -36,14 +42,31 @@ export class Renderer {
 `
   }
 
-  blockquote(quote: string): string {
-    return `<blockquote>
-${quote}</blockquote>
-`
+  fnref(refname: string): string {
+    if (!this._footnotes.includes(refname)) {
+      this._footnotes.push(refname)
+    }
+
+    return `<sup id="fnref:${refname}"><a href="#fn:${refname}" class="footnote-ref" role="doc-noteref">${
+      this._footnotes.length
+    }</a></sup>`
   }
 
-  html(html: string): string {
-    return html
+  footnote(footnotes: { [key: string]: string }): string {
+    let out = `<div class="footnotes" role="doc-endnotes">${this.hr()}<ol>`
+
+    for (let refname of this._footnotes) {
+      out += `<li id="fn:${refname}" role="doc-endnote"><span class="cite-text">${footnotes[
+        refname
+      ] ||
+        '?'}</span><a href="#fnref:${refname}" class="footnote-backref" role="doc-backlink">&#8617;</a></li>`
+    }
+
+    out += '</ol></div>'
+
+    this._footnotes = []
+
+    return out
   }
 
   heading(text: string, level: number, raw: string, ends: string): string {
@@ -69,6 +92,10 @@ ${quote}</blockquote>
 
   hr(): string {
     return this.options.xhtml ? '<hr/>\n' : '<hr>\n'
+  }
+
+  html(html: string): string {
+    return html
   }
 
   list(body: string, ordered?: boolean, start?: string | number, isTaskList?: boolean): string {
@@ -122,49 +149,34 @@ ${content}</tr>
 
   //*** Inline level renderer methods. ***
 
-  strong(text: string): string {
-    return `<strong>${text}</strong>`
-  }
-
-  em(text: string): string {
-    return `<em>${text}</em>`
+  br(): string {
+    return this.options.xhtml ? '<br/>' : '<br>'
   }
 
   codespan(text: string): string {
     return `<code>${text}</code>`
   }
 
-  br(): string {
-    return this.options.xhtml ? '<br/>' : '<br>'
-  }
-
   del(text: string): string {
     return `<del>${text}</del>`
   }
 
-  fnref(refname: string): string {
-    if (!this._footnotes.includes(refname)) {
-      this._footnotes.push(refname)
-    }
-
-    return `<sup id="fnref:${refname}"><a href="#fn:${refname}" class="footnote-ref" role="doc-noteref">${
-      this._footnotes.length
-    }</a></sup>`
+  em(text: string): string {
+    return `<em>${text}</em>`
   }
 
-  footnote(footnotes: { [key: string]: string }): string {
-    let out = `<div class="footnotes" role="doc-endnotes">${this.hr()}<ol>`
-
-    for (let refname of this._footnotes) {
-      out += `<li id="fn:${refname}" role="doc-endnote"><span class="cite-text">${footnotes[
-        refname
-      ] ||
-        '?'}</span><a href="#fnref:${refname}" class="footnote-backref" role="doc-backlink">&#8617;</a></li>`
+  image(href: string, title: string, text: string): string {
+    if (this.options.baseUrl) {
+      href = this.options.resolveUrl(this.options.baseUrl, href)
     }
 
-    out += '</ol></div>'
+    let out = '<img src="' + href + '" alt="' + text + '"'
 
-    this._footnotes = []
+    if (title) {
+      out += ' title="' + title + '"'
+    }
+
+    out += this.options.xhtml ? '/>' : '>'
 
     return out
   }
@@ -224,20 +236,8 @@ ${content}</tr>
     return out
   }
 
-  image(href: string, title: string, text: string): string {
-    if (this.options.baseUrl) {
-      href = this.options.resolveUrl(this.options.baseUrl, href)
-    }
-
-    let out = '<img src="' + href + '" alt="' + text + '"'
-
-    if (title) {
-      out += ' title="' + title + '"'
-    }
-
-    out += this.options.xhtml ? '/>' : '>'
-
-    return out
+  strong(text: string): string {
+    return `<strong>${text}</strong>`
   }
 
   text(text: string): string {
@@ -245,12 +245,8 @@ ${content}</tr>
   }
 }
 export class TextRenderer {
-  strong(text: string): string {
-    return text
-  }
-
-  em(text: string): string {
-    return text
+  br() {
+    return ''
   }
 
   codespan(text: string): string {
@@ -261,19 +257,23 @@ export class TextRenderer {
     return text
   }
 
-  text(text: string): string {
+  em(text: string): string {
     return text
-  }
-
-  link(href: string, title: string, text: string): string {
-    return '' + text
   }
 
   image(href: string, title: string, text: string): string {
     return '' + text
   }
 
-  br() {
-    return ''
+  link(href: string, title: string, text: string): string {
+    return '' + text
+  }
+
+  strong(text: string): string {
+    return text
+  }
+
+  text(text: string): string {
+    return text
   }
 }

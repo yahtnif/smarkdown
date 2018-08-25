@@ -1,5 +1,4 @@
 module.exports = {
-  banner: true,
   input: 'src/index.ts',
   format: ['es', 'umd', 'umd-min'],
   sizeLimit: {

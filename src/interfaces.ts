@@ -136,35 +136,28 @@ export interface RulesInlineExtra extends RulesInlineBreaks {
 }
 
 export class SmarkdownOptions {
-  gfm?: boolean = true
-  tables?: boolean = true
-  extra?: boolean = false
-  breaks?: boolean = false
-  taskList?: boolean
-  pedantic?: boolean = false
-  sanitize?: boolean = false
-  sanitizer?: (text: string) => string
-  mangle?: boolean = true
-  smartLists?: boolean = false
-  silent?: boolean = false
   baseUrl?: string = null
-  linksInNewTab?: boolean | Function = false
-  trimLinkText?: Function
+  breaks?: boolean = false
   disabledRules?: string[] = []
-  /**
-   * @param code The section of code to pass to the highlighter.
-   * @param lang The programming language specified in the code block.
-   */
-  highlight?: (code: string, lang?: string) => string
-  langPrefix?: string = 'language-'
-  langAttribute?: boolean = false
-  smartypants?: boolean = false
+  extra?: boolean = false
+  gfm?: boolean = true
   headerId?: boolean | string = false
   headerPrefix?: string = ''
-  /**
-   * An object containing functions to render tokens to HTML. Default: `new Renderer()`
-   */
+  highlight?: (code: string, lang?: string) => string
+  langAttribute?: boolean = false
+  langPrefix?: string = 'language-'
+  linksInNewTab?: boolean | Function = false
+  mangle?: boolean = true
+  pedantic?: boolean = false
   renderer?: Renderer
+  sanitize?: boolean = false
+  sanitizer?: (text: string) => string
+  silent?: boolean = false
+  smartLists?: boolean = false
+  smartypants?: boolean = false
+  tables?: boolean = true
+  taskList?: boolean
+  trimLinkText?: Function
   /**
    * Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.)
    * with a "/" as required by XHTML.
@@ -199,16 +192,15 @@ export class SmarkdownOptions {
   /**
    * If set to `true`, an inline text will not be taken in paragraph.
    *
-   * ```ts
-   * // isNoP == false
+   * ```js
    * Smarkdown.parse('some text'); // returns '<p>some text</p>'
    *
-   * Smarkdown.setOptions({isNoP: true});
+   * Smarkdown.setOptions({nop: true});
    *
    * Smarkdown.parse('some text'); // returns 'some text'
    * ```
    */
-  isNoP?: boolean
+  nop?: boolean
   /**
    * Split by chars inline
    * Default: \<![`*~

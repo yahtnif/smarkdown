@@ -44,16 +44,6 @@ ${quote}</blockquote>
 `
   }
 
-  fnref(refname: string): string {
-    if (!this._footnotes.includes(refname)) {
-      this._footnotes.push(refname)
-    }
-
-    return `<sup id="fnref:${refname}"><a href="#fn:${refname}" class="footnote-ref" role="doc-noteref">${
-      this._footnotes.length
-    }</a></sup>`
-  }
-
   footnote(footnotes: { [key: string]: string }): string {
     let out = `<div class="footnotes" role="doc-endnotes">${this.hr()}<ol>`
 
@@ -139,7 +129,7 @@ ${content}</tr>
 
   tablecell(
     content: string,
-    flags: { header?: boolean; align?: Align }
+    flags: { header?: boolean, align?: Align }
   ): string {
     const { header, align } = flags
     const type = header ? 'th' : 'td'
@@ -165,6 +155,16 @@ ${content}</tr>
 
   em(text: string): string {
     return `<em>${text}</em>`
+  }
+
+  fnref(refname: string): string {
+    if (!this._footnotes.includes(refname)) {
+      this._footnotes.push(refname)
+    }
+
+    return `<sup id="fnref:${refname}"><a href="#fn:${refname}" class="footnote-ref" role="doc-noteref">${
+      this._footnotes.length
+    }</a></sup>`
   }
 
   image(href: string, title: string, text: string): string {

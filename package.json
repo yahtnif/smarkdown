@@ -9,17 +9,20 @@
   "homepage": "https://github.com/yahtnif/smarkdown",
   "license": "MIT",
   "keywords": [
+    "commonmark",
     "smarkdown",
     "markdown",
     "markup",
     "parser",
-    "html"
+    "html",
+    "gfm"
   ],
   "scripts": {
     "build": "bili",
     "test": "mocha --inline-diffs",
     "pass": "yarn build && yarn test",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "version": "yarn build"
   },
   "lint-staged": {
     "{src|test}/*.{js,ts,tsx}": [

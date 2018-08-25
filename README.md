@@ -4,13 +4,19 @@
 
 Fork of [marked](https://github.com/markedjs/marked) and [marked-ts](https://github.com/KostyaTretyak/marked-ts).
 
+## Features
+
+* **Fast:** low-level compiler for parsing markdown without caching or blocking for long periods of time
+* **Lightweight:** it's 9kb of minified and gzipped
+* **Powerful:** easily to write extensions in an elegant way
+
 ## Table of contents
 
 * [Install](#install)
 * [Usage](#usage)
   * [Basic](#basic)
   * [Setting options](#setting-options)
-  * [Highlight code blocks](#highlight-code-blocks)
+  * [Syntax highlighting](#syntax-highlighting)
 * [Options](#options)
 * [Extensions](#extensions)
   * [Inline](#inline)
@@ -57,7 +63,7 @@ Smarkdown.setOptions({
 })
 ```
 
-### Highlight code blocks
+### Syntax highlighting
 
 ````js
 // highlight.js

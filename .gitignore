@@ -4,5 +4,4 @@ yarn.lock
 yarn-error.log
 .rpt2_cache
 *~
-dist/*.d.ts
-dist/*.map
+dist/

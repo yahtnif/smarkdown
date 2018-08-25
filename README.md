@@ -9,14 +9,18 @@ Fork of [marked](https://github.com/markedjs/marked) and [marked-ts](https://git
 * [Install](#install)
 * [Usage](#usage)
   * [Basic](#basic)
+  * [Setting options](#setting-options)
   * [Highlight code blocks](#highlight-code-blocks)
+* [Options](#options)
 * [Extensions](#extensions)
   * [Inline](#inline)
   * [Block](#block)
+  * [Extension's Options](#extension-s-options)
 * [Renderer methods](#renderer-methods)
   * [Overriding renderer methods](#overriding-renderer-methods)
 * [Size Comparison](#size-comparison)
 * [License](#license)
+
 
 ## Install
 
@@ -37,7 +41,7 @@ console.log(Smarkdown.parse('I am using __markdown__.'))
 // Outputs: I am using <strong>markdown</strong>.
 ```
 
-Example setting options with default values:
+### Setting options
 
 ```js
 import { Smarkdown, Renderer } from 'smarkdown'
@@ -46,18 +50,11 @@ Smarkdown.setOptions({
   renderer: Renderer,
   gfm: true,
   tables: true,
-  breaks: false,
-  extra: false,
-  pedantic: false,
-  sanitize: false,
-  smartLists: true,
-  smartypants: false,
-  baseUrl: null,
-  linksInNewTab: false,
-  disabledRules: []
+  breaks: true,
+  extra: true,
+  linksInNewTab: true,
+  disabledRules: ['lheading']
 })
-
-console.log(Smarkdown.parse('I am using __markdown__.'))
 ```
 
 ### Highlight code blocks
@@ -80,21 +77,80 @@ Smarkdown.setOptions({
 // prismjs
 import { Smarkdown } from 'smarkdown'
 import Prism from 'prismjs'
+import 'prismjs/components/prism-markdown'
 
 Smarkdown.setOptions({
   highlight: (code, lang) => {
-    const language = Prism.languages[lang] ? lang : defaultLanguage
+    const language = Prism.languages[lang] ? lang : 'markdown'
 
     return Prism.highlight(code, Prism.languages[language], language)
   }
 })
 ````
 
+## Options
+
+```ts
+{
+  baseUrl?: string = null
+  breaks?: boolean = false
+  disabledRules?: string[] = []
+  extra?: boolean = false
+  gfm?: boolean = true
+  headerId?: boolean | string = false
+  headerPrefix?: string = ''
+  highlight?: (code: string, lang?: string) => string
+  langAttribute?: boolean = false
+  langPrefix?: string = 'language-'
+  linksInNewTab?: boolean | Function = false
+  mangle?: boolean = true
+  pedantic?: boolean = false
+  renderer?: Renderer
+  sanitize?: boolean = false
+  sanitizer?: (text: string) => string
+  silent?: boolean = false
+  smartLists?: boolean = false
+  smartypants?: boolean = false
+  tables?: boolean = true
+  taskList?: boolean
+  trimLinkText?: Function
+  /**
+   * Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.)
+   * with a "/" as required by XHTML.
+   */
+  xhtml?: boolean = false
+  /**
+   * The function that will be using to slug string.
+   * By default using inner helper.
+   */
+  slug?: (str: string) => string = slug
+  /**
+   * If set to `true`, an inline text will not be taken in paragraph.
+   *
+   * ```js
+   * Smarkdown.parse('some text'); // returns '<p>some text</p>'
+   *
+   * Smarkdown.setOptions({nop: true});
+   *
+   * Smarkdown.parse('some text'); // returns 'some text'
+   * ```
+   */
+  nop?: boolean
+  /**
+   * Split by chars inline
+   * Default: \<![`*~
+   * Append new chars to default split chars
+   * Useful for set new inline rules
+   */
+  inlineSplitChars?: string
+}
+```
+
 ## Extensions
 
 ### Inline
 
-Using `Smarkdown.setInlineRule( regexp, callback, [, option] )`, which takes a regular expression as the first argument, and returns result `regexp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
+Using `Smarkdown.setInlineRule( regexp, callback, [, options] )`, which takes a regular expression as the first argument, and returns result `regexp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
 
 `regexp` **MUST** start with `^`.
 
@@ -182,7 +238,7 @@ Smarkdown.setInlineRule(
 
 ### Block
 
-Using `Smarkdown.setBlockRule( regexp, callback, [, option] )`, like `Smarkdown.setInlineRule( regexp, callback, [, option] )`
+Using `Smarkdown.setBlockRule( regexp, callback, [, options] )`, like `Smarkdown.setInlineRule( regexp, callback, [, options] )`
 
 ```js
 import { Smarkdown, escape } from 'smarkdown'
@@ -203,57 +259,61 @@ console.log(Smarkdown.parse(str))
 // <div class="warning">Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor.</div>
 ```
 
+### Extension's Options
+
+| Name | Type | Default | inline | block |
+| :-: | :-: | :-: | :-: | :-: |
+| priority | Number | null | ✓ | ✓ |
+| checkPreChar | Function | null | ✓ | |
+
 ## Renderer methods
 
-```ts
+```js
 //*** Block level renderer methods. ***
 
-blockquote(quote: string): string
+blockquote(quote)
 
-code(code: string, lang?: string, escaped?: boolean): string
-
-fnref(refname: string): string
+code(code, lang, escaped)
 
 footnote(footnotes:
 
-heading(text: string, level: number, raw: string, ends: string): string
+heading(text, level: number, raw, ends)
 
-hr(): string
+hr()
 
-html(html: string): string
+html(html)
 
-list(body: string, ordered?: boolean, start?: string | number, isTaskList?: boolean): string
+list(body, ordered, start, isTaskList)
 
-listitem(text: string, checked?: boolean | null): string
+listitem(text, checked)
 
-paragraph(text: string): string
+paragraph(text)
 
-table(header: string, body: string): string
+table(header, body)
 
-tablerow(content: string): string
+tablerow(content)
 
-tablecell(
-  content: string,
-  flags: { header?: boolean; align?: Align }
-): string
+tablecell(content, flags)
 
 //*** Inline level renderer methods. ***
 
-br(): string
+br()
 
-codespan(text: string): string
+codespan(text)
 
-del(text: string): string
+del(text)
 
-em(text: string): string
+em(text)
 
-image(href: string, title: string, text: string): string
+fnref(refname)
 
-link(href: string, title: string, text: string): string
+image(href, title, text)
 
-strong(text: string): string
+link(href, title, text)
 
-text(text: string): string
+strong(text)
+
+text(text)
 ```
 
 ### Overriding renderer methods
@@ -282,10 +342,11 @@ Smarkdown.setOptions({ renderer: MyRenderer })
 ## Size Comparison
 
 | | Smarkdown | Marked | markdown-it |
-| - | - | - | - |
-| Uncompressed | 76.6 KB | 38.8 KB | 258.5 KB |
-| Minified | 30.1 KB | 21.5 KB | 106.3 KB |
-| Minified & Gzipped | 9.34 KB | 7.18 KB | 34 KB |
+| :-: | :-: | :-: | :-: |
+| Version | 0.2.0 | 0.5.0 | 8.4.2 |
+| Uncompressed | 76.5 KB | 38.8 KB | 258.5 KB |
+| Minified | 30 KB | 21.5 KB | 106.3 KB |
+| Minified & Gzipped | 9.26 KB | 7.18 KB | 34 KB |
 
 ## License
 

@@ -11,6 +11,8 @@ export class Renderer {
     this._footnotes = []
   }
 
+  //*** Block level renderer methods. ***
+
   blockquote(quote: string): string {
     return `<blockquote>
 ${quote}</blockquote>

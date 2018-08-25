@@ -30,17 +30,13 @@ This is fork of [marked](https://github.com/markedjs/marked) and [marked-ts](htt
 
 ```bash
 npm install smarkdown --save
-```
 
-or
-
-```bash
 yarn add smarkdown
 ```
 
 ## Usage
 
-### Minimal usage:
+### Basic
 
 ```js
 import { Smarkdown } from 'smarkdown'
@@ -72,11 +68,10 @@ Smarkdown.setOptions({
 console.log(Smarkdown.parse('I am using __markdown__.'))
 ```
 
-### Example usage with highlight.js
-
-A function to highlight code blocks:
+### Highlight code blocks
 
 ````js
+// using highlight.js
 import { Smarkdown } from 'smarkdown'
 import { highlight } from 'highlight.js'
 
@@ -87,135 +82,156 @@ Smarkdown.setOptions({
       : highlight.highlightAuto(code).value
   }
 })
-let md = '```js\n console.log("hello"); \n```'
-console.log(Smarkdown.parse(md))
+````
+
+````js
+// using prismjs
+import { Smarkdown } from 'smarkdown'
+import Prism from 'prismjs'
+
+Smarkdown.setOptions({
+  highlight: (code, lang) => {
+    const language = Prism.languages[lang] ? lang : defaultLanguage
+
+    return Prism.highlight(code, Prism.languages[language], language)
+  }
+})
 ````
 
 ### Overriding renderer methods
-
-The renderer option allows you to render tokens in a custom manner. Here is an
-example of overriding the default heading token rendering by adding custom head id:
 
 ```js
 import { Smarkdown, Renderer } from 'smarkdown'
 
 class MyRenderer extends Renderer {
   // Overriding parent method.
-  heading(text, level, raw) {
-    const regexp = /\s*{([^}]+)}$/
-    const execArr = regexp.exec(text)
-    let id
+  table(header, body) {
+    if (body) body = '<tbody>' + body + '</tbody>'
 
-    if (execArr) {
-      text = text.replace(regexp, '')
-      id = execArr[1]
-    } else {
-      id = text.toLocaleLowerCase().replace(/[^\wа-яіїє]+/gi, '-')
-    }
-
-    return `<h${level} id="${id}">${text}</h${level}>`
+    // add class .table to table
+    return `
+<table class="table">
+<thead>
+${header}</thead>
+${body}</table>
+`
   }
 }
 
 Smarkdown.setOptions({ renderer: MyRenderer })
-
-console.log(Smarkdown.parse('# heading {my-custom-hash}'))
-```
-
-This code will output the following HTML:
-
-```html
-<h1 id="my-custom-hash">heading</h1>
 ```
 
 See also [Renderer methods API](#renderer-methods-api).
 
-### Example of setting a simple inline rule
+### Add new inline rules
 
-If you do not need recursiveness or checks some conditions before execute a regular expression, you can use the
-`Smarkdown.setInlineRule( regexp[, callback] )` method, which takes a regular expression as the first argument,
-and returns result `regexp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
+Using `Smarkdown.setInlineRule( regexp, callback, [, option] )`, which takes a regular expression as the first argument, and returns result `regexp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
 
-In regular expression very important adding symbol `^` from start. You should do this anyway.
-
-Works with `inlineSplitChars` option.
+`regexp` **MUST** start with `^`.
 
 ```js
 import { Smarkdown } from 'smarkdown'
 
 Smarkdown.setOptions({
-  inlineSplitChars: '=^'
+  // ^ for <sup></sup>
+  // = for <mark></mark>
+  // # for hashtag
+  inlineSplitChars: '=^#'
 })
 
+/**
+ * sub
+ *
+ * H~2~0
+ * H<sub>2</sub>O
+ */
 const regSub = /^~(?=\S)([\s\S]*?\S)~/
 Smarkdown.setInlineRule(regSub, function(execArr) {
   return `<sub>${this.output(execArr[1])}</sub>`
 })
 
+/**
+ * sup
+ *
+ * 1^st^
+ * 1<sup>st</sup>
+ */
 const regSup = /^\^(?=\S)([\s\S]*?\S)\^/
 Smarkdown.setInlineRule(regSup, function(execArr) {
   return `<sup>${this.output(execArr[1])}</sup>`
 })
 
+/**
+ * mark
+ *
+ * ==Experience== is the best teacher.
+ * <mark>Experience</mark> is the best teacher.
+ */
 const regMark = /^==(?=\S)([\s\S]*?\S)==/
 Smarkdown.setInlineRule(regMark, function(execArr) {
   return `<mark>${this.output(execArr[1])}</mark>`
 })
+
+/**
+ * hashtag
+ *
+ * #tag
+ * <span class="hashtag">tag</span>
+ */
+const regHashtag = /^#([^\s#]+)(?:\b)/
+Smarkdown.setInlineRule(
+  regHashtag,
+  function(execArr) {
+    return `<span class="hashtag">${execArr[1]}</span>`
+  },
+  {
+    checkPreChar (char) {
+      return !char || /\s/.test(char)
+    }
+  }
+)
+
+/**
+ * ruby annotation
+ *
+ * [注音]{zhuyin}
+ * <ruby>注音<rt>zhuyin</rt></ruby>
+ */
+const regRubyAnnotation = /^\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
+Smarkdown.setInlineRule(
+  regRubyAnnotation,
+  function(execArr) {
+    return `<ruby><rb>${execArr[1]}</rb><rp>(</rp><rt>${
+      execArr[2]
+    }</rt><rp>)</rp></ruby>`
+  },
+  {
+    priority: 1
+  }
+)
 ```
 
-### Example of setting a simple block rule
+### Add new block rules
 
-If you do not need recursiveness or checks some conditions before execute a regular expression, you can use the
-`Smarkdown.setBlockRule( regexp[, callback] )` method, which takes a regular expression as the first argument,
-and returns result `regexp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
-
-In regular expression very important adding symbol `^` from start. You should do this anyway.
+Using `Smarkdown.setBlockRule( regexp, callback, [, option] )`, like `Smarkdown.setInlineRule( regexp, callback, [, option] )`
 
 ```js
 import { Smarkdown, escape } from 'smarkdown'
 
-/**
- * KaTeX is a fast, easy-to-use JavaScript library for TeX math rendering on the web.
- */
-import * as katex from 'katex'
-
-Smarkdown.setBlockRule(/^@@@ *(\w+)\n([\s\S]+?)\n@@@/, function(execArr) {
-  // Don't use arrow function for this callback
-  // if you need Renderer's context, for example to `this.options`.
-
-  const channel = execArr[1]
-  const content = execArr[2]
-
-  switch (channel) {
-    case 'youtube': {
-      const id = escape(content)
-      return `\n<iframe width="420" height="315" src="https://www.youtube.com/embed/${id}"></iframe>\n`
-    }
-    case 'katex': {
-      return katex.renderToString(escape(content))
-    }
-    default: {
-      const msg = `[Error: a channel "${channel}" for an embedded code is not recognized]`
-      return '<div style="color: red">' + msg + '</div>'
-    }
-  }
+// block container
+const regExt = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
+Smarkdown.setBlockRule(regExt, (execArr) => {
+  return `<div class="${execArr[1]}">${execArr[2]}</div>`
 })
 
-const blockStr = `
-# Example usage with embed block code
-
-@@@ katex
-c = \\pm\\sqrt{a^2 + b^2}
-@@@
-
-@@@ youtube
-JgwnkM5WwWE
-@@@
+const str = `::: warning
+Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor.
+:::
 `
 
-const html = Smarkdown.parse(blockStr)
+console.log(Smarkdown.parse(str))
 
-console.log(html)
+// <div class="warning">Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor.</div>
 ```
 
 ## API

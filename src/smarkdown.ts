@@ -42,11 +42,28 @@ export class Smarkdown {
   }
 
   /**
+   * Setting simple inline rule.
+   */
+  static setInlineRule(
+    regexp: RegExp,
+    renderer: SimpleRenderer,
+    options: InlineRuleOption = {}
+  ) {
+    InlineLexer.simpleRules.push({
+      rule: regexp,
+      render: renderer,
+      options
+    })
+
+    return this
+  }
+
+  /**
    * Setting simple block rule.
    */
   static setBlockRule(
     regexp: RegExp,
-    renderer: SimpleRenderer = () => '',
+    renderer: SimpleRenderer,
     options: BlockRuleOption = {}
   ) {
     const id = 'SimpleBlockRule-' + (++this.blockRuleCount)
@@ -61,23 +78,6 @@ export class Smarkdown {
       renderer,
       id
     })
-    return this
-  }
-
-  /**
-   * Setting simple inline rule.
-   */
-  static setInlineRule(
-    regexp: RegExp,
-    renderer: SimpleRenderer,
-    options: InlineRuleOption = {}
-  ) {
-    InlineLexer.simpleRules.push({
-      rule: regexp,
-      render: renderer,
-      options
-    })
-
     return this
   }
 

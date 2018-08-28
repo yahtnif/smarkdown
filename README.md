@@ -106,7 +106,7 @@ Smarkdown.setOptions({
 | disabledRules | array | [] | |
 | extra | boolean | false | |
 | gfm | boolean | true | |
-| headerId | boolean | string | false | |
+| headerId | boolean \| string | false | |
 | headerPrefix | string | '' | |
 | highlight | function | (code, lang) => string | |
 | inlineSplitChars | string | '<!\[\`*~' | Split by chars, the value will append to default  |
@@ -126,7 +126,7 @@ Smarkdown.setOptions({
 | taskList | boolean | false | |
 | trimLinkText | function | | |
 | xhtml | boolean | false | Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.) with a "/" as required by XHTML. |
-| slug | function | false | str => string |
+| slug | function \| false | str => string | |
 
 
 ## Extensions

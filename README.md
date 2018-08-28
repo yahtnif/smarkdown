@@ -1,8 +1,6 @@
 # Smarkdown
 
-> Markdown parser, simple and powerful.
-
-Fork of [marked](https://github.com/markedjs/marked) and [marked-ts](https://github.com/KostyaTretyak/marked-ts).
+> Markdown parser, simple and powerful. Fork of [marked](https://github.com/markedjs/marked) and [marked-ts](https://github.com/KostyaTretyak/marked-ts).
 
 ## Features
 
@@ -12,7 +10,7 @@ Fork of [marked](https://github.com/markedjs/marked) and [marked-ts](https://git
 
 ## Table of contents
 
-* [Install](#install)
+* [Installation](#installation)
 * [Usage](#usage)
   * [Basic](#basic)
   * [Setting options](#setting-options)
@@ -28,7 +26,7 @@ Fork of [marked](https://github.com/markedjs/marked) and [marked-ts](https://git
 * [License](#license)
 
 
-## Install
+## Installation
 
 ```bash
 npm install smarkdown --save
@@ -43,8 +41,13 @@ yarn add smarkdown
 ```js
 import { Smarkdown } from 'smarkdown'
 
-console.log(Smarkdown.parse('I am using __markdown__.'))
-// Outputs: I am using <strong>markdown</strong>.
+const str = 'I am using **Smarkdown**.'
+
+console.log(Smarkdown.parse(str))
+// <p>I am using <strong>Smarkdown</strong>.</p>
+
+console.log(Smarkdown.parse(str, { nop: true }))
+// I am using <strong>Smarkdown</strong>.
 ```
 
 ### Setting options
@@ -96,61 +99,35 @@ Smarkdown.setOptions({
 
 ## Options
 
-```ts
-{
-  baseUrl?: string = null
-  breaks?: boolean = false
-  disabledRules?: string[] = []
-  extra?: boolean = false
-  gfm?: boolean = true
-  headerId?: boolean | string = false
-  headerPrefix?: string = ''
-  highlight?: (code: string, lang?: string) => string
-  langAttribute?: boolean = false
-  langPrefix?: string = 'language-'
-  linksInNewTab?: boolean | Function = false
-  mangle?: boolean = true
-  pedantic?: boolean = false
-  renderer?: Renderer
-  sanitize?: boolean = false
-  sanitizer?: (text: string) => string
-  silent?: boolean = false
-  smartLists?: boolean = false
-  smartypants?: boolean = false
-  tables?: boolean = true
-  taskList?: boolean
-  trimLinkText?: Function
-  /**
-   * Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.)
-   * with a "/" as required by XHTML.
-   */
-  xhtml?: boolean = false
-  /**
-   * The function that will be using to slug string.
-   * By default using inner helper.
-   */
-  slug?: (str: string) => string = slug
-  /**
-   * If set to `true`, an inline text will not be taken in paragraph.
-   *
-   * ```js
-   * Smarkdown.parse('some text'); // returns '<p>some text</p>'
-   *
-   * Smarkdown.setOptions({nop: true});
-   *
-   * Smarkdown.parse('some text'); // returns 'some text'
-   * ```
-   */
-  nop?: boolean
-  /**
-   * Split by chars inline
-   * Default: \<![`*~
-   * Append new chars to default split chars
-   * Useful for set new inline rules
-   */
-  inlineSplitChars?: string
-}
-```
+| Name | Type | Default | Note |
+| :-: | :-: | :-: | :-: |
+| baseUrl | String | null | |
+| breaks | boolean | false | |
+| disabledRules | array | [] | |
+| extra | boolean | false | |
+| gfm | boolean | true | |
+| headerId | boolean | string | false | |
+| headerPrefix | string | '' | |
+| highlight | function | (code, lang) => string | |
+| inlineSplitChars | string | '<!\[\`*~' | Split by chars, the value will append to default  |
+| langAttribute | boolean | false | |
+| langPrefix | string | 'language-' | |
+| linksInNewTab | boolean \| function | false | |
+| mangle | boolean | true | |
+| nop | boolean | false | If set to `true`, an inline text will not be taken in paragraph. |
+| pedantic | boolean | false | |
+| renderer | Renderer | | |
+| sanitize | boolean | false | |
+| sanitizer | function | text => string | |
+| silent | boolean | false | |
+| smartLists | boolean | false | |
+| smartypants | boolean | false | |
+| tables | boolean | true | |
+| taskList | boolean | false | |
+| trimLinkText | function | | |
+| xhtml | boolean | false | Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.) with a "/" as required by XHTML. |
+| slug | function | false | str => string |
+
 
 ## Extensions
 
@@ -164,8 +141,8 @@ Using `Smarkdown.setInlineRule( regexp, callback, [, options] )`, which takes a 
 import { Smarkdown } from 'smarkdown'
 
 Smarkdown.setOptions({
-  // ^ for <sup></sup>
   // = for <mark></mark>
+  // ^ for <sup></sup>
   // # for hashtag
   inlineSplitChars: '=^#'
 })
@@ -269,8 +246,8 @@ console.log(Smarkdown.parse(str))
 
 | Name | Type | Default | inline | block |
 | :-: | :-: | :-: | :-: | :-: |
-| priority | Number | null | ✓ | ✓ |
-| checkPreChar | Function | null | ✓ | |
+| priority | number | null | ✓ | ✓ |
+| checkPreChar | function | null | ✓ | |
 
 ## Renderer methods
 
@@ -356,8 +333,10 @@ Smarkdown.setOptions({ renderer: MyRenderer })
 
 ## License
 
-Copyright (c) 2011-2018, Christopher Jeffrey. (MIT License)
+[MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2018, Костя Третяк. (MIT License)
+Copyright (c) 2011-2018, Christopher Jeffrey.
 
-Copyright (c) 2018, Yahtnif. (MIT License)
+Copyright (c) 2018, Костя Третяк.
+
+Copyright (c) 2018-present, Yahtnif.

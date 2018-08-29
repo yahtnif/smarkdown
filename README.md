@@ -26,7 +26,8 @@
   * [Inline](#inline)
   * [Block](#block)
   * [Extension's Options](#extension-s-options)
-* [Renderer methods](#renderer-methods)
+* [Renderer](#renderer)
+  * [Methods](#methods)
   * [Overriding renderer methods](#overriding-renderer-methods)
 * [Size Comparison](#size-comparison)
 * [License](#license)
@@ -62,13 +63,14 @@ console.log(Smarkdown.parse(str, { nop: true }))
 import { Smarkdown, Renderer } from 'smarkdown'
 
 Smarkdown.setOptions({
-  renderer: Renderer,
-  gfm: true,
-  tables: true,
   breaks: true,
+  disabledRules: ['lheading'],
   extra: true,
+  gfm: true,
+  headerId: true,
   linksInNewTab: true,
-  disabledRules: ['lheading']
+  renderer: Renderer,
+  tables: true
 })
 ```
 
@@ -107,32 +109,30 @@ Smarkdown.setOptions({
 
 | Name | Type | Default | Note |
 | :-: | :-: | :-: | :-: |
-| baseUrl | String | null | |
-| breaks | boolean | false | |
-| disabledRules | array | [] | |
-| extra | boolean | false | |
-| gfm | boolean | true | |
-| headerId | boolean \| string | false | |
-| headerPrefix | string | '' | |
-| highlight | function | (code, lang) => string | |
-| inlineSplitChars | string | '<!\[\`*~' | Split by chars, the value will append to default  |
-| langAttribute | boolean | false | |
-| langPrefix | string | 'language-' | |
-| linksInNewTab | boolean \| function | false | |
-| mangle | boolean | true | |
-| nop | boolean | false | If set to `true`, an inline text will not be taken in paragraph. |
-| pedantic | boolean | false | |
-| renderer | Renderer | | |
-| sanitize | boolean | false | |
-| sanitizer | function | text => string | |
-| silent | boolean | false | |
-| smartLists | boolean | false | |
-| smartypants | boolean | false | |
-| tables | boolean | true | |
-| taskList | boolean | false | |
-| trimLinkText | function | | |
+| baseUrl | String | null | A prefix url for any relative link. |
+| breaks | boolean | false | If true, use GFM hard and soft line breaks. Requires `gfm` be `true`. |
+| disabledRules | array | [] | If set to `['lheading']`, will disable headers of an underline-ish style. |
+| extra | boolean | false | Enable `footnote`. |
+| gfm | boolean | true | If true, use approved [GitHub Flavored Markdown (GFM) specification](https://github.github.com/gfm/). |
+| headerId | boolean \| string | false | If true, include an `id` attribute when emitting headings.<br>If set to `on`, include an `id` attribute when writing headings not in a “close” atx-style(## h2, etc).<br>If set to `off`, include an `id` attribute when writing headings in a “close” atx-style (## h2 ##, etc).|
+| headerPrefix | string | '' | A string to prefix the id attribute when emitting headings. |
+| highlight | function | (code, lang) => string | A function to highlight code blocks, see [Syntax highlighting](#syntax-highlighting) |
+| inlineSplitChars | string | '<!\[\`*~' | Split by chars, the value will append to default.  |
+| langAttribute | boolean | false | If `true`, add `data-lang` attribute to highlight block code. |
+| langPrefix | string | 'language-' | A string to prefix the className in a `<code>` block. Useful for syntax highlighting. |
+| linksInNewTab | boolean \| function | false | If true, open links in new tabs. |
+| mangle | boolean | true | If true, autolinked email address is escaped with HTML character references. |
+| nop | boolean | false | If `true`, an inline text will not be taken in paragraph. |
+| pedantic | boolean | false | If true, conform to the original `markdown.pl` as much as possible. Don't fix original markdown bugs or behavior. Turns off and overrides `gfm`. |
+| renderer | Renderer | Renderer | An object containing functions to render tokens to HTML. See [Renderer](#renderer) for more details. |
+| sanitize | boolean | false | If true, sanitize the HTML passed into `markdownString` with the `sanitizer` function. |
+| sanitizer | function | null | A function to sanitize the HTML passed into `markdownString`. |
+| silent | boolean | false | If true, the parser does not throw any exception. |
+| smartLists | boolean | false | If true, use smarter list behavior than those found in `markdown.pl`. |
+| smartypants | boolean | false | If true, use "smart" typographic punctuation for things like quotes and dashes. |
+| tables | boolean | true | If true and `gfm` is true, use [GFM Tables](https://github.github.com/gfm/#tables-extension) extension. |
+| trimLinkText | function | null | Useful for text truncation. |
 | xhtml | boolean | false | Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.) with a "/" as required by XHTML. |
-| slug | function \| false | str => string | |
 
 
 ## Extensions
@@ -255,7 +255,9 @@ console.log(Smarkdown.parse(str))
 | priority | number | null | ✓ | ✓ |
 | checkPreChar | function | null | ✓ | |
 
-## Renderer methods
+## Renderer
+
+### Methods
 
 ```js
 //*** Block level renderer methods. ***

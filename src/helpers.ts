@@ -12,19 +12,18 @@ const replacements: Replacements = {
 
 const escapeTestNoEncode = /[<>"']|&(?!#?\w+;)/
 const escapeReplaceNoEncode = /[<>"']|&(?!#?\w+;)/g
+const regUnescape = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi
 
 export function escape(html: string, encode?: boolean) {
   if (encode) {
     if (escapeTest.test(html)) {
       return html.replace(escapeReplace, (ch: string) => replacements[ch])
     }
-  } else {
-    if (escapeTestNoEncode.test(html)) {
-      return html.replace(
-        escapeReplaceNoEncode,
-        (ch: string) => replacements[ch]
-      )
-    }
+  } else if (escapeTestNoEncode.test(html)) {
+    return html.replace(
+      escapeReplaceNoEncode,
+      (ch: string) => replacements[ch]
+    )
   }
 
   return html
@@ -32,10 +31,7 @@ export function escape(html: string, encode?: boolean) {
 
 export function unescape(html: string) {
   // Explicitly match decimal, hex, and named HTML entities
-  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi, function(
-    _,
-    n
-  ) {
+  return html.replace(regUnescape, function(_, n) {
     n = n.toLowerCase()
 
     if (n === 'colon') return ':'

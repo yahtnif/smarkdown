@@ -156,7 +156,6 @@ export class SmarkdownOptions {
   smartLists?: boolean = false
   smartypants?: boolean = false
   tables?: boolean = true
-  taskList?: boolean
   trimLinkText?: Function
   /**
    * Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.)
@@ -200,14 +199,14 @@ export class SmarkdownOptions {
    * Smarkdown.parse('some text'); // returns 'some text'
    * ```
    */
-  nop?: boolean
+  nop?: boolean = false
   /**
    * Split by chars inline
    * Default: \<![`*~
    * Append new chars to default split chars
    * Useful for set new inline rules
    */
-  inlineSplitChars?: string
+  inlineSplitChars?: string = ''
 }
 
 export interface LexerReturns {

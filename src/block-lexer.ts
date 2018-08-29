@@ -49,7 +49,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
   protected isTable: boolean
   protected isExtra: boolean
 
-  constructor(protected staticThis: typeof BlockLexer, options?: object) {
+  constructor(protected self: typeof BlockLexer, options?: object) {
     this.options = options
     this.setRules()
   }
@@ -240,17 +240,17 @@ export class BlockLexer<T extends typeof BlockLexer> {
 
   protected setRules() {
     if (this.options.extra) {
-      this.rules = this.staticThis.getRulesExtra()
+      this.rules = this.self.getRulesExtra()
     } else if (this.options.pedantic) {
-      this.rules = this.staticThis.getRulesPedantic()
+      this.rules = this.self.getRulesPedantic()
     } else if (this.options.gfm) {
       if (this.options.tables) {
-        this.rules = this.staticThis.getRulesTable()
+        this.rules = this.self.getRulesTable()
       } else {
-        this.rules = this.staticThis.getRulesGfm()
+        this.rules = this.self.getRulesGfm()
       }
     } else {
-      this.rules = this.staticThis.getRulesBase()
+      this.rules = this.self.getRulesBase()
     }
 
     this.options.disabledRules.forEach(
@@ -276,7 +276,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
   protected getTokens(src: string, top?: boolean): LexerReturns {
     let nextPart = src
     let execArr: RegExpExecArray
-    const simpleRules = this.staticThis.simpleRules || []
+    const simpleRules = this.self.simpleRules || []
     const simpleRulesBefore = simpleRules.filter(
       (rule) => rule.options.priority
     ).sort((a, b) => b.options.priority - a.options.priority)
@@ -487,7 +487,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
           // Determine whether the next list item belongs here.
           // Backpedal if it does not belong in this list.
           if (this.options.smartLists && i !== length - 1) {
-            blockBullet = this.staticThis
+            blockBullet = this.self
               .getRulesBase()
               .bullet.exec(str[i + 1])[0]
 

@@ -52,7 +52,7 @@ export class InlineLexer {
   protected ruleCallbacks: RulesInlineCallback[]
 
   constructor(
-    protected staticThis: typeof InlineLexer,
+    protected self: typeof InlineLexer,
     protected links: Links = {},
     protected options: SmarkdownOptions,
     renderer?: Renderer
@@ -216,15 +216,15 @@ export class InlineLexer {
 
   protected setRules() {
     if (this.options.extra) {
-      this.rules = this.staticThis.getRulesExtra(this.options)
+      this.rules = this.self.getRulesExtra(this.options)
     } else if (this.options.pedantic) {
-      this.rules = this.staticThis.getRulesPedantic()
+      this.rules = this.self.getRulesPedantic()
     } else if (this.options.gfm) {
       this.rules = this.options.breaks
-        ? this.staticThis.getRulesBreaks()
-        : this.staticThis.getRulesGfm()
+        ? this.self.getRulesBreaks()
+        : this.self.getRulesGfm()
     } else {
-      this.rules = this.staticThis.getRulesBase()
+      this.rules = this.self.getRulesBase()
     }
 
     if (this.options.inlineSplitChars) {
@@ -267,7 +267,7 @@ export class InlineLexer {
     let execArr: RegExpExecArray
     let out = ''
     const preParts = [nextPart, nextPart]
-    const simpleRules = this.staticThis.simpleRules || []
+    const simpleRules = this.self.simpleRules || []
     const simpleRulesBefore = simpleRules.filter(
       (rule) => rule.options.priority
     ).sort((a, b) => b.options.priority - a.options.priority)

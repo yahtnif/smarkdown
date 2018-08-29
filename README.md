@@ -1,7 +1,7 @@
 # Smarkdown
 
 [![npm](https://badgen.net/npm/v/smarkdown)](https://www.npmjs.com/package/smarkdown)
-[![gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js)
+[![gzip size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js)
 [![install size](https://badgen.net/packagephobia/install/smarkdown)](https://packagephobia.now.sh/result?p=smarkdown)
 [![downloads](https://badgen.net/npm/dt/smarkdown)](https://www.npmjs.com/package/smarkdown)
 [![Build Status](https://travis-ci.org/yahtnif/smarkdown.svg?branch=master)](https://travis-ci.org/yahtnif/smarkdown)
@@ -334,10 +334,10 @@ Smarkdown.setOptions({ renderer: MyRenderer })
 
 | | Smarkdown | Marked | markdown-it |
 | :-: | :-: | :-: | :-: |
-| Version | 0.2.0 | 0.5.0 | 8.4.2 |
-| Uncompressed | 76.5 KB | 38.8 KB | 258.5 KB |
-| Minified | 30 KB | 21.5 KB | 106.3 KB |
-| Minified & Gzipped | 9.26 KB | 7.18 KB | 34 KB |
+| Version | [![npm](https://badgen.net/npm/v/smarkdown)](https://www.npmjs.com/package/smarkdown) | [![npm](https://badgen.net/npm/v/marked)](https://www.npmjs.com/package/marked) | [![npm](https://badgen.net/npm/v/markdown-it)](https://www.npmjs.com/package/markdown-it) |
+| Uncompressed | [![uncompressed size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.js)](https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.js) | [![uncompressed size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/marked/lib/marked.js)](https://cdn.jsdelivr.net/npm/marked/lib/marked.js) | [![uncompressed size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.js)](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.js) |
+| Minified | [![minified size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js)](https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js) | [![minified size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/marked/marked.min.js)](https://cdn.jsdelivr.net/npm/marked/marked.min.js) | [![minified size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js)](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js) |
+| Minified & Gzipped | [![gzip size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js) | [![gzip size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/marked/marked.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/marked/marked.min.js) | [![gzip size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js) |
 
 ## License
 

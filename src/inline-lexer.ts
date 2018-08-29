@@ -199,10 +199,10 @@ export class InlineLexer {
     })
   }
 
-  protected static getRulesExtra(): RulesInlineExtra {
+  protected static getRulesExtra(options: SmarkdownOptions): RulesInlineExtra {
     if (this.rulesExtra) return this.rulesExtra
 
-    const breaks = this.getRulesBreaks()
+    const breaks = options.breaks ? this.getRulesBreaks() : <RulesInlineBreaks>{}
 
     return (this.rulesExtra = {
       ...breaks,
@@ -216,7 +216,7 @@ export class InlineLexer {
 
   protected setRules() {
     if (this.options.extra) {
-      this.rules = this.staticThis.getRulesExtra()
+      this.rules = this.staticThis.getRulesExtra(this.options)
     } else if (this.options.pedantic) {
       this.rules = this.staticThis.getRulesPedantic()
     } else if (this.options.gfm) {

@@ -1,11 +1,7 @@
 const klawSync = require('klaw-sync')
 const fs = require('fs-extra')
 const { expect } = require('chai')
-const { Smarkdown, SmarkdownOptions } = require('../dist/smarkdown')
-
-function M(str, options) {
-  return Smarkdown.parse(str, options)
-}
+const { Smarkdown } = require('../dist/smarkdown')
 
 const files = klawSync('test/tasks', { nodir: true })
 
@@ -16,7 +12,7 @@ describe('Smarkdown', function() {
     const [text, html] = data.split(/\n{3}/)
 
     it(filename, function() {
-      expect(M(text)).to.equal(html)
+      expect(Smarkdown.parse(text)).to.equal(html)
     })
   }
 })

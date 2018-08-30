@@ -6,6 +6,7 @@
   "main": "dist/smarkdown.js",
   "module": "dist/smarkdown.es.js",
   "jsnext:main": "dist/smarkdown.es.js",
+  "browser": "dist/smarkdown.min.js",
   "repository": "yahtnif/smarkdown",
   "homepage": "https://github.com/yahtnif/smarkdown",
   "license": "MIT",
@@ -19,7 +20,7 @@
     "gfm"
   ],
   "scripts": {
-    "build": "bili",
+    "build": "rollup --c",
     "test": "mocha --inline-diffs",
     "pass": "yarn build && yarn test",
     "precommit": "lint-staged",
@@ -37,7 +38,6 @@
     "singleQuote": true
   },
   "devDependencies": {
-    "bili": "^3.1.2",
     "chai": "^4.1.2",
     "fs-extra": "^7.0.0",
     "husky": "^0.14.3",
@@ -45,7 +45,11 @@
     "lint-staged": "^7.2.2",
     "mocha": "^5.2.0",
     "prettier": "1.14.2",
+    "rollup": "^0.65.0",
+    "rollup-plugin-clear": "^2.0.7",
+    "rollup-plugin-filesize": "^4.0.1",
     "rollup-plugin-typescript2": "0.17.0",
+    "rollup-plugin-uglify": "^4.0.0",
     "typescript": "3.0.3"
   }
 }

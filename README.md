@@ -37,7 +37,7 @@
 
 ```bash
 npm install smarkdown --save
-
+# or with yarn
 yarn add smarkdown
 ```
 
@@ -46,7 +46,7 @@ yarn add smarkdown
 ### Basic
 
 ```js
-import { Smarkdown } from 'smarkdown'
+import Smarkdown from 'smarkdown'
 
 const str = 'I am using **Smarkdown**.'
 
@@ -60,7 +60,7 @@ console.log(Smarkdown.parse(str, { nop: true }))
 ### Setting options
 
 ```js
-import { Smarkdown, Renderer } from 'smarkdown'
+import Smarkdown from 'smarkdown'
 
 Smarkdown.setOptions({
   breaks: true,
@@ -69,7 +69,7 @@ Smarkdown.setOptions({
   gfm: true,
   headerId: true,
   linksInNewTab: true,
-  renderer: Renderer,
+  renderer: Smarkdown.Renderer,
   tables: true
 })
 ```
@@ -78,7 +78,7 @@ Smarkdown.setOptions({
 
 ````js
 // highlight.js
-import { Smarkdown } from 'smarkdown'
+import Smarkdown from 'smarkdown'
 import { highlight } from 'highlight.js'
 
 Smarkdown.setOptions({
@@ -92,7 +92,7 @@ Smarkdown.setOptions({
 
 ````js
 // prismjs
-import { Smarkdown } from 'smarkdown'
+import Smarkdown from 'smarkdown'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-markdown'
 
@@ -143,7 +143,7 @@ Using `Smarkdown.setInlineRule( regexp, callback, [, options] )`, which takes a 
 `regexp` **MUST** start with `^`.
 
 ```js
-import { Smarkdown } from 'smarkdown'
+import Smarkdown from 'smarkdown'
 
 /**
  * sub
@@ -222,7 +222,7 @@ Smarkdown.setInlineRule(
 Using `Smarkdown.setBlockRule( regexp, callback, [, options] )`, like `Smarkdown.setInlineRule( regexp, callback, [, options] )`
 
 ```js
-import { Smarkdown, escape } from 'smarkdown'
+import Smarkdown from 'smarkdown'
 
 // block container
 const regExt = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
@@ -302,9 +302,9 @@ text(text)
 ### Overriding renderer methods
 
 ```js
-import { Smarkdown, Renderer } from 'smarkdown'
+import Smarkdown from 'smarkdown'
 
-class MyRenderer extends Renderer {
+class MyRenderer extends Smarkdown.Renderer {
   // Overriding parent method.
   table(header, body) {
     if (body) body = '<tbody>' + body + '</tbody>'

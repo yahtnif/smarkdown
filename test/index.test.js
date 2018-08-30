@@ -1,7 +1,7 @@
 const klawSync = require('klaw-sync')
 const fs = require('fs-extra')
 const { expect } = require('chai')
-const { Smarkdown } = require('../dist/smarkdown')
+const Smarkdown = require('../dist/smarkdown')
 
 const files = klawSync('test/tasks', { nodir: true })
 

@@ -1,5 +1,5 @@
 import { Renderer } from './renderer'
-import { escape, unescape, slug, rtrim, resolveUrl, noop } from './helpers'
+import { escape, unescape, slug, rtrim, resolveUrl, noop, defaultTextBreak } from './helpers'
 
 export interface RulesBlockBase {
   newline: RegExp
@@ -201,12 +201,11 @@ export class SmarkdownOptions {
    */
   nop?: boolean = false
   /**
-   * Split by chars inline
-   * Default: \<![`*~
-   * Append new chars to default split chars
+   * Break inline text
    * Useful for set new inline rules
    */
-  inlineSplitChars?: string = ''
+  textBreak?: string = defaultTextBreak
+  isTextBreakSync?: boolean = true
 }
 
 export interface LexerReturns {

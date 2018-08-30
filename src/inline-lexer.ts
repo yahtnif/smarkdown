@@ -1,4 +1,4 @@
-import { ExtendRegexp } from './helpers'
+import { ExtendRegexp, defaultTextBreak } from './helpers'
 import { Renderer } from './renderer'
 import {
   RulesInlineBase,
@@ -50,6 +50,7 @@ export class InlineLexer {
   protected isGfm: boolean
   protected isExtra: boolean
   protected ruleCallbacks: RulesInlineCallback[]
+  protected textBreak: string = defaultTextBreak
 
   constructor(
     protected self: typeof InlineLexer,
@@ -227,15 +228,14 @@ export class InlineLexer {
       this.rules = this.self.getRulesBase()
     }
 
-    if (this.options.inlineSplitChars) {
+    if (!this.options.isTextBreakSync) {
       const textRuleStr = this.rules.text.toString()
-      const newStr = `${this.options.inlineSplitChars}]|`
 
-      if (!textRuleStr.includes(newStr)) {
-        this.rules.text = new RegExp(
-          textRuleStr.replace(']|', newStr).slice(1, -1)
-        )
-      }
+      this.rules.text = new RegExp(
+        textRuleStr.replace(this.textBreak.slice(4), this.options.textBreak.slice(4)).slice(1, -1)
+      )
+      this.textBreak = this.options.textBreak
+      this.options.isTextBreakSync = true
     }
 
     this.options.disabledRules.forEach(

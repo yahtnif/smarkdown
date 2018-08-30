@@ -158,3 +158,6 @@ export class ExtendRegexp {
     return new RegExp(this.source, this.flags)
   }
 }
+
+// from a part of this.rules.text
+export const defaultTextBreak = '\\<![`*~'

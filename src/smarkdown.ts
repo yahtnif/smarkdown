@@ -49,6 +49,16 @@ export class Smarkdown {
     renderer: SimpleRenderer,
     options: InlineRuleOption = {}
   ) {
+    const log = console.log
+    let breakText = regexp.toString().match(/^\/\^\\?(.)/)[1]
+    log('setInlineRule')
+    log('regexp:', regexp)
+    log('breakText:', breakText)
+    if (breakText && !this.options.textBreak.includes(breakText)) {
+      this.options.textBreak += breakText
+      this.options.isTextBreakSync = false
+    }
+
     InlineLexer.simpleRules.push({
       rule: regexp,
       render: renderer,

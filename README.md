@@ -117,7 +117,6 @@ Smarkdown.setOptions({
 | headerId | boolean \| string | false | If true, include an `id` attribute when emitting headings.<br>If set to `on`, include an `id` attribute when writing headings not in a “close” atx-style(## h2, etc).<br>If set to `off`, include an `id` attribute when writing headings in a “close” atx-style (## h2 ##, etc).|
 | headerPrefix | string | '' | A string to prefix the id attribute when emitting headings. |
 | highlight | function | (code, lang) => string | A function to highlight code blocks, see [Syntax highlighting](#syntax-highlighting) |
-| inlineSplitChars | string | '<!\[\`*~' | Split by chars, the value will append to default.  |
 | langAttribute | boolean | false | If `true`, add `data-lang` attribute to highlight block code. |
 | langPrefix | string | 'language-' | A string to prefix the className in a `<code>` block. Useful for syntax highlighting. |
 | linksInNewTab | boolean \| function | false | If true, open links in new tabs. |
@@ -145,13 +144,6 @@ Using `Smarkdown.setInlineRule( regexp, callback, [, options] )`, which takes a 
 
 ```js
 import { Smarkdown } from 'smarkdown'
-
-Smarkdown.setOptions({
-  // = for <mark></mark>
-  // ^ for <sup></sup>
-  // # for hashtag
-  inlineSplitChars: '=^#'
-})
 
 /**
  * sub

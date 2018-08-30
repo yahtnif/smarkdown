@@ -26,7 +26,6 @@
 * [Extensions](#extensions)
   * [Inline](#inline)
   * [Block](#block)
-  * [Extension's Options](#extension-s-options)
 * [Renderer](#renderer)
   * [Methods](#methods)
   * [Overriding renderer methods](#overriding-renderer-methods)
@@ -151,6 +150,13 @@ Smarkdown.setOptions({
 
 ## Extensions
 
+Extension options:
+
+| Name | Type | Default | inline | block |
+| :-: | :-: | :-: | :-: | :-: |
+| priority | number | null | ✓ | ✓ |
+| checkPreChar | function | null | ✓ | |
+
 ### Inline
 
 Using `Smarkdown.setInlineRule( regexp, callback, [, options] )`, which takes a regular expression as the first argument, and returns result `regexp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
@@ -254,13 +260,6 @@ console.log(Smarkdown.parse(str))
 
 // <div class="warning">Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor.</div>
 ```
-
-### Extension's Options
-
-| Name | Type | Default | inline | block |
-| :-: | :-: | :-: | :-: | :-: |
-| priority | number | null | ✓ | ✓ |
-| checkPreChar | function | null | ✓ | |
 
 ## Renderer
 

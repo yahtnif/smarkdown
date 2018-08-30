@@ -19,6 +19,7 @@
 * [Installation](#installation)
 * [Usage](#usage)
   * [Basic](#basic)
+  * [Browser](#browser)
   * [Setting options](#setting-options)
   * [Syntax highlighting](#syntax-highlighting)
 * [Options](#options)
@@ -55,6 +56,20 @@ console.log(Smarkdown.parse(str))
 
 console.log(Smarkdown.parse(str, { nop: true }))
 // I am using <strong>Smarkdown</strong>.
+```
+
+### Browser
+
+```html
+<!doctype html>
+<html>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js"></script>
+  <script>
+    console.log(Smarkdown.parse('**Smarkdown** in the browser.'));
+  </script>
+</body>
+</html>
 ```
 
 ### Setting options

@@ -12,41 +12,54 @@
 
 * **Fast:** low-level compiler for parsing markdown without caching or blocking for long periods of time
 * **Lightweight:** it's 9kb of minified and gzipped
-* **Powerful:** easily to write extensions in an elegant way
+* **Pluggable:** add your own [extensions](#extensions)
 
 ## Table of contents
 
 * [Installation](#installation)
 * [Usage](#usage)
-  * [Basic](#basic)
-  * [Browser](#browser)
-  * [Setting options](#setting-options)
-  * [Syntax highlighting](#syntax-highlighting)
 * [Options](#options)
 * [Extensions](#extensions)
-  * [Inline](#inline)
-  * [Block](#block)
 * [Renderer](#renderer)
-  * [Methods](#methods)
-  * [Overriding renderer methods](#overriding-renderer-methods)
 * [Size Comparison](#size-comparison)
 * [License](#license)
 
 
 ## Installation
 
-```bash
-npm install smarkdown --save
-# or with yarn
+```sh
+npm install smarkdown
+# or
 yarn add smarkdown
 ```
 
+**browser (CDN):**
+
+* [jsDelivr](https://www.jsdelivr.com/package/npm/smarkdown)
+* [unpkg](https://unpkg.com/smarkdown/)
+
+
 ## Usage
 
-### Basic
+Import the library as a module:
 
 ```js
 import Smarkdown from 'smarkdown'
+```
+
+Or import the library with a script tag:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js"></script>
+```
+
+Example:
+
+```js
+// Setting options, see [Options](#options)
+Smarkdown.setOptions({
+  breaks: true
+})
 
 const str = 'I am using **Smarkdown**.'
 
@@ -55,37 +68,6 @@ console.log(Smarkdown.parse(str))
 
 console.log(Smarkdown.parse(str, { nop: true }))
 // I am using <strong>Smarkdown</strong>.
-```
-
-### Browser
-
-```html
-<!doctype html>
-<html>
-<body>
-  <script src="https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js"></script>
-  <script>
-    console.log(Smarkdown.parse('**Smarkdown** in the browser.'));
-  </script>
-</body>
-</html>
-```
-
-### Setting options
-
-```js
-import Smarkdown from 'smarkdown'
-
-Smarkdown.setOptions({
-  breaks: true,
-  disabledRules: ['lheading'],
-  extra: true,
-  gfm: true,
-  headerId: true,
-  linksInNewTab: true,
-  renderer: Smarkdown.Renderer,
-  tables: true
-})
 ```
 
 ### Syntax highlighting
@@ -119,6 +101,7 @@ Smarkdown.setOptions({
 })
 ````
 
+
 ## Options
 
 | Name | Type | Default | Note |
@@ -126,9 +109,9 @@ Smarkdown.setOptions({
 | baseUrl | String | null | A prefix url for any relative link. |
 | breaks | boolean | false | If true, use GFM hard and soft line breaks. Requires `gfm` be `true`. |
 | disabledRules | array | [] | If set to `['lheading']`, will disable headers of an underline-ish style. |
-| extra | boolean | false | Enable `footnote`. |
+| extra | boolean | false | If true, enable `footnote`. |
 | gfm | boolean | true | If true, use approved [GitHub Flavored Markdown (GFM) specification](https://github.github.com/gfm/). |
-| headerId | boolean \| string | false | If true, include an `id` attribute when emitting headings.<br>If set to `on`, include an `id` attribute when writing headings not in a “close” atx-style(## h2, etc).<br>If set to `off`, include an `id` attribute when writing headings in a “close” atx-style (## h2 ##, etc).|
+| headerId | boolean \| string | false | Include an `id` attribute when emitting headings.<br>If true, for all headings.<br>If set to `on`, for “non-close” atx-style headings (## h2, etc).<br>If set to `off`, for “close” atx-style headings (## h2 ##, etc).|
 | headerPrefix | string | '' | A string to prefix the id attribute when emitting headings. |
 | highlight | function | (code, lang) => string | A function to highlight code blocks, see [Syntax highlighting](#syntax-highlighting) |
 | langAttribute | boolean | false | If `true`, add `data-lang` attribute to highlight block code. |
@@ -261,6 +244,7 @@ console.log(Smarkdown.parse(str))
 // <div class="warning">Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor.</div>
 ```
 
+
 ## Renderer
 
 ### Methods
@@ -336,12 +320,14 @@ ${body}</table>
 Smarkdown.setOptions({ renderer: MyRenderer })
 ```
 
+
 ## Size Comparison
 
 | | Smarkdown | Marked | markdown-it |
 | :-: | :-: | :-: | :-: |
 | Version | [![npm](https://badgen.net/npm/v/smarkdown)](https://www.npmjs.com/package/smarkdown) | [![npm](https://badgen.net/npm/v/marked)](https://www.npmjs.com/package/marked) | [![npm](https://badgen.net/npm/v/markdown-it)](https://www.npmjs.com/package/markdown-it) |
 | Minified & Gzipped | [![gzip size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js) | [![gzip size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/marked/marked.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/marked/marked.min.js) | [![gzip size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js) |
+
 
 ## License
 

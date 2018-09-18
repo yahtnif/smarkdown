@@ -47,6 +47,7 @@ export class InlineLexer {
     | RulesInlineExtra
   protected renderer: Renderer
   protected inLink: boolean
+  protected inRawBlock: boolean
   protected isGfm: boolean
   protected isExtra: boolean
   protected ruleCallbacks: RulesInlineCallback[]
@@ -352,6 +353,12 @@ export class InlineLexer {
           this.inLink = false
         }
 
+        if (!this.inRawBlock && /^<(pre|code|kbd|script)(\s|>)/i.test(execArr[0])) {
+          this.inRawBlock = true
+        } else if (this.inRawBlock && /^<\/(pre|code|kbd|script)(\s|>)/i.test(execArr[0])) {
+          this.inRawBlock = false
+        }
+
         nextPart = nextPart.substring(execArr[0].length)
 
         out += this.options.sanitize
@@ -480,9 +487,13 @@ export class InlineLexer {
       // text
       if ((execArr = this.rules.text.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
-        out += this.renderer.text(
-          this.options.escape(this.smartypants(execArr[0]))
-        )
+
+        if (this.inRawBlock) {
+          out += this.renderer.text(execArr[0])
+        } else {
+          out += this.renderer.text(this.options.escape(this.smartypants(execArr[0])))
+        }
+
         continue
       }
 

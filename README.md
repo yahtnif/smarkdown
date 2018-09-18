@@ -12,7 +12,7 @@
 
 * **Fast:** low-level compiler for parsing markdown without caching or blocking for long periods of time
 * **Lightweight:** it's 9kb of minified and gzipped
-* **Pluggable:** add your own [extensions](#extensions)
+* **Extensible:** add your own [extensions](#extensions)
 
 ## Table of contents
 
@@ -56,7 +56,7 @@ Or import the library with a script tag:
 Example:
 
 ```js
-// Setting options, see [Options](#options)
+// Setting options
 Smarkdown.setOptions({
   breaks: true
 })

@@ -164,9 +164,10 @@ export class InlineLexer {
       .setGroup('])', '~|])')
       .getRegex()
 
+    const _extended_email = /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/
     const _url = /^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/
     const url = new ExtendRegexp(_url)
-      .setGroup('email', base._email)
+      .setGroup('email', _extended_email)
       .getRegex()
 
     const _backpedal = /(?:[^?!.,:;*_~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_~)]+(?!$))+/
@@ -176,6 +177,8 @@ export class InlineLexer {
      * Strikethrough text is any text wrapped in two tildes (~).
      * For now, gfm allow strikethrough text wrapped in single tilde on github, it's conflict with subscript extension.
      * [Single tilde in GFM spec](https://github.com/github/cmark/issues/99)
+     *
+     * const del = /^~+(?=\S)([\s\S]*?\S)~+/
      */
     const del = /^~~(?=\S)([\s\S]*?\S)~~/
 
@@ -326,22 +329,29 @@ export class InlineLexer {
         (execArr = (<RulesInlineGfm>this.rules).url.exec(nextPart))
       ) {
         let text: string, href: string, prevCapZero: string
-        do {
-          prevCapZero = execArr[0]
-          execArr[0] = (<RulesInlineGfm>this.rules)._backpedal.exec(execArr[0])[0]
-        } while (prevCapZero !== execArr[0])
-        nextPart = nextPart.substring(execArr[0].length)
-        text = this.options.escape(execArr[0])
+
         if (execArr[2] === '@') {
+          text = this.options.escape(execArr[0])
           href = 'mailto:' + text
         } else {
+          // do extended autolink path validation
+          do {
+            prevCapZero = execArr[0]
+            execArr[0] = (<RulesInlineGfm>this.rules)._backpedal.exec(execArr[0])[0]
+          } while (prevCapZero !== execArr[0])
+
+          text = this.options.escape(execArr[0])
+
           if (execArr[1] === 'www.') {
             href = 'http://' + text
           } else {
             href = text
           }
         }
+
+        nextPart = nextPart.substring(execArr[0].length)
         out += this.renderer.link(href, null, text)
+
         continue
       }
 

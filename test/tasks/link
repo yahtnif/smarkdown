@@ -4,6 +4,15 @@ Link: [constructor][].
 
 [constructor]: https://example.org/
 
+(See https://www.example.com/example.)
+
+((http://foo.com))
+
+`/users?email=one@two.com`
+
 
 <p>autolink: <a href="http://example.com">http://example.com</a></p>
 <p>Link: <a href="https://example.org/">constructor</a>.</p>
+<p>(See <a href="https://www.example.com/example">https://www.example.com/example</a>.)</p>
+<p>((<a href="http://foo.com">http://foo.com</a>))</p>
+<p><code>/users?email=one@two.com</code></p>

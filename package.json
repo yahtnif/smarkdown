@@ -21,9 +21,10 @@
   ],
   "scripts": {
     "build": "rollup --c",
-    "test": "mocha --inline-diffs",
-    "pass": "yarn build && yarn test",
+    "pass": "yarn build && yarn size && yarn test",
     "precommit": "lint-staged",
+    "size": "size-limit",
+    "test": "mocha --inline-diffs",
     "version": "yarn build"
   },
   "lint-staged": {
@@ -32,6 +33,12 @@
       "git add"
     ]
   },
+  "size-limit": [
+    {
+      "limit": "10 KB",
+      "path": "dist/smarkdown.min.js"
+    }
+  ],
   "prettier": {
     "arrowParens": "always",
     "semi": false,
@@ -50,6 +57,7 @@
     "rollup-plugin-filesize": "^4.0.1",
     "rollup-plugin-typescript2": "0.17.0",
     "rollup-plugin-uglify": "^4.0.0",
+    "size-limit": "^0.20.0",
     "typescript": "3.0.3"
   }
 }

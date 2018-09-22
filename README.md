@@ -124,6 +124,7 @@ Smarkdown.setOptions({
 | sanitize | boolean | false | If true, sanitize the HTML passed into `markdownString` with the `sanitizer` function. |
 | sanitizer | function | null | A function to sanitize the HTML passed into `markdownString`. |
 | silent | boolean | false | If true, the parser does not throw any exception. |
+| slug | function | str => built_in_slug(str) | Slugify `id` attribute for heading and footnote. |
 | smartLists | boolean | false | If true, use smarter list behavior than those found in `markdown.pl`. |
 | smartypants | boolean | false | If true, use "smart" typographic punctuation for things like quotes and dashes. |
 | tables | boolean | true | If true and `gfm` is true, use [GFM Tables](https://github.github.com/gfm/#tables-extension) extension. |

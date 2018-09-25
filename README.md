@@ -139,7 +139,6 @@ Extension options:
 | Name | Type | Default | inline | block |
 | :-: | :-: | :-: | :-: | :-: |
 | priority | number | null | ✓ | ✓ |
-| checkPreChar | function | null | ✓ | |
 
 ### Inline
 
@@ -194,11 +193,6 @@ Smarkdown.setInlineRule(
   regHashtag,
   function(execArr) {
     return `<span class="hashtag">${execArr[1]}</span>`
-  },
-  {
-    checkPreChar (char) {
-      return !char || /\s/.test(char)
-    }
   }
 )
 
@@ -334,8 +328,4 @@ Smarkdown.setOptions({ renderer: MyRenderer })
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2011-2018, Christopher Jeffrey.
-
-Copyright (c) 2018, Костя Третяк.
-
-Copyright (c) 2018-present, Yahtnif.
+See LICENSE for more info.

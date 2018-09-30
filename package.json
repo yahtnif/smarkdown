@@ -50,10 +50,10 @@
     "singleQuote": true
   },
   "devDependencies": {
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "fs-extra": "^7.0.0",
-    "husky": "^1.0.0-rc.14",
-    "klaw-sync": "^5.0.0",
+    "husky": "^1.0.1",
+    "klaw-sync": "^6.0.0",
     "lint-staged": "^7.3.0",
     "mocha": "^5.2.0",
     "prettier": "1.14.3",
@@ -63,6 +63,6 @@
     "rollup-plugin-typescript2": "0.17.0",
     "rollup-plugin-uglify": "^6.0.0",
     "size-limit": "^0.20.0",
-    "typescript": "3.0.3"
+    "typescript": "3.1.1"
   }
 }

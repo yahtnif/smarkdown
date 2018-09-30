@@ -518,7 +518,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
           const t = {
             loose,
             checked,
-            type: loose ? TokenType.looseItemStart : TokenType.listItemStart
+            type: TokenType.listItemStart
           }
 
           listItems.push(t)

@@ -3,23 +3,21 @@ import { Renderer } from './renderer'
 import { InlineLexer } from './inline-lexer'
 import { BlockLexer } from './block-lexer'
 import {
+  BlockRuleOption,
+  InlineRuleOption,
+  LexerReturns,
+  Links,
+  SimpleRenderer,
+  SimpleRenderers,
   SmarkdownOptions,
   Token,
-  Links,
-  LexerReturns,
-  SimpleRenderer,
-  InlineRuleOption,
-  BlockRuleOption
 } from './interfaces'
 
 export default class Smarkdown {
   static options = new SmarkdownOptions()
   static Renderer = Renderer
-  protected static simpleRenderers: {
-    renderer: SimpleRenderer
-    id: string
-  }[] = []
   protected static blockRuleCount = 0
+  protected static simpleRenderers: SimpleRenderers[] = []
 
   static getOptions(options: SmarkdownOptions) {
     if (!options) {
@@ -94,8 +92,7 @@ export default class Smarkdown {
    * Accepts Markdown text and returns text in HTML format.
    *
    * @param src String of markdown source to be compiled.
-   * @param options Hash of options. They replace, but do not merge with the default options.
-   * If you want the merging, you can to do this via `Smarkdown.setOptions()`.
+   * @param options Hash of options, merge with the default options.
    */
   static inlineParse(
     src: string,
@@ -108,8 +105,7 @@ export default class Smarkdown {
    * Accepts Markdown text and returns text in HTML format.
    *
    * @param src String of markdown source to be compiled.
-   * @param options Hash of options. They replace, but do not merge with the default options.
-   * If you want the merging, you can to do this via `Smarkdown.setOptions()`.
+   * @param options Hash of options, merge with the default options.
    */
   static parse(src: string, options: SmarkdownOptions): string {
     try {
@@ -117,7 +113,7 @@ export default class Smarkdown {
       const { tokens, links } = this.callBlockLexer(src, opts)
       return this.callParser(tokens, links, opts)
     } catch (e) {
-      return this.callMe(e)
+      return this.callError(e)
     }
   }
 
@@ -155,7 +151,7 @@ export default class Smarkdown {
     }
   }
 
-  protected static callMe(err: Error) {
+  protected static callError(err: Error) {
     if (this.options.silent) {
       return (
         '<p>An error occurred:</p><pre>' +

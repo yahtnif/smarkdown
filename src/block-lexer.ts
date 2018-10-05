@@ -1,25 +1,21 @@
 import { ExtendRegexp } from './helpers'
 import {
-  RulesBlockBase,
-  SmarkdownOptions,
-  Token,
-  Links,
   Align,
   LexerReturns,
-  TokenType,
+  Links,
+  RulesBlockBase,
+  RulesBlockExtra,
   RulesBlockGfm,
   RulesBlockPedantic,
   RulesBlockTables,
-  RulesBlockExtra,
-  BlockRuleOption
+  SimpleBlockRules,
+  SmarkdownOptions,
+  Token,
+  TokenType,
 } from './interfaces'
 
 export class BlockLexer<T extends typeof BlockLexer> {
-  static simpleRules: {
-    id: string
-    rule: RegExp
-    options: BlockRuleOption
-  }[] = []
+  static simpleRules: SimpleBlockRules[] = []
   protected static rulesBase: RulesBlockBase
   /**
    * Pedantic Block Grammar.
@@ -37,17 +33,18 @@ export class BlockLexer<T extends typeof BlockLexer> {
    * GFM + Tables + Extra Block Grammar.
    */
   protected static rulesExtra: RulesBlockExtra
+
+  protected isExtra: boolean
+  protected isGfm: boolean
+  protected isTable: boolean
+  protected links: Links = Object.create(null)
+  protected options: SmarkdownOptions
   protected rules:
     | RulesBlockBase
     | RulesBlockGfm
     | RulesBlockTables
     | RulesBlockExtra
-  protected options: SmarkdownOptions
-  protected links: Links = Object.create(null)
   protected tokens: Token[] = []
-  protected isGfm: boolean
-  protected isTable: boolean
-  protected isExtra: boolean
 
   constructor(protected self: typeof BlockLexer, options?: object) {
     this.options = options

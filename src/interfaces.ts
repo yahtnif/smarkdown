@@ -2,32 +2,32 @@ import { Renderer } from './renderer'
 import { escape, unescape, slug, rtrim, resolveUrl, noop, defaultTextBreak } from './helpers'
 
 export interface RulesBlockBase {
-  newline: RegExp
-  code: RegExp
-  hr: RegExp
-  heading: RegExp
-  lheading: RegExp
   blockquote: RegExp
-  list: RegExp
-  html: RegExp
+  bullet: RegExp
+  code: RegExp
   def: RegExp
+  heading: RegExp
+  hr: RegExp
+  html: RegExp
+  lheading: RegExp
+  list: RegExp
+  newline: RegExp
   paragraph: RegExp
   text: RegExp
-  bullet: RegExp
+  _comment: RegExp
+  _label: RegExp
+  _title: RegExp
   /**
    * List item (<li>).
    */
   item: RegExp
-  _label: RegExp
-  _title: RegExp
-  _comment: RegExp
 }
 
 export interface RulesBlockPedantic extends RulesBlockBase {}
 
 export interface RulesBlockGfm extends RulesBlockBase {
-  fences: RegExp
   checkbox: RegExp
+  fences: RegExp
 }
 
 export interface RulesBlockTables extends RulesBlockGfm {
@@ -49,42 +49,42 @@ export interface Links {
 }
 
 export enum TokenType {
-  space = 1,
-  text,
-  paragraph,
-  heading,
-  listStart,
-  listEnd,
-  looseItemStart,
-  looseItemEnd,
-  listItemStart,
-  listItemEnd,
-  blockquoteStart,
   blockquoteEnd,
+  blockquoteStart,
   code,
-  table,
-  html,
+  footnote,
+  heading,
   hr,
-  footnote
+  html,
+  listEnd,
+  listItemEnd,
+  listItemStart,
+  listStart,
+  looseItemEnd,
+  looseItemStart,
+  paragraph,
+  space = 1,
+  table,
+  text,
 }
 
 export type Align = 'center' | 'left' | 'right'
 
 export interface Token {
-  type: number | string
-  text?: string
-  lang?: string
-  depth?: number
-  header?: string[]
   align?: Align[]
   cells?: string[][]
-  ordered?: boolean
-  pre?: boolean
+  depth?: number
+  ends?: string
   escaped?: boolean
   execArr?: RegExpExecArray
-  ends?: string
-  start?: string | number
+  header?: string[]
+  lang?: string
   loose?: boolean
+  ordered?: boolean
+  pre?: boolean
+  start?: string | number
+  text?: string
+  type: number | string
   /**
    * GFM
    */
@@ -98,24 +98,24 @@ export interface Token {
 }
 
 export interface RulesInlineBase {
-  escape: RegExp
-  autolink: RegExp
-  tag: RegExp
-  link: RegExp
-  reflink: RegExp
-  nolink: RegExp
-  strong: RegExp
-  em: RegExp
-  code: RegExp
-  br: RegExp
-  text: RegExp
-  _scheme: RegExp
-  _email: RegExp
-  _label: RegExp
-  _href: RegExp
-  _title: RegExp
-  _escapes: RegExp
   _attribute: RegExp
+  _email: RegExp
+  _escapes: RegExp
+  _href: RegExp
+  _label: RegExp
+  _scheme: RegExp
+  _title: RegExp
+  autolink: RegExp
+  br: RegExp
+  code: RegExp
+  em: RegExp
+  escape: RegExp
+  link: RegExp
+  nolink: RegExp
+  reflink: RegExp
+  strong: RegExp
+  tag: RegExp
+  text: RegExp
 }
 
 export interface RulesInlinePedantic extends RulesInlineBase {}
@@ -124,9 +124,9 @@ export interface RulesInlinePedantic extends RulesInlineBase {}
  * GFM Inline Grammar
  */
 export interface RulesInlineGfm extends RulesInlineBase {
-  url: RegExp
-  del: RegExp
   _backpedal: RegExp
+  del: RegExp
+  url: RegExp
 }
 
 export interface RulesInlineBreaks extends RulesInlineGfm {}
@@ -209,8 +209,8 @@ export class SmarkdownOptions {
 }
 
 export interface LexerReturns {
-  tokens: Token[]
   links: Links
+  tokens: Token[]
 }
 
 export interface Replacements {
@@ -219,17 +219,34 @@ export interface Replacements {
 
 export interface RulesInlineCallback {
   condition(): RegExp
-  tokenize(execArr: RegExpExecArray): void
   regexp?: RegExp
+  tokenize(execArr: RegExpExecArray): void
 }
 
 export type SimpleRenderer = (execArr?: RegExpExecArray) => string
 
+export interface SimpleRenderers {
+  id: string
+  renderer: SimpleRenderer
+}
+
 export type InlineRuleOption = {
-  priority?: number
   checkPreChar?: Function
+  priority?: number
 }
 
 export type BlockRuleOption = {
   priority?: number
+}
+
+export interface SimpleInlineRules {
+  options: InlineRuleOption
+  render: Function
+  rule: RegExp
+}
+
+export interface SimpleBlockRules {
+  id: string
+  options: BlockRuleOption
+  rule: RegExp
 }

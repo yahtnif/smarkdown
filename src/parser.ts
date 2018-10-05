@@ -1,30 +1,28 @@
 import { Renderer, TextRenderer } from './renderer'
 import { InlineLexer } from './inline-lexer'
 import {
+  Links,
+  SimpleRenderer,
+  SimpleRenderers,
   SmarkdownOptions,
   Token,
-  Links,
   TokenType,
-  SimpleRenderer
 } from './interfaces'
 
 /**
  * Parsing & Compiling.
  */
 export class Parser {
-  protected tokens: Token[]
-  protected token: Token
   protected footnotes: { [key: string]: string }
   protected inlineLexer: InlineLexer
   protected inlineTextLexer: InlineLexer
+  protected line: number = 0
   protected options: SmarkdownOptions
   protected renderer: Renderer
   protected textRenderer: TextRenderer
-  protected line: number = 0
-  simpleRenderers: {
-    renderer: SimpleRenderer
-    id: string
-  }[] = []
+  protected token: Token
+  protected tokens: Token[]
+  simpleRenderers: SimpleRenderers[] = []
 
   constructor(options?: SmarkdownOptions) {
     this.tokens = []

@@ -1,27 +1,23 @@
 import { ExtendRegexp, defaultTextBreak } from './helpers'
 import { Renderer } from './renderer'
 import {
-  RulesInlineBase,
-  SmarkdownOptions,
-  Links,
   Link,
-  RulesInlineGfm,
+  Links,
+  RulesInlineBase,
   RulesInlineBreaks,
-  RulesInlineExtra,
-  RulesInlinePedantic,
   RulesInlineCallback,
-  InlineRuleOption
+  RulesInlineExtra,
+  RulesInlineGfm,
+  RulesInlinePedantic,
+  SimpleInlineRules,
+  SmarkdownOptions,
 } from './interfaces'
 
 /**
  * Inline Lexer & Compiler.
  */
 export class InlineLexer {
-  static simpleRules: {
-    rule: RegExp
-    render: Function
-    options: InlineRuleOption
-  }[] = []
+  static simpleRules: SimpleInlineRules[] = []
   protected static rulesBase: RulesInlineBase
   /**
    * Pedantic Inline Grammar.
@@ -175,7 +171,7 @@ export class InlineLexer {
     /**
      * [GFM Strikethrough](https://github.github.com/gfm/#strikethrough-extension-)
      * Strikethrough text is any text wrapped in two tildes (~).
-     * For now, gfm allow strikethrough text wrapped in single tilde on github, it's conflict with subscript extension.
+     * For now, gfm allows strikethrough text wrapped in single tilde on github, it's conflict with subscript extension.
      * [Single tilde in GFM spec](https://github.com/github/cmark/issues/99)
      *
      * const del = /^~+(?=\S)([\s\S]*?\S)~+/

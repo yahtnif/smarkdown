@@ -139,6 +139,7 @@ Extension options:
 | Name | Type | Default | inline | block |
 | :-: | :-: | :-: | :-: | :-: |
 | priority | number | null | ✓ | ✓ |
+| checkPreChar | function | null | ✓ | |
 
 ### Inline
 

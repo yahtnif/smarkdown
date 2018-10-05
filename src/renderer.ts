@@ -1,9 +1,9 @@
 import { SmarkdownOptions, Align } from './interfaces'
 
 export class Renderer {
-  options: SmarkdownOptions
-  _headings: string[]
   _footnotes: string[]
+  _headings: string[]
+  options: SmarkdownOptions
 
   constructor(options?: SmarkdownOptions) {
     this.options = options || {}

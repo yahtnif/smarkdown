@@ -189,11 +189,15 @@ Smarkdown.setInlineRule(regMark, function(execArr) {
  * #tag
  * <span class="hashtag">tag</span>
  */
-const regHashtag = /^#([^\s#]+)(?:\b)/
+const regHashtag = /^#([^\s#]+)((?:\b)|(?=\s|$))/
 Smarkdown.setInlineRule(
   regHashtag,
   function(execArr) {
     return `<span class="hashtag">${execArr[1]}</span>`
+  }, {
+    checkPreChar (char) {
+      return !char || /\s|\B/.test(char)
+    }
   }
 )
 

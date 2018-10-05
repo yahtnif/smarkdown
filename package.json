@@ -21,10 +21,9 @@
   ],
   "scripts": {
     "build": "rollup --c",
-    "pass": "yarn build && yarn size && yarn test",
-    "size": "size-limit",
+    "pass": "rollup --c && size-limit && mocha --inline-diffs",
     "test": "mocha --inline-diffs",
-    "version": "yarn build"
+    "version": "rollup --c"
   },
   "lint-staged": {
     "{src|test}/*.{js,ts,tsx}": [
@@ -34,8 +33,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn pass && lint-staged",
-      "pre-push": "yarn pass"
+      "pre-commit": "rollup --c && size-limit && mocha --inline-diffs && lint-staged",
+      "pre-push": "rollup --c && size-limit && mocha --inline-diffs"
     }
   },
   "size-limit": [

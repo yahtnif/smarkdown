@@ -49,6 +49,7 @@ export interface Links {
 }
 
 export enum TokenType {
+  space = 1,
   blockquoteEnd,
   blockquoteStart,
   code,
@@ -63,7 +64,6 @@ export enum TokenType {
   looseItemEnd,
   looseItemStart,
   paragraph,
-  space = 1,
   table,
   text,
 }

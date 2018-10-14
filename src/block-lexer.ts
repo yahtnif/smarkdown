@@ -139,7 +139,6 @@ export class BlockLexer<T extends typeof BlockLexer> {
       .setGroup('hr', base.hr)
       .setGroup('heading', base.heading)
       .setGroup('lheading', base.lheading)
-      .setGroup('blockquote', base.blockquote)
       .setGroup('tag', tag) // pars can be interrupted by type (6) html blocks
       .getRegex()
 

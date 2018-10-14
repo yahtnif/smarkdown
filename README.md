@@ -6,13 +6,14 @@
 [![downloads](https://badgen.net/npm/dt/smarkdown)](https://www.npmjs.com/package/smarkdown)
 [![Build Status](https://travis-ci.org/yahtnif/smarkdown.svg?branch=master)](https://travis-ci.org/yahtnif/smarkdown)
 
-> Markdown parser, simple and powerful. Fork of [marked](https://github.com/markedjs/marked) and [marked-ts](https://github.com/KostyaTretyak/marked-ts).
+> Markdown parser, simplicity and extensibility. Fork of [marked](https://github.com/markedjs/marked) and [marked-ts](https://github.com/KostyaTretyak/marked-ts).
 
 ## Features
 
-* **Fast:** low-level compiler for parsing markdown without caching or blocking for long periods of time
-* **Lightweight:** it's 9kb of minified and gzipped
-* **Extensible:** add your own [extensions](#extensions)
+* **Awesome:** ES6, TypeScript, Rollup, Prettier...
+* **Extensible:** Add your own [extensions](#extensions)
+* **Fast:** Low-level compiler for parsing markdown without caching or blocking for long periods of time
+* **Lightweight:** It's 9kb of minified and gzipped
 
 ## Table of contents
 

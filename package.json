@@ -1,6 +1,6 @@
 {
   "name": "smarkdown",
-  "description": "Markdown parser, simple and powerful.",
+  "description": "Markdown parser, simplicity and extensibility.",
   "author": "Yahtnif <yahtnif@gmail.com>",
   "version": "0.4.5",
   "main": "dist/smarkdown.js",

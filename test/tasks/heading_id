@@ -1,0 +1,9 @@
+headerId: true
+
+===
+
+## `Heading` with a [link](http://example.com)
+
+
+
+<h2 id="heading-with-a-link"><code>Heading</code> with a <a href="http://example.com">link</a></h2>

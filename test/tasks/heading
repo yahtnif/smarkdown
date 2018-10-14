@@ -4,7 +4,8 @@
 #### h4
 ##### h5
 ###### h6
-## [link title](https://example.com)
+## Heading with a [link](https://example.com)
+
 
 
 <h1>h1</h1>
@@ -13,4 +14,4 @@
 <h4>h4</h4>
 <h5>h5</h5>
 <h6>h6</h6>
-<h2><a href="https://example.com">link title</a></h2>
+<h2>Heading with a <a href="https://example.com">link</a></h2>

@@ -1,4 +1,4 @@
-autolink: <http://example.com>
+autolink: <https://example.com>
 
 Link: [constructor][].
 
@@ -6,13 +6,11 @@ Link: [constructor][].
 
 (See https://www.example.com/example.)
 
-((http://foo.com))
-
-`/users?email=one@two.com`
+((https://example.com))
 
 
-<p>autolink: <a href="http://example.com">http://example.com</a></p>
+
+<p>autolink: <a href="https://example.com">https://example.com</a></p>
 <p>Link: <a href="https://example.org/">constructor</a>.</p>
 <p>(See <a href="https://www.example.com/example">https://www.example.com/example</a>.)</p>
-<p>((<a href="http://foo.com">http://foo.com</a>))</p>
-<p><code>/users?email=one@two.com</code></p>
+<p>((<a href="https://example.com">https://example.com</a>))</p>

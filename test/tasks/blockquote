@@ -1,0 +1,84 @@
+> Blockquote
+
+
+>The spaces after the `>` characters can be omitted
+
+
+   > The `>` characters can be indented 1-3 spaces
+
+
+    > Four spaces will get a code block
+
+
+> Laziness clause
+omit the `>` before paragraph continuation text
+
+
+> Non-lazy line
+Lazy line
+> Non-lazy line
+
+
+A block quote can be empty:
+
+>
+
+
+>
+>
+>
+
+
+>
+> foo
+>
+
+
+> foo
+>
+> bar
+
+
+> > > foo
+>>> foo
+
+
+
+<blockquote>
+<p>Blockquote</p>
+</blockquote>
+<blockquote>
+<p>The spaces after the <code>&gt;</code> characters can be omitted</p>
+</blockquote>
+<blockquote>
+<p>The <code>&gt;</code> characters can be indented 1-3 spaces</p>
+</blockquote>
+<pre><code>&gt; Four spaces will get a code block</code></pre><blockquote>
+<p>Laziness clause
+omit the <code>&gt;</code> before paragraph continuation text</p>
+</blockquote>
+<blockquote>
+<p>Non-lazy line
+Lazy line
+Non-lazy line</p>
+</blockquote>
+<p>A block quote can be empty:</p>
+<blockquote>
+</blockquote>
+<blockquote>
+</blockquote>
+<blockquote>
+<p>foo</p>
+</blockquote>
+<blockquote>
+<p>foo</p>
+<p>bar</p>
+</blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>foo
+foo</p>
+</blockquote>
+</blockquote>
+</blockquote>

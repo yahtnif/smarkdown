@@ -1,4 +1,4 @@
-import { ExtendRegexp } from './helpers'
+import { ExtendRegexp, noopExec } from './helpers'
 import {
   Align,
   LexerReturns,
@@ -8,6 +8,7 @@ import {
   RulesBlockGfm,
   RulesBlockPedantic,
   RulesBlockTables,
+  RulesBlockType,
   SimpleBlockRules,
   SmarkdownOptions,
   Token,
@@ -251,13 +252,9 @@ export class BlockLexer<T extends typeof BlockLexer> {
 
     this.options.disabledRules.forEach(
       (
-        rule: keyof (
-          | RulesBlockBase
-          | RulesBlockGfm
-          | RulesBlockTables
-          | RulesBlockExtra)
+        rule: RulesBlockType
       ) => {
-        ;(<any>this.rules)[rule] = this.options.noop
+        this.rules[rule] = noopExec
       }
     )
 

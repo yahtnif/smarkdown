@@ -1,5 +1,5 @@
 import { Renderer } from './renderer'
-import { escape, unescape, slug, rtrim, resolveUrl, noop, defaultTextBreak } from './helpers'
+import { escape, unescape, slug, rtrim, resolveUrl, defaultTextBreak } from './helpers'
 
 export interface RulesBlockBase {
   blockquote: RegExp
@@ -38,6 +38,8 @@ export interface RulesBlockTables extends RulesBlockGfm {
 export interface RulesBlockExtra extends RulesBlockTables {
   footnote: RegExp
 }
+
+export type RulesBlockType = keyof(RulesBlockBase | RulesBlockGfm | RulesBlockTables | RulesBlockExtra)
 
 export interface Link {
   href: string
@@ -135,6 +137,8 @@ export interface RulesInlineExtra extends RulesInlineBreaks {
   fnref: RegExp
 }
 
+export type RulesInlineType = keyof(RulesInlineBase | RulesInlinePedantic | RulesInlineGfm | RulesInlineBreaks | RulesInlineExtra)
+
 export class SmarkdownOptions {
   baseUrl?: string = null
   breaks?: boolean = false
@@ -177,11 +181,6 @@ export class SmarkdownOptions {
    * By default using inner helper.
    */
   slug?: (str: string) => string = slug
-  /**
-   * The RegExp that will be using to make RegExp.exec as noop.
-   * By default using inner helper.
-   */
-  noop?: Function = noop
   rtrim?: (str: string, c: string, invert?: boolean) => string = rtrim
   /**
    * The function that will be using to render image/link URLs relative to a base url.

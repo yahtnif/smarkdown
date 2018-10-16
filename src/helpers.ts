@@ -122,10 +122,6 @@ export function resolveUrl(base: string, href: string) {
   }
 }
 
-export function noop() {}
-
-;(<any>noop).exec = noop
-
 export class ExtendRegexp {
   private source: string
   private flags: string
@@ -161,3 +157,5 @@ export class ExtendRegexp {
 
 // from a part of this.rules.text
 export const defaultTextBreak = '\\<![`*~'
+
+export const noopExec = /^$/

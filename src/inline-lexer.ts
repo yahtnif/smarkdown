@@ -1,4 +1,4 @@
-import { ExtendRegexp, defaultTextBreak } from './helpers'
+import { ExtendRegexp, defaultTextBreak, noopExec } from './helpers'
 import { Renderer } from './renderer'
 import {
   Link,
@@ -9,6 +9,7 @@ import {
   RulesInlineExtra,
   RulesInlineGfm,
   RulesInlinePedantic,
+  RulesInlineType,
   SimpleInlineRules,
   SmarkdownOptions,
 } from './interfaces'
@@ -246,14 +247,9 @@ export class InlineLexer {
 
     this.options.disabledRules.forEach(
       (
-        rule: keyof (
-          | RulesInlineBase
-          | RulesInlinePedantic
-          | RulesInlineGfm
-          | RulesInlineBreaks
-          | RulesInlineExtra)
+        rule: RulesInlineType
       ) => {
-        ;(<any>this.rules)[rule] = this.options.noop
+        this.rules[rule] = noopExec
       }
     )
 

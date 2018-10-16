@@ -135,7 +135,7 @@ export class Parser {
         const checked = this.token.checked
 
         while (this.next().type != TokenType.listItemEnd) {
-          body += !loose && this.token.type === <any>TokenType.text
+          body += !loose && this.token.type === <number>TokenType.text
             ? this.parseText()
             : this.tok()
         }

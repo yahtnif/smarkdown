@@ -74,7 +74,7 @@ export type Align = 'center' | 'left' | 'right'
 
 export interface Token {
   align?: Align[]
-  cells?: string[][]
+  cells?: string[] | string[][]
   depth?: number
   ends?: string
   escaped?: boolean
@@ -212,7 +212,7 @@ export interface LexerReturns {
   tokens: Token[]
 }
 
-export interface Replacements {
+export interface EmptyObject {
   [key: string]: string
 }
 

@@ -370,7 +370,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
             .replace(/^ *|\| *$/g, '')
             .split(/ *\| */) as Align[],
           cells: execArr[3]
-            ? <any>execArr[3].replace(/\n$/, '').split('\n')
+            ? execArr[3].replace(/\n$/, '').split('\n')
             : []
         }
 
@@ -583,7 +583,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
             .replace(/^ *|\| *$/g, '')
             .split(/ *\| */) as Align[],
           cells: execArr[3]
-            ? <any>execArr[3].replace(/(?: *\| *)?\n$/, '').split('\n')
+            ? execArr[3].replace(/(?: *\| *)?\n$/, '').split('\n')
             : []
         }
 

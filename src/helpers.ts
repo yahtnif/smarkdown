@@ -1,8 +1,8 @@
-import { Replacements } from './interfaces'
+import { EmptyObject } from './interfaces'
 
 const escapeTest = /[&<>"']/
 const escapeReplace = /[&<>"']/g
-const replacements: Replacements = {
+const replacements: EmptyObject = {
   '&': '&amp;',
   '<': '&lt;',
   '>': '&gt;',
@@ -92,7 +92,7 @@ export function rtrim(str: string, c: string, invert: boolean = false) {
 
 const originIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i
 const noLastSlashUrl = /^[^:]+:\/*[^/]*$/
-const baseUrls: any = {}
+const baseUrls: EmptyObject = {}
 
 export function resolveUrl(base: string, href: string) {
   if (originIndependentUrl.test(href)) {

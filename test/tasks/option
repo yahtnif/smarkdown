@@ -1,0 +1,11 @@
+disabledRules: ['lheading']
+
+===
+
+h1
+==
+
+
+
+<p>h1
+==</p>

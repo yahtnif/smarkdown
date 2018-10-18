@@ -4,7 +4,7 @@ import {
   Links,
   SimpleRenderer,
   SimpleRenderers,
-  SmarkdownOptions,
+  Options,
   Token,
   TokenType,
 } from './interfaces'
@@ -17,14 +17,14 @@ export class Parser {
   protected inlineLexer: InlineLexer
   protected inlineTextLexer: InlineLexer
   protected line: number = 0
-  protected options: SmarkdownOptions
+  protected options: Options
   protected renderer: Renderer
   protected textRenderer: TextRenderer
   protected token: Token
   protected tokens: Token[]
   simpleRenderers: SimpleRenderers[] = []
 
-  constructor(options?: SmarkdownOptions) {
+  constructor(options?: Options) {
     this.tokens = []
     this.token = null
     this.footnotes = {}
@@ -33,7 +33,7 @@ export class Parser {
     this.renderer.options = this.options
   }
 
-  static parse(tokens: Token[], links: Links, options?: SmarkdownOptions): string {
+  static parse(tokens: Token[], links: Links, options?: Options): string {
     const parser = new this(options)
     return parser.parse(links, tokens)
   }

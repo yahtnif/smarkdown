@@ -9,17 +9,17 @@ import {
   Links,
   SimpleRenderer,
   SimpleRenderers,
-  SmarkdownOptions,
+  Options,
   Token,
 } from './interfaces'
 
 export default class Smarkdown {
-  static options = new SmarkdownOptions()
+  static options = new Options()
   static Renderer = Renderer
-  protected static blockRuleCount = 0
+  protected static ruleCounter = 0
   protected static simpleRenderers: SimpleRenderers[] = []
 
-  static getOptions(options: SmarkdownOptions) {
+  static getOptions(options: Options) {
     if (!options) {
       return this.options
     }
@@ -36,7 +36,7 @@ export default class Smarkdown {
    *
    * @param options Hash of options.
    */
-  static setOptions(options: SmarkdownOptions) {
+  static setOptions(options: Options) {
     this.options = this.getOptions(options)
     return this
   }
@@ -73,7 +73,7 @@ export default class Smarkdown {
     renderer: SimpleRenderer,
     options: BlockRuleOption = {}
   ) {
-    const id = 'SimpleBlockRule-' + (++this.blockRuleCount)
+    const id = 'SRule-' + (++this.ruleCounter)
 
     BlockLexer.simpleRules.push({
       rule: regexp,
@@ -96,7 +96,7 @@ export default class Smarkdown {
    */
   static inlineParse(
     src: string,
-    options: SmarkdownOptions
+    options: Options
   ): string {
     return new InlineLexer(InlineLexer, {}, this.getOptions(options)).output(src)
   }
@@ -107,7 +107,7 @@ export default class Smarkdown {
    * @param src String of markdown source to be compiled.
    * @param options Hash of options, merge with the default options.
    */
-  static parse(src: string, options: SmarkdownOptions): string {
+  static parse(src: string, options: Options): string {
     try {
       const opts = this.getOptions(options)
       const { tokens, links } = this.callBlockLexer(src, opts)
@@ -119,7 +119,7 @@ export default class Smarkdown {
 
   protected static callBlockLexer(
     src: string = '',
-    options?: SmarkdownOptions
+    options?: Options
   ): LexerReturns {
     if (typeof src != 'string')
       throw new Error(
@@ -140,7 +140,7 @@ export default class Smarkdown {
   protected static callParser(
     tokens: Token[],
     links: Links,
-    options?: SmarkdownOptions
+    options?: Options
   ): string {
     if (this.simpleRenderers.length) {
       const parser = new Parser(options)

@@ -90,12 +90,12 @@ export function rtrim(str: string, c: string, invert: boolean = false) {
   return str.substr(0, str.length - suffLen)
 }
 
-const originIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i
-const noLastSlashUrl = /^[^:]+:\/*[^/]*$/
+const regOriginIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i
+const regNoLastSlashUrl = /^[^:]+:\/*[^/]*$/
 const baseUrls: EmptyObject = {}
 
 export function resolveUrl(base: string, href: string) {
-  if (originIndependentUrl.test(href)) {
+  if (regOriginIndependentUrl.test(href)) {
     return href
   }
 
@@ -104,7 +104,7 @@ export function resolveUrl(base: string, href: string) {
     // we can ignore everything in base after the last slash of its path component,
     // but we might need to add _that_
     // https://tools.ietf.org/html/rfc3986#section-3
-    if (noLastSlashUrl.test(base)) {
+    if (regNoLastSlashUrl.test(base)) {
       baseUrls[baseUrlsKey] = base + '/'
     } else {
       baseUrls[baseUrlsKey] = rtrim(base, '/', true)

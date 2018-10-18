@@ -10,7 +10,7 @@ import {
   RulesBlockTables,
   RulesBlockType,
   SimpleBlockRules,
-  SmarkdownOptions,
+  Options,
   Token,
   TokenType,
 } from './interfaces'
@@ -39,7 +39,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
   protected isGfm: boolean
   protected isTable: boolean
   protected links: Links = Object.create(null)
-  protected options: SmarkdownOptions
+  protected options: Options
   protected rules:
     | RulesBlockBase
     | RulesBlockGfm
@@ -60,7 +60,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
    */
   static lex(
     src: string,
-    options?: SmarkdownOptions,
+    options?: Options,
     top?: boolean
   ): LexerReturns {
     const lexer = new this(this, options)

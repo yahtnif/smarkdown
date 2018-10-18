@@ -139,7 +139,7 @@ export interface RulesInlineExtra extends RulesInlineBreaks {
 
 export type RulesInlineType = keyof(RulesInlineBase | RulesInlinePedantic | RulesInlineGfm | RulesInlineBreaks | RulesInlineExtra)
 
-export class SmarkdownOptions {
+export class Options {
   baseUrl?: string = null
   breaks?: boolean = false
   disabledRules?: string[] = []

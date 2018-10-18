@@ -11,7 +11,7 @@ import {
   RulesInlinePedantic,
   RulesInlineType,
   SimpleInlineRules,
-  SmarkdownOptions,
+  Options,
 } from './interfaces'
 
 /**
@@ -53,7 +53,7 @@ export class InlineLexer {
   constructor(
     protected self: typeof InlineLexer,
     protected links: Links = {},
-    protected options: SmarkdownOptions,
+    protected options: Options,
     renderer?: Renderer
   ) {
     this.renderer = renderer || this.options.renderer || new Renderer(this.options)
@@ -65,7 +65,7 @@ export class InlineLexer {
   /**
    * Static Lexing/Compiling Method.
    */
-  static output(src: string, links: Links, options: SmarkdownOptions): string {
+  static output(src: string, links: Links, options: Options): string {
     const inlineLexer = new this(this, links, options)
     return inlineLexer.output(src)
   }
@@ -207,7 +207,7 @@ export class InlineLexer {
     })
   }
 
-  protected static getRulesExtra(options: SmarkdownOptions): RulesInlineExtra {
+  protected static getRulesExtra(options: Options): RulesInlineExtra {
     if (this.rulesExtra) return this.rulesExtra
 
     const breaks = options.breaks ? this.getRulesBreaks() : <RulesInlineBreaks>{}

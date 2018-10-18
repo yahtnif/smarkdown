@@ -154,7 +154,7 @@ import Smarkdown from 'smarkdown'
 /**
  * sub
  *
- * H~2~0
+ * H~2~O
  * H<sub>2</sub>O
  */
 const regSub = /^~(?=\S)([\s\S]*?\S)~/
@@ -212,9 +212,7 @@ const regRubyAnnotation = /^\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
 Smarkdown.setInlineRule(
   regRubyAnnotation,
   function(execArr) {
-    return `<ruby><rb>${execArr[1]}</rb><rp>(</rp><rt>${
-      execArr[2]
-    }</rt><rp>)</rp></ruby>`
+    return `<ruby>${execArr[1]}<rt>${execArr[2]}</rt></ruby>`
   },
   {
     priority: 1

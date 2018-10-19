@@ -45,19 +45,19 @@ export default class Smarkdown {
    * Setting new inline rule.
    */
   static setInlineRule(
-    regexp: RegExp,
+    regExp: RegExp,
     renderer: NewRenderer,
     options: InlineRuleOption = {}
   ) {
-    const breakText = regexp.toString().match(/^\/\^\(*\\?(.)/)[1]
+    const breakChar = regExp.toString().match(/^\/\^\(*\\?(.)/)[1]
 
-    if (breakText && !this.options.textBreak.includes(breakText)) {
-      this.options.textBreak += breakText
+    if (breakChar && !this.options.textBreak.includes(breakChar)) {
+      this.options.textBreak += breakChar
       this.options.isTextBreakSync = false
     }
 
     InlineLexer.newRules.push({
-      rule: regexp,
+      rule: regExp,
       render: renderer,
       options
     })
@@ -69,14 +69,14 @@ export default class Smarkdown {
    * Setting new block rule.
    */
   static setBlockRule(
-    regexp: RegExp,
+    regExp: RegExp,
     renderer: NewRenderer,
     options: BlockRuleOption = {}
   ) {
     const id = 'SRule-' + (++this.ruleCounter)
 
     BlockLexer.newRules.push({
-      rule: regexp,
+      rule: regExp,
       options,
       id
     })

@@ -158,4 +158,5 @@ export class ExtendRegexp {
 // from a part of this.rules.text
 export const defaultTextBreak = '\\<![`*~'
 
-export const noopExec = /^$/
+// match nothing
+export const noopExec = /S^/

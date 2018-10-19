@@ -2,7 +2,6 @@ import { Renderer, TextRenderer } from './renderer'
 import { InlineLexer } from './inline-lexer'
 import {
   Links,
-  NewRenderer,
   NewRenderers,
   Options,
   Token,

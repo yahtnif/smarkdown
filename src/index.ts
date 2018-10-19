@@ -49,7 +49,7 @@ export default class Smarkdown {
     renderer: NewRenderer,
     options: InlineRuleOption = {}
   ) {
-    const breakText = regexp.toString().match(/^\/\^\\?(.)/)[1]
+    const breakText = regexp.toString().match(/^\/\^\(*\\?(.)/)[1]
 
     if (breakText && !this.options.textBreak.includes(breakText)) {
       this.options.textBreak += breakText

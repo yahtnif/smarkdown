@@ -2,8 +2,8 @@ import { Renderer, TextRenderer } from './renderer'
 import { InlineLexer } from './inline-lexer'
 import {
   Links,
-  SimpleRenderer,
-  SimpleRenderers,
+  NewRenderer,
+  NewRenderers,
   Options,
   Token,
   TokenType,
@@ -22,7 +22,7 @@ export class Parser {
   protected textRenderer: TextRenderer
   protected token: Token
   protected tokens: Token[]
-  simpleRenderers: SimpleRenderers[] = []
+  newRenderers: NewRenderers[] = []
 
   constructor(options?: Options) {
     this.tokens = []
@@ -206,7 +206,7 @@ export class Parser {
         return this.renderer.html(this.token.text);
       }
       default: {
-        for (const sr of this.simpleRenderers) {
+        for (const sr of this.newRenderers) {
           if (this.token.type === sr.id) {
             return sr.renderer.call(
               this.renderer,

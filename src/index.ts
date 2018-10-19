@@ -7,8 +7,8 @@ import {
   InlineRuleOption,
   LexerReturns,
   Links,
-  SimpleRenderer,
-  SimpleRenderers,
+  NewRenderer,
+  NewRenderers,
   Options,
   Token,
 } from './interfaces'
@@ -17,7 +17,7 @@ export default class Smarkdown {
   static options = new Options()
   static Renderer = Renderer
   protected static ruleCounter = 0
-  protected static simpleRenderers: SimpleRenderers[] = []
+  protected static newRenderers: NewRenderers[] = []
 
   static getOptions(options: Options) {
     if (!options) {
@@ -42,11 +42,11 @@ export default class Smarkdown {
   }
 
   /**
-   * Setting simple inline rule.
+   * Setting new inline rule.
    */
   static setInlineRule(
     regexp: RegExp,
-    renderer: SimpleRenderer,
+    renderer: NewRenderer,
     options: InlineRuleOption = {}
   ) {
     const breakText = regexp.toString().match(/^\/\^\\?(.)/)[1]
@@ -56,7 +56,7 @@ export default class Smarkdown {
       this.options.isTextBreakSync = false
     }
 
-    InlineLexer.simpleRules.push({
+    InlineLexer.newRules.push({
       rule: regexp,
       render: renderer,
       options
@@ -66,22 +66,22 @@ export default class Smarkdown {
   }
 
   /**
-   * Setting simple block rule.
+   * Setting new block rule.
    */
   static setBlockRule(
     regexp: RegExp,
-    renderer: SimpleRenderer,
+    renderer: NewRenderer,
     options: BlockRuleOption = {}
   ) {
     const id = 'SRule-' + (++this.ruleCounter)
 
-    BlockLexer.simpleRules.push({
+    BlockLexer.newRules.push({
       rule: regexp,
       options,
       id
     })
 
-    this.simpleRenderers.push({
+    this.newRenderers.push({
       renderer,
       id
     })
@@ -142,9 +142,9 @@ export default class Smarkdown {
     links: Links,
     options?: Options
   ): string {
-    if (this.simpleRenderers.length) {
+    if (this.newRenderers.length) {
       const parser = new Parser(options)
-      parser.simpleRenderers = this.simpleRenderers
+      parser.newRenderers = this.newRenderers
       return parser.parse(links, tokens)
     } else {
       return Parser.parse(tokens, links, options)

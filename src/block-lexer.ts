@@ -1,22 +1,23 @@
 import { ExtendRegexp, noopExec } from './helpers'
 import {
   Align,
+  BlockRule,
   LexerReturns,
   Links,
+  Options,
   RulesBlockBase,
   RulesBlockExtra,
   RulesBlockGfm,
   RulesBlockPedantic,
   RulesBlockTables,
   RulesBlockType,
-  SimpleBlockRules,
-  Options,
+  RulesBlockTypes,
   Token,
   TokenType,
 } from './interfaces'
 
-export class BlockLexer<T extends typeof BlockLexer> {
-  static simpleRules: SimpleBlockRules[] = []
+export class BlockLexer {
+  static newRules: BlockRule[] = []
   protected static rulesBase: RulesBlockBase
   /**
    * Pedantic Block Grammar.
@@ -40,11 +41,7 @@ export class BlockLexer<T extends typeof BlockLexer> {
   protected isTable: boolean
   protected links: Links = Object.create(null)
   protected options: Options
-  protected rules:
-    | RulesBlockBase
-    | RulesBlockGfm
-    | RulesBlockTables
-    | RulesBlockExtra
+  protected rules: RulesBlockTypes
   protected tokens: Token[] = []
 
   constructor(protected self: typeof BlockLexer, options?: object) {
@@ -269,11 +266,11 @@ export class BlockLexer<T extends typeof BlockLexer> {
   protected getTokens(src: string, top?: boolean): LexerReturns {
     let nextPart = src
     let execArr: RegExpExecArray
-    const simpleRules = this.self.simpleRules || []
-    const simpleRulesBefore = simpleRules.filter(
+    const newRules = this.self.newRules || []
+    const newRulesBefore = newRules.filter(
       (rule) => rule.options.priority
     ).sort((a, b) => b.options.priority - a.options.priority)
-    const simpleRulesAfter = simpleRules.filter(
+    const newRulesAfter = newRules.filter(
       (rule) => !rule.options.priority
     )
 
@@ -289,8 +286,8 @@ export class BlockLexer<T extends typeof BlockLexer> {
         }
       }
 
-      // simple rules before
-      for (const sr of simpleRulesBefore) {
+      // new rules before
+      for (const sr of newRulesBefore) {
         if ((execArr = sr.rule.exec(nextPart))) {
           nextPart = nextPart.substring(execArr[0].length)
           this.tokens.push({
@@ -616,8 +613,8 @@ export class BlockLexer<T extends typeof BlockLexer> {
         }
       }
 
-      // simple rules
-      for (const sr of simpleRulesAfter) {
+      // new rules
+      for (const sr of newRulesAfter) {
         if ((execArr = sr.rule.exec(nextPart))) {
           nextPart = nextPart.substring(execArr[0].length)
           this.tokens.push({

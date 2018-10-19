@@ -39,7 +39,9 @@ export interface RulesBlockExtra extends RulesBlockTables {
   footnote: RegExp
 }
 
-export type RulesBlockType = keyof(RulesBlockBase | RulesBlockGfm | RulesBlockTables | RulesBlockExtra)
+export type RulesBlockTypes = RulesBlockBase | RulesBlockGfm | RulesBlockTables | RulesBlockExtra
+
+export type RulesBlockType = keyof(RulesBlockTypes)
 
 export interface Link {
   href: string
@@ -137,7 +139,9 @@ export interface RulesInlineExtra extends RulesInlineBreaks {
   fnref: RegExp
 }
 
-export type RulesInlineType = keyof(RulesInlineBase | RulesInlinePedantic | RulesInlineGfm | RulesInlineBreaks | RulesInlineExtra)
+export type RulesInlineTypes = RulesInlineBase | RulesInlinePedantic | RulesInlineGfm | RulesInlineBreaks | RulesInlineExtra
+
+export type RulesInlineType = keyof(RulesInlineTypes)
 
 export class Options {
   baseUrl?: string = null
@@ -222,11 +226,11 @@ export interface RulesInlineCallback {
   tokenize(execArr: RegExpExecArray): void
 }
 
-export type SimpleRenderer = (execArr?: RegExpExecArray) => string
+export type NewRenderer = (execArr?: RegExpExecArray) => string
 
-export interface SimpleRenderers {
+export interface NewRenderers {
   id: string
-  renderer: SimpleRenderer
+  renderer: NewRenderer
 }
 
 export type InlineRuleOption = {
@@ -238,13 +242,13 @@ export type BlockRuleOption = {
   priority?: number
 }
 
-export interface SimpleInlineRules {
+export interface InlineRule {
   options: InlineRuleOption
   render: Function
   rule: RegExp
 }
 
-export interface SimpleBlockRules {
+export interface BlockRule {
   id: string
   options: BlockRuleOption
   rule: RegExp

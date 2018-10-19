@@ -1,8 +1,10 @@
 import { ExtendRegexp, defaultTextBreak, noopExec } from './helpers'
 import { Renderer } from './renderer'
 import {
+  InlineRule,
   Link,
   Links,
+  Options,
   RulesInlineBase,
   RulesInlineBreaks,
   RulesInlineCallback,
@@ -10,15 +12,14 @@ import {
   RulesInlineGfm,
   RulesInlinePedantic,
   RulesInlineType,
-  SimpleInlineRules,
-  Options,
+  RulesInlineTypes,
 } from './interfaces'
 
 /**
  * Inline Lexer & Compiler.
  */
 export class InlineLexer {
-  static simpleRules: SimpleInlineRules[] = []
+  static newRules: InlineRule[] = []
   protected static rulesBase: RulesInlineBase
   /**
    * Pedantic Inline Grammar.
@@ -36,12 +37,7 @@ export class InlineLexer {
    * GFM + Line Breaks + Extra Inline Grammar.
    */
   protected static rulesExtra: RulesInlineExtra
-  protected rules:
-    | RulesInlineBase
-    | RulesInlinePedantic
-    | RulesInlineGfm
-    | RulesInlineBreaks
-    | RulesInlineExtra
+  protected rules: RulesInlineTypes
   protected renderer: Renderer
   protected inLink: boolean
   protected inRawBlock: boolean
@@ -269,11 +265,11 @@ export class InlineLexer {
     let execArr: RegExpExecArray
     let out = ''
     const preParts = [nextPart, nextPart]
-    const simpleRules = this.self.simpleRules || []
-    const simpleRulesBefore = simpleRules.filter(
+    const newRules = this.self.newRules || []
+    const newRulesBefore = newRules.filter(
       (rule) => rule.options.priority
     ).sort((a, b) => b.options.priority - a.options.priority)
-    const simpleRulesAfter = simpleRules.filter(
+    const newRulesAfter = newRules.filter(
       (rule) => !rule.options.priority
     )
 
@@ -285,8 +281,8 @@ export class InlineLexer {
         continue
       }
 
-      // simple rules before
-      for (const sr of simpleRulesBefore) {
+      // new rules before
+      for (const sr of newRulesBefore) {
         if ((execArr = sr.rule.exec(nextPart))) {
           preParts[0] = preParts[1]
           preParts[1] = nextPart
@@ -473,8 +469,8 @@ export class InlineLexer {
         continue
       }
 
-      // simple rules after
-      for (const sr of simpleRulesAfter) {
+      // new rules after
+      for (const sr of newRulesAfter) {
         if ((execArr = sr.rule.exec(nextPart))) {
           preParts[0] = preParts[1]
           preParts[1] = nextPart

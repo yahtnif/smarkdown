@@ -1,5 +1,5 @@
 import { Renderer } from './renderer'
-import { escape, unescape, slug, rtrim, resolveUrl, defaultTextBreak } from './helpers'
+import { escape, unescape, slug, rtrim, resolveUrl, cleanUrl, defaultTextBreak } from './helpers'
 
 export interface RulesBlockBase {
   blockquote: RegExp
@@ -191,6 +191,7 @@ export class Options {
    * By default using inner helper.
    */
   resolveUrl?: (base: string, href: string) => string = resolveUrl
+  cleanUrl?: (sanitize: boolean, base: string, href: string) => string = cleanUrl
   /**
    * If set to `true`, an inline text will not be taken in paragraph.
    *

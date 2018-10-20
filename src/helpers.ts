@@ -20,10 +20,7 @@ export function escape(html: string, encode?: boolean) {
       return html.replace(escapeReplace, (ch: string) => replacements[ch])
     }
   } else if (escapeTestNoEncode.test(html)) {
-    return html.replace(
-      escapeReplaceNoEncode,
-      (ch: string) => replacements[ch]
-    )
+    return html.replace(escapeReplaceNoEncode, (ch: string) => replacements[ch])
   }
 
   return html
@@ -120,6 +117,34 @@ export function resolveUrl(base: string, href: string) {
   } else {
     return base + href
   }
+}
+
+export function cleanUrl(sanitize: boolean, base: string, href: string) {
+  if (sanitize) {
+    try {
+      var prot = decodeURIComponent(unescape(href))
+        .replace(/[^\w:]/g, '')
+        .toLowerCase()
+    } catch (e) {
+      return null
+    }
+    if (
+      prot.indexOf('javascript:') === 0 ||
+      prot.indexOf('vbscript:') === 0 ||
+      prot.indexOf('data:') === 0
+    ) {
+      return null
+    }
+  }
+  if (base && !regOriginIndependentUrl.test(href)) {
+    href = resolveUrl(base, href)
+  }
+  try {
+    href = encodeURI(href).replace(/%25/g, '%')
+  } catch (e) {
+    return null
+  }
+  return href
 }
 
 export class ExtendRegexp {

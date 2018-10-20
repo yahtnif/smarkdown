@@ -168,9 +168,9 @@ ${content}</tr>
   }
 
   image(href: string, title: string, text: string): string {
-    if (this.options.baseUrl) {
-      href = this.options.resolveUrl(this.options.baseUrl, href)
-    }
+    href = this.options.cleanUrl(this.options.sanitize, this.options.baseUrl, href)
+
+    if (href === null) return text
 
     let out = '<img src="' + href + '" alt="' + text + '"'
 
@@ -184,35 +184,10 @@ ${content}</tr>
   }
 
   link(href: string, title: string, text: string): string {
-    if (this.options.sanitize) {
-      let prot: string
+    href = this.options.cleanUrl(this.options.sanitize, this.options.baseUrl, href)
 
-      try {
-        prot = decodeURIComponent(this.options.unescape(href))
-          .replace(/[^\w:]/g, '')
-          .toLowerCase()
-      } catch (e) {
-        return text
-      }
+    if (href === null) return text
 
-      if (
-        prot.indexOf('javascript:') === 0 ||
-        prot.indexOf('vbscript:') === 0 ||
-        prot.indexOf('data:') === 0
-      ) {
-        return text
-      }
-    }
-
-    if (this.options.baseUrl) {
-      href = this.options.resolveUrl(this.options.baseUrl, href)
-    }
-
-    try {
-      href = encodeURI(href).replace(/%25/g, '%')
-    } catch (e) {
-      return text
-    }
     let out = '<a href="' + this.options.escape(href) + '"'
 
     if (title) {

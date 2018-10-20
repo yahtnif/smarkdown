@@ -10,6 +10,13 @@ describe('Smarkdown', () => {
     })
   })
 
+  describe('advanced', () => {
+    testFunc({
+      dir: 'test/advanced',
+      Smarkdown
+    })
+  })
+
   describe('extensions', () => {
     testFunc({
       dir: 'test/extensions',

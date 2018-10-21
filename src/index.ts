@@ -17,7 +17,7 @@ export default class Smarkdown {
   static options = new Options()
   static Renderer = Renderer
   protected static ruleCounter = 0
-  protected static newRenderers: BlockRenderer[] = []
+  protected static blockRenderers: BlockRenderer[] = []
 
   static getOptions(options: Options) {
     if (!options) {
@@ -81,7 +81,7 @@ export default class Smarkdown {
       id
     })
 
-    this.newRenderers.push({
+    this.blockRenderers.push({
       renderer,
       id
     })
@@ -142,9 +142,9 @@ export default class Smarkdown {
     links: Links,
     options?: Options
   ): string {
-    if (this.newRenderers.length) {
+    if (this.blockRenderers.length) {
       const parser = new Parser(options)
-      parser.newRenderers = this.newRenderers
+      parser.blockRenderers = this.blockRenderers
       return parser.parse(links, tokens)
     } else {
       return Parser.parse(tokens, links, options)

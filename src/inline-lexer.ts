@@ -1,18 +1,18 @@
 import { ExtendRegexp, defaultTextBreak, noopExec } from './helpers'
 import { Renderer } from './renderer'
 import {
+  BaseInlineRules,
+  BreaksInlineRules,
+  ExtraInlineRules,
+  GfmInlineRules,
   InlineRule,
+  InlineRulesCallback,
+  InlineRulesType,
+  InlineRulesTypes,
   Link,
   Links,
   Options,
-  RulesInlineBase,
-  RulesInlineBreaks,
-  RulesInlineCallback,
-  RulesInlineExtra,
-  RulesInlineGfm,
-  RulesInlinePedantic,
-  RulesInlineType,
-  RulesInlineTypes,
+  PedanticInlineRules,
 } from './interfaces'
 
 /**
@@ -20,30 +20,30 @@ import {
  */
 export class InlineLexer {
   static newRules: InlineRule[] = []
-  protected static rulesBase: RulesInlineBase
+  protected static baseRules: BaseInlineRules
   /**
    * Pedantic Inline Grammar.
    */
-  protected static rulesPedantic: RulesInlinePedantic
+  protected static pedanticRules: PedanticInlineRules
   /**
    * GFM Inline Grammar
    */
-  protected static rulesGfm: RulesInlineGfm
+  protected static gfmRules: GfmInlineRules
   /**
    * GFM + Line Breaks Inline Grammar.
    */
-  protected static rulesBreaks: RulesInlineBreaks
+  protected static breaksRules: BreaksInlineRules
   /**
    * GFM + Line Breaks + Extra Inline Grammar.
    */
-  protected static rulesExtra: RulesInlineExtra
-  protected rules: RulesInlineTypes
+  protected static extraRules: ExtraInlineRules
+  protected rules: InlineRulesTypes
   protected renderer: Renderer
   protected inLink: boolean
   protected inRawBlock: boolean
   protected isGfm: boolean
   protected isExtra: boolean
-  protected ruleCallbacks: RulesInlineCallback[]
+  protected ruleCallbacks: InlineRulesCallback[]
   protected textBreak: string = defaultTextBreak
 
   constructor(
@@ -66,8 +66,8 @@ export class InlineLexer {
     return inlineLexer.output(src)
   }
 
-  protected static getRulesBase(): RulesInlineBase {
-    if (this.rulesBase) return this.rulesBase
+  protected static getBaseRules(): BaseInlineRules {
+    if (this.baseRules) return this.baseRules
 
     const tag = '^comment'
       + '|^</[a-zA-Z][\\w:-]*\\s*>' // self-closing tag
@@ -80,7 +80,7 @@ export class InlineLexer {
     /**
      * Inline-Level Grammar.
      */
-    const base: RulesInlineBase = {
+    const base: BaseInlineRules = {
       escape: /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,
       autolink: /^<(scheme:[^\s\x00-\x1f<>]*|email)>/,
       tag: regexTag,
@@ -123,13 +123,13 @@ export class InlineLexer {
       .setGroup('label', base._label)
       .getRegex()
 
-    return (this.rulesBase = base)
+    return (this.baseRules = base)
   }
 
-  protected static getRulesPedantic(): RulesInlinePedantic {
-    if (this.rulesPedantic) return this.rulesPedantic
+  protected static getPedanticRules(): PedanticInlineRules {
+    if (this.pedanticRules) return this.pedanticRules
 
-    const base = this.getRulesBase()
+    const base = this.getBaseRules()
     const regexLink = new ExtendRegexp(/^!?\[(label)\]\((.*?)\)/)
       .setGroup('label', base._label)
       .getRegex()
@@ -137,7 +137,7 @@ export class InlineLexer {
       .setGroup('label', base._label)
       .getRegex()
 
-    return (this.rulesPedantic = {
+    return (this.pedanticRules = {
       ...base,
       ...{
         strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
@@ -148,10 +148,10 @@ export class InlineLexer {
     })
   }
 
-  protected static getRulesGfm(): RulesInlineGfm {
-    if (this.rulesGfm) return this.rulesGfm
+  protected static getGfmRules(): GfmInlineRules {
+    if (this.gfmRules) return this.gfmRules
 
-    const base = this.getRulesBase()
+    const base = this.getBaseRules()
 
     const escape = new ExtendRegexp(base.escape)
       .setGroup('])', '~|])')
@@ -183,18 +183,18 @@ export class InlineLexer {
       )
       .getRegex()
 
-    return (this.rulesGfm = {
+    return (this.gfmRules = {
       ...base,
       ...{ escape, url, _backpedal, del, text }
     })
   }
 
-  protected static getRulesBreaks(): RulesInlineBreaks {
-    if (this.rulesBreaks) return this.rulesBreaks
+  protected static getRulesBreaks(): BreaksInlineRules {
+    if (this.breaksRules) return this.breaksRules
 
-    const gfm = this.getRulesGfm()
+    const gfm = this.getGfmRules()
 
-    return (this.rulesBreaks = {
+    return (this.breaksRules = {
       ...gfm,
       ...{
         br: new ExtendRegexp(gfm.br).setGroup('{2,}', '*').getRegex(),
@@ -203,12 +203,12 @@ export class InlineLexer {
     })
   }
 
-  protected static getRulesExtra(options: Options): RulesInlineExtra {
-    if (this.rulesExtra) return this.rulesExtra
+  protected static getExtraRules(options: Options): ExtraInlineRules {
+    if (this.extraRules) return this.extraRules
 
-    const breaks = options.breaks ? this.getRulesBreaks() : <RulesInlineBreaks>{}
+    const breaks = options.breaks ? this.getRulesBreaks() : <BreaksInlineRules>{}
 
-    return (this.rulesExtra = {
+    return (this.extraRules = {
       ...breaks,
       ...{
         fnref: new ExtendRegexp(/^!?\[\^(label)\]/)
@@ -220,15 +220,15 @@ export class InlineLexer {
 
   protected setRules() {
     if (this.options.extra) {
-      this.rules = this.self.getRulesExtra(this.options)
+      this.rules = this.self.getExtraRules(this.options)
     } else if (this.options.pedantic) {
-      this.rules = this.self.getRulesPedantic()
+      this.rules = this.self.getPedanticRules()
     } else if (this.options.gfm) {
       this.rules = this.options.breaks
         ? this.self.getRulesBreaks()
-        : this.self.getRulesGfm()
+        : this.self.getGfmRules()
     } else {
-      this.rules = this.self.getRulesBase()
+      this.rules = this.self.getBaseRules()
     }
 
     if (!this.options.isTextBreakSync) {
@@ -243,14 +243,14 @@ export class InlineLexer {
 
     this.options.disabledRules.forEach(
       (
-        rule: RulesInlineType
+        rule: InlineRulesType
       ) => {
         this.rules[rule] = noopExec
       }
     )
 
-    this.isGfm = (<RulesInlineGfm>this.rules).url !== undefined
-    this.isExtra = (<RulesInlineExtra>this.rules).fnref !== undefined
+    this.isGfm = (<GfmInlineRules>this.rules).url !== undefined
+    this.isExtra = (<ExtraInlineRules>this.rules).fnref !== undefined
   }
 
   protected escapes (text: string) {
@@ -314,7 +314,7 @@ export class InlineLexer {
       if (
         !this.inLink &&
         this.isGfm &&
-        (execArr = (<RulesInlineGfm>this.rules).url.exec(nextPart))
+        (execArr = (<GfmInlineRules>this.rules).url.exec(nextPart))
       ) {
         let text: string, href: string, prevCapZero: string
 
@@ -325,7 +325,7 @@ export class InlineLexer {
           // do extended autolink path validation
           do {
             prevCapZero = execArr[0]
-            execArr[0] = (<RulesInlineGfm>this.rules)._backpedal.exec(execArr[0])[0]
+            execArr[0] = (<GfmInlineRules>this.rules)._backpedal.exec(execArr[0])[0]
           } while (prevCapZero !== execArr[0])
 
           text = this.options.escape(execArr[0])
@@ -401,7 +401,7 @@ export class InlineLexer {
       // fnref
       if (
         this.isExtra &&
-        (execArr = (<RulesInlineExtra>this.rules).fnref.exec(nextPart))
+        (execArr = (<ExtraInlineRules>this.rules).fnref.exec(nextPart))
       ) {
         nextPart = nextPart.substring(execArr[0].length)
         out += this.renderer.fnref(this.options.slug(execArr[1]))
@@ -462,7 +462,7 @@ export class InlineLexer {
       // del (gfm)
       if (
         this.isGfm &&
-        (execArr = (<RulesInlineGfm>this.rules).del.exec(nextPart))
+        (execArr = (<GfmInlineRules>this.rules).del.exec(nextPart))
       ) {
         nextPart = nextPart.substring(execArr[0].length)
         out += this.renderer.del(this.output(execArr[1]))

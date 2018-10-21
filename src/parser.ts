@@ -21,7 +21,7 @@ export class Parser {
   protected textRenderer: TextRenderer
   protected token: Token
   protected tokens: Token[]
-  newRenderers: BlockRenderer[] = []
+  blockRenderers: BlockRenderer[] = []
 
   constructor(options?: Options) {
     this.tokens = []
@@ -205,7 +205,7 @@ export class Parser {
         return this.renderer.html(this.token.text);
       }
       default: {
-        for (const sr of this.newRenderers) {
+        for (const sr of this.blockRenderers) {
           if (this.token.type === sr.id) {
             return sr.renderer.call(
               this.renderer,

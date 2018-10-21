@@ -1,47 +1,47 @@
 import { ExtendRegexp, noopExec } from './helpers'
 import {
   Align,
+  BaseBlockRules,
   BlockRule,
+  BlockRulesType,
+  BlockRulesTypes,
+  ExtraBlockRules,
+  GfmBlockRules,
   LexerReturns,
   Links,
   Options,
-  RulesBlockBase,
-  RulesBlockExtra,
-  RulesBlockGfm,
-  RulesBlockPedantic,
-  RulesBlockTables,
-  RulesBlockType,
-  RulesBlockTypes,
+  PedanticBlockRules,
+  TablesBlockRules,
   Token,
   TokenType,
 } from './interfaces'
 
 export class BlockLexer {
   static newRules: BlockRule[] = []
-  protected static rulesBase: RulesBlockBase
+  protected static baseRules: BaseBlockRules
   /**
    * Pedantic Block Grammar.
    */
-  protected static rulesPedantic: RulesBlockPedantic
+  protected static pedanticRules: PedanticBlockRules
   /**
    * GFM Block Grammar.
    */
-  protected static rulesGfm: RulesBlockGfm
+  protected static gfmRules: GfmBlockRules
   /**
    * GFM + Tables Block Grammar.
    */
-  protected static rulesTables: RulesBlockTables
+  protected static rulesTables: TablesBlockRules
   /**
    * GFM + Tables + Extra Block Grammar.
    */
-  protected static rulesExtra: RulesBlockExtra
+  protected static extraRules: ExtraBlockRules
 
   protected isExtra: boolean
   protected isGfm: boolean
   protected isTable: boolean
   protected links: Links = Object.create(null)
   protected options: Options
-  protected rules: RulesBlockTypes
+  protected rules: BlockRulesTypes
   protected tokens: Token[] = []
 
   constructor(protected self: typeof BlockLexer, options?: object) {
@@ -64,8 +64,8 @@ export class BlockLexer {
     return lexer.getTokens(src, top)
   }
 
-  protected static getRulesBase(): RulesBlockBase {
-    if (this.rulesBase) return this.rulesBase
+  protected static getBaseRules(): BaseBlockRules {
+    if (this.baseRules) return this.baseRules
 
     const html =
       '^ {0,3}(?:' + // optional indentation
@@ -81,7 +81,7 @@ export class BlockLexer {
 
     const htmlRegex = new RegExp(html)
 
-    const base: RulesBlockBase = {
+    const base: BaseBlockRules = {
       newline: /^\n+/,
       code: /^( {4}[^\n]+\n*)+/,
       hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
@@ -144,13 +144,13 @@ export class BlockLexer {
       .setGroup('paragraph', base.paragraph)
       .getRegex()
 
-    return (this.rulesBase = base)
+    return (this.baseRules = base)
   }
 
-  protected static getRulesPedantic(): RulesBlockPedantic {
-    if (this.rulesPedantic) return this.rulesPedantic
+  protected static getPedanticRules(): PedanticBlockRules {
+    if (this.pedanticRules) return this.pedanticRules
 
-    const base = this.getRulesBase()
+    const base = this.getBaseRules()
 
     const html =
       '^ *(?:comment *(?:\\n|\\s*$)' +
@@ -166,7 +166,7 @@ export class BlockLexer {
       .setGroup(/tag/g, tag)
       .getRegex()
 
-    const pedantic: RulesBlockPedantic = {
+    const pedantic: PedanticBlockRules = {
       ...base,
       ...{
         html: regexHtml,
@@ -174,15 +174,15 @@ export class BlockLexer {
       }
     }
 
-    return (this.rulesPedantic = pedantic)
+    return (this.pedanticRules = pedantic)
   }
 
-  protected static getRulesGfm(): RulesBlockGfm {
-    if (this.rulesGfm) return this.rulesGfm
+  protected static getGfmRules(): GfmBlockRules {
+    if (this.gfmRules) return this.gfmRules
 
-    const base = this.getRulesBase()
+    const base = this.getBaseRules()
 
-    const gfm: RulesBlockGfm = {
+    const gfm: GfmBlockRules = {
       ...base,
       ...{
         fences: /^ *(`{3,}|~{3,})[ \.]*(\S+)? *\n([\s\S]*?)\n? *\1 *(?:\n+|$)/,
@@ -199,14 +199,14 @@ export class BlockLexer {
       .setGroup('(?!', `(?!${group1}|${group2}|`)
       .getRegex()
 
-    return (this.rulesGfm = gfm)
+    return (this.gfmRules = gfm)
   }
 
-  protected static getRulesTable(): RulesBlockTables {
+  protected static getTableRules(): TablesBlockRules {
     if (this.rulesTables) return this.rulesTables
 
     return (this.rulesTables = {
-      ...this.getRulesGfm(),
+      ...this.getGfmRules(),
       ...{
         nptable: /^ *([^|\n ].*\|.*)\n *([-:]+ *\|[-| :]*)(?:\n((?:.*[^>\n ].*(?:\n|$))*)\n*|$)/,
         table: /^ *\|(.+)\n *\|?( *[-:]+[-| :]*)(?:\n((?: *[^>\n ].*(?:\n|$))*)\n*|$)/
@@ -214,10 +214,10 @@ export class BlockLexer {
     })
   }
 
-  protected static getRulesExtra(): RulesBlockExtra {
-    if (this.rulesExtra) return this.rulesExtra
+  protected static getExtraRules(): ExtraBlockRules {
+    if (this.extraRules) return this.extraRules
 
-    const table = this.getRulesTable()
+    const table = this.getTableRules()
 
     table.paragraph = new ExtendRegexp(table.paragraph)
       .setGroup(
@@ -226,7 +226,7 @@ export class BlockLexer {
       )
       .getRegex()
 
-    return (this.rulesExtra = {
+    return (this.extraRules = {
       ...table,
       footnote: /^\[\^([^\]]+)\]: ([^\n]+)/
     })
@@ -234,30 +234,30 @@ export class BlockLexer {
 
   protected setRules() {
     if (this.options.extra) {
-      this.rules = this.self.getRulesExtra()
+      this.rules = this.self.getExtraRules()
     } else if (this.options.pedantic) {
-      this.rules = this.self.getRulesPedantic()
+      this.rules = this.self.getPedanticRules()
     } else if (this.options.gfm) {
       if (this.options.tables) {
-        this.rules = this.self.getRulesTable()
+        this.rules = this.self.getTableRules()
       } else {
-        this.rules = this.self.getRulesGfm()
+        this.rules = this.self.getGfmRules()
       }
     } else {
-      this.rules = this.self.getRulesBase()
+      this.rules = this.self.getBaseRules()
     }
 
     this.options.disabledRules.forEach(
       (
-        rule: RulesBlockType
+        rule: BlockRulesType
       ) => {
         this.rules[rule] = noopExec
       }
     )
 
-    this.isGfm = (<RulesBlockGfm>this.rules).fences !== undefined
-    this.isTable = (<RulesBlockTables>this.rules).table !== undefined
-    this.isExtra = (<RulesBlockExtra>this.rules).footnote !== undefined
+    this.isGfm = (<GfmBlockRules>this.rules).fences !== undefined
+    this.isTable = (<TablesBlockRules>this.rules).table !== undefined
+    this.isExtra = (<ExtraBlockRules>this.rules).footnote !== undefined
   }
 
   /**
@@ -313,7 +313,7 @@ export class BlockLexer {
       // fences code (gfm)
       if (
         this.isGfm &&
-        (execArr = (<RulesBlockGfm>this.rules).fences.exec(nextPart))
+        (execArr = (<GfmBlockRules>this.rules).fences.exec(nextPart))
       ) {
         nextPart = nextPart.substring(execArr[0].length)
 
@@ -328,7 +328,7 @@ export class BlockLexer {
       // footnote
       if (
         this.isExtra &&
-        (execArr = (<RulesBlockExtra>this.rules).footnote.exec(nextPart))
+        (execArr = (<ExtraBlockRules>this.rules).footnote.exec(nextPart))
       ) {
         nextPart = nextPart.substring(execArr[0].length)
 
@@ -358,7 +358,7 @@ export class BlockLexer {
       if (
         top &&
         this.isTable &&
-        (execArr = (<RulesBlockTables>this.rules).nptable.exec(nextPart))
+        (execArr = (<TablesBlockRules>this.rules).nptable.exec(nextPart))
       ) {
         const item: Token = {
           type: TokenType.table,
@@ -460,10 +460,10 @@ export class BlockLexer {
           // Check for task list items
           if (
             this.isGfm &&
-            (execArr = (<RulesBlockGfm>this.rules).checkbox.exec(item))
+            (execArr = (<GfmBlockRules>this.rules).checkbox.exec(item))
           ) {
             checked = execArr[1] !== ' '
-            item = item.replace((<RulesBlockGfm>this.rules).checkbox, '')
+            item = item.replace((<GfmBlockRules>this.rules).checkbox, '')
           }
 
           // Outdent whatever the list item contains. Hacky.
@@ -478,7 +478,7 @@ export class BlockLexer {
           // Backpedal if it does not belong in this list.
           if (this.options.smartLists && i !== length - 1) {
             blockBullet = this.self
-              .getRulesBase()
+              .getBaseRules()
               .bullet.exec(str[i + 1])[0]
 
             if (
@@ -571,7 +571,7 @@ export class BlockLexer {
       if (
         top &&
         this.isTable &&
-        (execArr = (<RulesBlockTables>this.rules).table.exec(nextPart))
+        (execArr = (<TablesBlockRules>this.rules).table.exec(nextPart))
       ) {
         const item: Token = {
           type: TokenType.table,

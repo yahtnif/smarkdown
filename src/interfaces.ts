@@ -1,7 +1,7 @@
 import { Renderer } from './renderer'
 import { escape, unescape, slug, rtrim, resolveUrl, cleanUrl, defaultTextBreak } from './helpers'
 
-export interface RulesBlockBase {
+export interface BaseBlockRules {
   blockquote: RegExp
   bullet: RegExp
   code: RegExp
@@ -23,25 +23,25 @@ export interface RulesBlockBase {
   item: RegExp
 }
 
-export interface RulesBlockPedantic extends RulesBlockBase {}
+export interface PedanticBlockRules extends BaseBlockRules {}
 
-export interface RulesBlockGfm extends RulesBlockBase {
+export interface GfmBlockRules extends BaseBlockRules {
   checkbox: RegExp
   fences: RegExp
 }
 
-export interface RulesBlockTables extends RulesBlockGfm {
+export interface TablesBlockRules extends GfmBlockRules {
   nptable: RegExp
   table: RegExp
 }
 
-export interface RulesBlockExtra extends RulesBlockTables {
+export interface ExtraBlockRules extends TablesBlockRules {
   footnote: RegExp
 }
 
-export type RulesBlockTypes = RulesBlockBase | RulesBlockGfm | RulesBlockTables | RulesBlockExtra
+export type BlockRulesTypes = BaseBlockRules | GfmBlockRules | TablesBlockRules | ExtraBlockRules
 
-export type RulesBlockType = keyof(RulesBlockTypes)
+export type BlockRulesType = keyof(BlockRulesTypes)
 
 export interface Link {
   href: string
@@ -101,7 +101,7 @@ export interface Token {
   footnotes?: string[]
 }
 
-export interface RulesInlineBase {
+export interface BaseInlineRules {
   _attribute: RegExp
   _email: RegExp
   _escapes: RegExp
@@ -122,26 +122,26 @@ export interface RulesInlineBase {
   text: RegExp
 }
 
-export interface RulesInlinePedantic extends RulesInlineBase {}
+export interface PedanticInlineRules extends BaseInlineRules {}
 
 /**
  * GFM Inline Grammar
  */
-export interface RulesInlineGfm extends RulesInlineBase {
+export interface GfmInlineRules extends BaseInlineRules {
   _backpedal: RegExp
   del: RegExp
   url: RegExp
 }
 
-export interface RulesInlineBreaks extends RulesInlineGfm {}
+export interface BreaksInlineRules extends GfmInlineRules {}
 
-export interface RulesInlineExtra extends RulesInlineBreaks {
+export interface ExtraInlineRules extends BreaksInlineRules {
   fnref: RegExp
 }
 
-export type RulesInlineTypes = RulesInlineBase | RulesInlinePedantic | RulesInlineGfm | RulesInlineBreaks | RulesInlineExtra
+export type InlineRulesTypes = BaseInlineRules | PedanticInlineRules | GfmInlineRules | BreaksInlineRules | ExtraInlineRules
 
-export type RulesInlineType = keyof(RulesInlineTypes)
+export type InlineRulesType = keyof(InlineRulesTypes)
 
 export class Options {
   baseUrl?: string = null
@@ -221,7 +221,7 @@ export interface EmptyObject {
   [key: string]: string
 }
 
-export interface RulesInlineCallback {
+export interface InlineRulesCallback {
   condition(): RegExp
   regexp?: RegExp
   tokenize(execArr: RegExpExecArray): void

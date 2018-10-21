@@ -229,7 +229,7 @@ export interface RulesInlineCallback {
 
 export type NewRenderer = (execArr?: RegExpExecArray) => string
 
-export interface NewRenderers {
+export interface BlockRenderer {
   id: string
   renderer: NewRenderer
 }

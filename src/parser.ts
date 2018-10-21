@@ -1,8 +1,8 @@
 import { Renderer, TextRenderer } from './renderer'
 import { InlineLexer } from './inline-lexer'
 import {
+  BlockRenderer,
   Links,
-  NewRenderers,
   Options,
   Token,
   TokenType,
@@ -21,7 +21,7 @@ export class Parser {
   protected textRenderer: TextRenderer
   protected token: Token
   protected tokens: Token[]
-  newRenderers: NewRenderers[] = []
+  newRenderers: BlockRenderer[] = []
 
   constructor(options?: Options) {
     this.tokens = []

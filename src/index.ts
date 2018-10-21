@@ -3,12 +3,12 @@ import { Renderer } from './renderer'
 import { InlineLexer } from './inline-lexer'
 import { BlockLexer } from './block-lexer'
 import {
+  BlockRenderer,
   BlockRuleOption,
   InlineRuleOption,
   LexerReturns,
   Links,
   NewRenderer,
-  NewRenderers,
   Options,
   Token,
 } from './interfaces'
@@ -17,7 +17,7 @@ export default class Smarkdown {
   static options = new Options()
   static Renderer = Renderer
   protected static ruleCounter = 0
-  protected static newRenderers: NewRenderers[] = []
+  protected static newRenderers: BlockRenderer[] = []
 
   static getOptions(options: Options) {
     if (!options) {
@@ -25,7 +25,7 @@ export default class Smarkdown {
     }
 
     if (typeof options.renderer === 'function') {
-      options.renderer = new (<any>options.renderer)(this.options)
+      options.renderer = new (<typeof Renderer>options.renderer)(this.options)
     }
 
     return Object.assign({}, this.options, options)

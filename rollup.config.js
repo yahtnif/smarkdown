@@ -4,6 +4,7 @@ import filesize from 'rollup-plugin-filesize'
 import license from 'rollup-plugin-license'
 import typescript from 'rollup-plugin-typescript2'
 import pkg from './package.json'
+import cleanup from 'rollup-plugin-cleanup'
 
 const banner = `/*!
 * Smarkdown v${pkg.version}
@@ -44,7 +45,8 @@ export default [
       { file: pkg.module, format: 'es' }
     ],
     plugins: [
-      ...sharedPlugins
+      ...sharedPlugins,
+      cleanup()
     ]
   }
 ]

@@ -27,7 +27,7 @@ exports.testFunc = function ({ dir, Smarkdown }) {
 
     let [actual, expected] = text.split(/\n{4,}/)
 
-    if (!expected.endsWith('\n')) {
+    if (!expected.endsWith('</div>') && !expected.endsWith('\n')) {
       expected += '\n'
     }
 

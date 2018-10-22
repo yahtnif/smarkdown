@@ -1,0 +1,14 @@
+extra: true
+
+===
+
+footnote one[^1] and two[^two]
+
+[^1]: This is the first footnote.
+[^two]: This is the second footnote.
+
+
+
+<p>footnote one<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> and two<sup id="fnref:two"><a href="#fn:two" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<div class="footnotes" role="doc-endnotes"><hr>
+<ol><li id="fn:1" role="doc-endnote"><span class="cite-text">This is the first footnote.</span><a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#8617;</a></li><li id="fn:two" role="doc-endnote"><span class="cite-text">This is the second footnote.</span><a href="#fnref:two" class="footnote-backref" role="doc-backlink">&#8617;</a></li></ol></div>

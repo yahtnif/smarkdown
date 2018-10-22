@@ -110,7 +110,7 @@ Smarkdown.setOptions({
 | baseUrl | String | null | A prefix url for any relative link. |
 | breaks | boolean | false | If true, use GFM hard and soft line breaks. Requires `gfm` be `true`. |
 | disabledRules | array | [] | If set to `['lheading']`, will disable headers of an underline-ish style. |
-| extra | boolean | false | If true, enable `footnote`. |
+| extra | boolean | false | If true, enable `footnote`. Requires `gfm` be `true`. |
 | gfm | boolean | true | If true, use approved [GitHub Flavored Markdown (GFM) specification](https://github.github.com/gfm/). |
 | headerId | boolean \| string | false | Include an `id` attribute when emitting headings.<br>If true, for all headings.<br>If set to `on`, for “non-close” atx-style headings (## h2, etc).<br>If set to `off`, for “close” atx-style headings (## h2 ##, etc).|
 | headerPrefix | string | '' | A string to prefix the id attribute when emitting headings. |

@@ -205,7 +205,7 @@ export class InlineLexer {
   protected static getExtraRules(options: Options): ExtraInlineRules {
     if (this.extraRules) return this.extraRules
 
-    const breaks = options.breaks ? this.getBreaksRules() : <BreaksInlineRules>{}
+    const breaks = options.breaks ? this.getBreaksRules() : this.getGfmRules()
 
     return (this.extraRules = {
       ...breaks,

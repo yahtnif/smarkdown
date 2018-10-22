@@ -30,16 +30,16 @@ export interface GfmBlockRules extends BaseBlockRules {
   fences: RegExp
 }
 
-export interface TablesBlockRules extends GfmBlockRules {
+export interface TableBlockRules extends GfmBlockRules {
   nptable: RegExp
   table: RegExp
 }
 
-export interface ExtraBlockRules extends TablesBlockRules {
+export interface ExtraBlockRules extends TableBlockRules {
   footnote: RegExp
 }
 
-export type BlockRulesTypes = BaseBlockRules | GfmBlockRules | TablesBlockRules | ExtraBlockRules
+export type BlockRulesTypes = BaseBlockRules | GfmBlockRules | TableBlockRules | ExtraBlockRules
 
 export type BlockRulesType = keyof(BlockRulesTypes)
 

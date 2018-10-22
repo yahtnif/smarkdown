@@ -37,13 +37,13 @@ export class InlineLexer {
    * GFM + Line Breaks + Extra Inline Grammar.
    */
   protected static extraRules: ExtraInlineRules
-  protected rules: InlineRulesTypes
-  protected renderer: Renderer
   protected inLink: boolean
   protected inRawBlock: boolean
-  protected isGfm: boolean
   protected isExtra: boolean
+  protected isGfm: boolean
+  protected renderer: Renderer
   protected ruleCallbacks: InlineRulesCallback[]
+  protected rules: InlineRulesTypes
   protected textBreak: string = defaultTextBreak
 
   constructor(

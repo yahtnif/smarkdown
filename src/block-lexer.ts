@@ -11,7 +11,7 @@ import {
   Links,
   Options,
   PedanticBlockRules,
-  TablesBlockRules,
+  TableBlockRules,
   Token,
   TokenType,
 } from './interfaces'
@@ -30,7 +30,7 @@ export class BlockLexer {
   /**
    * GFM + Tables Block Grammar.
    */
-  protected static rulesTables: TablesBlockRules
+  protected static tableRules: TableBlockRules
   /**
    * GFM + Tables + Extra Block Grammar.
    */
@@ -202,10 +202,10 @@ export class BlockLexer {
     return (this.gfmRules = gfm)
   }
 
-  protected static getTableRules(): TablesBlockRules {
-    if (this.rulesTables) return this.rulesTables
+  protected static getTableRules(): TableBlockRules {
+    if (this.tableRules) return this.tableRules
 
-    return (this.rulesTables = {
+    return (this.tableRules = {
       ...this.getGfmRules(),
       ...{
         nptable: /^ *([^|\n ].*\|.*)\n *([-:]+ *\|[-| :]*)(?:\n((?:.*[^>\n ].*(?:\n|$))*)\n*|$)/,
@@ -256,7 +256,7 @@ export class BlockLexer {
     )
 
     this.isGfm = (<GfmBlockRules>this.rules).fences !== undefined
-    this.isTable = (<TablesBlockRules>this.rules).table !== undefined
+    this.isTable = (<TableBlockRules>this.rules).table !== undefined
     this.isExtra = (<ExtraBlockRules>this.rules).footnote !== undefined
   }
 
@@ -358,7 +358,7 @@ export class BlockLexer {
       if (
         top &&
         this.isTable &&
-        (execArr = (<TablesBlockRules>this.rules).nptable.exec(nextPart))
+        (execArr = (<TableBlockRules>this.rules).nptable.exec(nextPart))
       ) {
         const item: Token = {
           type: TokenType.table,
@@ -571,7 +571,7 @@ export class BlockLexer {
       if (
         top &&
         this.isTable &&
-        (execArr = (<TablesBlockRules>this.rules).table.exec(nextPart))
+        (execArr = (<TableBlockRules>this.rules).table.exec(nextPart))
       ) {
         const item: Token = {
           type: TokenType.table,

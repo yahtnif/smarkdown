@@ -14,7 +14,7 @@ const escapeTestNoEncode = /[<>"']|&(?!#?\w+;)/
 const escapeReplaceNoEncode = /[<>"']|&(?!#?\w+;)/g
 const regUnescape = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi
 
-export function escape(html: string, encode?: boolean) {
+export function escape(html: string, encode?: boolean): string {
   if (encode) {
     if (escapeTest.test(html)) {
       return html.replace(escapeReplace, (ch: string) => replacements[ch])
@@ -26,7 +26,7 @@ export function escape(html: string, encode?: boolean) {
   return html
 }
 
-export function unescape(html: string) {
+export function unescape(html: string): string {
   // Explicitly match decimal, hex, and named HTML entities
   return html.replace(regUnescape, function(_, n) {
     n = n.toLowerCase()
@@ -47,7 +47,7 @@ const regHtmlTags: RegExp = /<(?:.|\n)*?>/gm
 const regSpecialChars: RegExp = /[!\"#$%&'\(\)\*\+,\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g
 const regDotSpace: RegExp = /(\s|\.)/g
 
-export function slug(str: string) {
+export function slug(str: string): string {
   return (
     str
       // Remove html tags
@@ -64,7 +64,7 @@ export function slug(str: string) {
 // Remove trailing 'c's. Equivalent to str.replace(/c*$/, '').
 // /c*$/ is vulnerable to REDOS.
 // invert: Remove suffix of non-c chars instead. Default falsey.
-export function rtrim(str: string, c: string, invert: boolean = false) {
+export function rtrim(str: string, c: string, invert: boolean = false): string {
   if (str.length === 0) {
     return ''
   }
@@ -91,7 +91,7 @@ const regOriginIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i
 const regNoLastSlashUrl = /^[^:]+:\/*[^/]*$/
 const baseUrls: EmptyObject = {}
 
-export function resolveUrl(base: string, href: string) {
+export function resolveUrl(base: string, href: string): string {
   if (regOriginIndependentUrl.test(href)) {
     return href
   }
@@ -119,7 +119,7 @@ export function resolveUrl(base: string, href: string) {
   }
 }
 
-export function cleanUrl(sanitize: boolean, base: string, href: string) {
+export function cleanUrl(sanitize: boolean, base: string, href: string): string {
   if (sanitize) {
     try {
       var prot = decodeURIComponent(unescape(href))

@@ -1,14 +1,12 @@
 import { Options, Align } from './interfaces'
 
 export class Renderer {
-  _footnotes: string[]
-  _headings: string[]
+  _footnotes: string[] = []
+  _headings: string[] = []
   options: Options
 
   constructor(options?: Options) {
     this.options = options || {}
-    this._headings = []
-    this._footnotes = []
   }
 
   //*** Block level renderer methods. ***
@@ -47,7 +45,7 @@ ${quote}</blockquote>
   footnote(footnotes: { [key: string]: string }): string {
     let out = `<div class="footnotes" role="doc-endnotes">${this.hr()}<ol>`
 
-    for (let refname of this._footnotes) {
+    for (const refname of this._footnotes) {
       out += `<li id="fn:${refname}" role="doc-endnote"><span class="cite-text">${footnotes[
         refname
       ] ||
@@ -63,7 +61,7 @@ ${quote}</blockquote>
 
   heading(text: string, level: number, raw: string, ends: string): string {
     const { headerId } = this.options
-    let idHtml = ''
+    let attr = ''
     if (
       (headerId === true) ||
       (headerId === 'off' && ends) ||
@@ -74,11 +72,11 @@ ${quote}</blockquote>
       if (count > 0) {
         id += `-${count}`
       }
-      idHtml = ` id="${this.options.headerPrefix}${id}"`
+      attr += ` id="${this.options.headerPrefix}${id}"`
       this._headings.push(raw)
     }
 
-    return `<h${level}${idHtml}>${text}</h${level}>
+    return `<h${level}${attr}>${text}</h${level}>
 `
   }
 

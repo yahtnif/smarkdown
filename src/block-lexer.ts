@@ -79,25 +79,23 @@ export class BlockLexer {
       '|</(?!script|pre|style)[a-z][\\w-]*\\s*>(?=\\h*\\n)[\\s\\S]*?(?:\\n{2,}|$)' + // (7) closing tag
       ')'
 
-    const htmlRegex = new RegExp(html)
-
     const base: BaseBlockRules = {
-      newline: /^\n+/,
-      code: /^( {4}[^\n]+\n*)+/,
-      hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
-      heading: /^ *(#{1,6}) *([^\n]+?) *(#+ *)?(?:\n+|$)/,
-      blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
-      list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
-      html: htmlRegex,
-      def: /^ {0,3}\[(label)\]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)(title))? *(?:\n+|$)/,
-      lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,
-      paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading| {0,3}>|<\/?(?:tag)(?: +|\n|\/?>)|<(?:script|pre|style|!--))[^\n]+)*)/,
-      text: /^[^\n]+/,
-      bullet: /(?:[*+-]|\d+\.)/,
-      item: /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/,
+      _comment: /<!--(?!-?>)[\s\S]*?-->/,
       _label: /(?!\s*\])(?:\\[\[\]]|[^\[\]])+/,
       _title: /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/,
-      _comment: /<!--(?!-?>)[\s\S]*?-->/
+      blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
+      bullet: /(?:[*+-]|\d+\.)/,
+      code: /^( {4}[^\n]+\n*)+/,
+      def: /^ {0,3}\[(label)\]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)(title))? *(?:\n+|$)/,
+      heading: /^ *(#{1,6}) *([^\n]+?) *(#+ *)?(?:\n+|$)/,
+      hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
+      html: new RegExp(html),
+      item: /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/,
+      lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,
+      list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
+      newline: /^\n+/,
+      paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading| {0,3}>|<\/?(?:tag)(?: +|\n|\/?>)|<(?:script|pre|style|!--))[^\n]+)*)/,
+      text: /^[^\n]+/
     }
 
     base.def = new ExtendRegexp(base.def)
@@ -291,7 +289,7 @@ export class BlockLexer {
         if ((execArr = sr.rule.exec(nextPart))) {
           nextPart = nextPart.substring(execArr[0].length)
           this.tokens.push({
-            type: sr.id,
+            type: sr.type,
             execArr: execArr
           })
           continue mainLoop
@@ -505,14 +503,14 @@ export class BlockLexer {
             listStart.loose = true
           }
 
-          const t = {
+          const token = {
             loose,
             checked,
             type: TokenType.listItemStart
           }
 
-          listItems.push(t)
-          this.tokens.push(t)
+          listItems.push(token)
+          this.tokens.push(token)
 
           // Recurse.
           this.getTokens(item, false)
@@ -522,9 +520,7 @@ export class BlockLexer {
         }
 
         if (listStart.loose) {
-          const l = listItems.length
-          let i = 0
-          for (; i < l; i++) {
+          for (let i = 0; i < listItems.length; i++) {
             listItems[i].loose = true
           }
         }
@@ -618,7 +614,7 @@ export class BlockLexer {
         if ((execArr = sr.rule.exec(nextPart))) {
           nextPart = nextPart.substring(execArr[0].length)
           this.tokens.push({
-            type: sr.id,
+            type: sr.type,
             execArr: execArr
           })
           continue mainLoop
@@ -693,9 +689,8 @@ export class BlockLexer {
           // add space before unescaped |
           return ' |'
         }
-      }),
-      cells = row.split(/ \|/),
-      i = 0
+      })
+    let cells = row.split(/ \|/)
 
     if (cells.length > count) {
       cells.splice(count)
@@ -703,7 +698,7 @@ export class BlockLexer {
       while (cells.length < count) cells.push('')
     }
 
-    for (; i < cells.length; i++) {
+    for (let i = 0; i < cells.length; i++) {
       // leading or trailing whitespace is ignored per the gfm spec
       cells[i] = cells[i].trim().replace(/\\\|/g, '|')
     }

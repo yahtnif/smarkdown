@@ -97,8 +97,8 @@ export interface Token {
    * Extra
    */
   footnote?: string
-  refname?: string
   footnotes?: string[]
+  refname?: string
 }
 
 export interface BaseInlineRules {
@@ -196,11 +196,11 @@ export class Options {
    * If set to `true`, an inline text will not be taken in paragraph.
    *
    * ```js
-   * Smarkdown.parse('some text'); // returns '<p>some text</p>'
+   * Smarkdown.parse('some text') // returns '<p>some text</p>'
    *
-   * Smarkdown.setOptions({nop: true});
+   * Smarkdown.setOptions({nop: true})
    *
-   * Smarkdown.parse('some text'); // returns 'some text'
+   * Smarkdown.parse('some text') // returns 'some text'
    * ```
    */
   nop?: boolean = false
@@ -230,8 +230,8 @@ export interface InlineRulesCallback {
 export type NewRenderer = (execArr?: RegExpExecArray) => string
 
 export interface BlockRenderer {
-  id: string
   renderer: NewRenderer
+  type: string
 }
 
 export type InlineRuleOption = {
@@ -250,7 +250,7 @@ export interface InlineRule {
 }
 
 export interface BlockRule {
-  id: string
   options: BlockRuleOption
   rule: RegExp
+  type: string
 }

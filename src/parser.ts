@@ -2,6 +2,7 @@ import { Renderer, TextRenderer } from './renderer'
 import { InlineLexer } from './inline-lexer'
 import {
   BlockRenderer,
+  EmptyObject,
   Links,
   Options,
   Token,
@@ -12,7 +13,7 @@ import {
  * Parsing & Compiling.
  */
 export class Parser {
-  protected footnotes: { [key: string]: string }
+  protected footnotes: EmptyObject = {}
   protected inlineLexer: InlineLexer
   protected inlineTextLexer: InlineLexer
   protected line: number = 0
@@ -26,7 +27,6 @@ export class Parser {
   constructor(options?: Options) {
     this.tokens = []
     this.token = null
-    this.footnotes = {}
     this.options = options
     this.renderer = this.options.renderer || new Renderer(this.options)
     this.renderer.options = this.options
@@ -157,11 +157,10 @@ export class Parser {
       case TokenType.table: {
         let header = '',
           body = '',
-          row,
-          cell
+          cell = '',
+          row
 
         // header
-        cell = ''
         for (let i = 0; i < this.token.header.length; i++) {
           const flags = { header: true, align: this.token.align[i] }
           const out = this.inlineLexer.output(this.token.header[i])
@@ -202,11 +201,11 @@ export class Parser {
       }
       case TokenType.html: {
         // TODO parse inline content if parameter markdown=1
-        return this.renderer.html(this.token.text);
+        return this.renderer.html(this.token.text)
       }
       default: {
         for (const sr of this.blockRenderers) {
-          if (this.token.type === sr.id) {
+          if (this.token.type === sr.type) {
             return sr.renderer.call(
               this.renderer,
               this.token.execArr

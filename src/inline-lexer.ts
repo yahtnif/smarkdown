@@ -75,30 +75,29 @@ export class InlineLexer {
       + '|^<\\?[\\s\\S]*?\\?>' // processing instruction, e.g. <?php ?>
       + '|^<![a-zA-Z]+\\s[\\s\\S]*?>' // declaration, e.g. <!DOCTYPE html>
       + '|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>' // CDATA section
-    const regexTag = new RegExp(tag)
 
     /**
      * Inline-Level Grammar.
      */
     const base: BaseInlineRules = {
-      escape: /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,
-      autolink: /^<(scheme:[^\s\x00-\x1f<>]*|email)>/,
-      tag: regexTag,
-      link: /^!?\[(label)\]\(href(?:\s+(title))?\s*\)/,
-      reflink: /^!?\[(label)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
-      nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
-      strong: /^__([^\s])__(?!_)|^\*\*([^\s])\*\*(?!\*)|^__([^\s][\s\S]*?[^\s])__(?!_)|^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)/,
-      em: /^_([^\s_])_(?!_)|^\*([^\s*"<\[])\*(?!\*)|^_([^\s][\s\S]*?[^\s_])_(?!_|[^\s.])|^_([^\s_][\s\S]*?[^\s])_(?!_|[^\s.])|^\*([^\s"<\[][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*"<\[][\s\S]*?[^\s])\*(?!\*)/,
-      code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
-      br: /^( {2,}|\\)\n(?!\s*$)/,
-      text: /^(`+|[^`])[\s\S]*?(?=[\\<!\[`*]|\b_| {2,}\n|$)/,
-      _scheme: /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/,
+      _attribute: /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/,
       _email: /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/,
-      _label: /(?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|[^\[\]\\])*?/,
-      _href: /\s*(<(?:\\[<>]?|[^\s<>\\])*>|(?:\\[()]?|\([^\s\x00-\x1f\\]*\)|[^\s\x00-\x1f()\\])*?)/,
-      _title: /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/,
       _escapes: /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g,
-      _attribute: /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/
+      _href: /\s*(<(?:\\[<>]?|[^\s<>\\])*>|(?:\\[()]?|\([^\s\x00-\x1f\\]*\)|[^\s\x00-\x1f()\\])*?)/,
+      _label: /(?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|[^\[\]\\])*?/,
+      _scheme: /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/,
+      _title: /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/,
+      autolink: /^<(scheme:[^\s\x00-\x1f<>]*|email)>/,
+      br: /^( {2,}|\\)\n(?!\s*$)/,
+      code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
+      em: /^_([^\s_])_(?!_)|^\*([^\s*"<\[])\*(?!\*)|^_([^\s][\s\S]*?[^\s_])_(?!_|[^\s.])|^_([^\s_][\s\S]*?[^\s])_(?!_|[^\s.])|^\*([^\s"<\[][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*"<\[][\s\S]*?[^\s])\*(?!\*)/,
+      escape: /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,
+      link: /^!?\[(label)\]\(href(?:\s+(title))?\s*\)/,
+      nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
+      reflink: /^!?\[(label)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
+      strong: /^__([^\s])__(?!_)|^\*\*([^\s])\*\*(?!\*)|^__([^\s][\s\S]*?[^\s])__(?!_)|^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)/,
+      tag: new RegExp(tag),
+      text: /^(`+|[^`])[\s\S]*?(?=[\\<!\[`*]|\b_| {2,}\n|$)/
     }
 
     base.autolink = new ExtendRegexp(base.autolink)
@@ -140,10 +139,10 @@ export class InlineLexer {
     return (this.pedanticRules = {
       ...base,
       ...{
-        strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
         em: /^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/,
         link: regexLink,
-        reflink: regexReflink
+        reflink: regexReflink,
+        strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/
       }
     })
   }
@@ -189,7 +188,7 @@ export class InlineLexer {
     })
   }
 
-  protected static getRulesBreaks(): BreaksInlineRules {
+  protected static getBreaksRules(): BreaksInlineRules {
     if (this.breaksRules) return this.breaksRules
 
     const gfm = this.getGfmRules()
@@ -206,7 +205,7 @@ export class InlineLexer {
   protected static getExtraRules(options: Options): ExtraInlineRules {
     if (this.extraRules) return this.extraRules
 
-    const breaks = options.breaks ? this.getRulesBreaks() : <BreaksInlineRules>{}
+    const breaks = options.breaks ? this.getBreaksRules() : <BreaksInlineRules>{}
 
     return (this.extraRules = {
       ...breaks,
@@ -225,7 +224,7 @@ export class InlineLexer {
       this.rules = this.self.getPedanticRules()
     } else if (this.options.gfm) {
       this.rules = this.options.breaks
-        ? this.self.getRulesBreaks()
+        ? this.self.getBreaksRules()
         : this.self.getGfmRules()
     } else {
       this.rules = this.self.getBaseRules()

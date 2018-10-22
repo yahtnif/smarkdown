@@ -16,7 +16,7 @@ import {
 export default class Smarkdown {
   static options = new Options()
   static Renderer = Renderer
-  protected static ruleCounter = 0
+  protected static rulesCounter = 0
   protected static blockRenderers: BlockRenderer[] = []
 
   static getOptions(options: Options) {
@@ -38,7 +38,6 @@ export default class Smarkdown {
    */
   static setOptions(options: Options) {
     this.options = this.getOptions(options)
-    return this
   }
 
   /**
@@ -61,8 +60,6 @@ export default class Smarkdown {
       render: renderer,
       options
     })
-
-    return this
   }
 
   /**
@@ -73,19 +70,18 @@ export default class Smarkdown {
     renderer: NewRenderer,
     options: BlockRuleOption = {}
   ) {
-    const id = 'SRule-' + (++this.ruleCounter)
+    const ruleType = 'SRule-' + (++this.rulesCounter)
 
     BlockLexer.newRules.push({
       rule: regExp,
       options,
-      id
+      type: ruleType
     })
 
     this.blockRenderers.push({
       renderer,
-      id
+      type: ruleType
     })
-    return this
   }
 
   /**

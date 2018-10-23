@@ -30,7 +30,6 @@ export class BlockLexer {
    * GFM + Extra Block Grammar.
    */
   protected static extraRules: ExtraBlockRules
-
   protected isExtra: boolean
   protected isGfm: boolean
   protected links: Links = Object.create(null)
@@ -43,12 +42,7 @@ export class BlockLexer {
     this.setRules()
   }
 
-  /**
-   * Accepts Markdown text and returns object with tokens and links.
-   *
-   * @param src String of markdown source to be compiled.
-   * @param options Hash of options.
-   */
+  // Accepts Markdown text and returns object with tokens and links.
   static lex(
     src: string,
     options?: Options,

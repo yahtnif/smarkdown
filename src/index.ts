@@ -10,13 +10,13 @@ import {
   Links,
   NewRenderer,
   Options,
-  Token,
+  Token
 } from './interfaces'
+import { defaultTextBreak } from './helpers'
 
 export default class Smarkdown {
   static options = new Options()
   static Renderer = Renderer
-  protected static rulesCounter = 0
   protected static blockRenderers: BlockRenderer[] = []
 
   static getOptions(options: Options) {
@@ -31,18 +31,10 @@ export default class Smarkdown {
     return Object.assign({}, this.options, options)
   }
 
-  /**
-   * Merges the default options with options that will be set.
-   *
-   * @param options Hash of options.
-   */
   static setOptions(options: Options) {
     this.options = this.getOptions(options)
   }
 
-  /**
-   * Setting new inline rule.
-   */
   static setInlineRule(
     regExp: RegExp,
     renderer: NewRenderer,
@@ -56,21 +48,40 @@ export default class Smarkdown {
     }
 
     InlineLexer.newRules.push({
+      breakChar,
+      options,
       rule: regExp,
-      render: renderer,
-      options
+      render: renderer
     })
   }
 
-  /**
-   * Setting new block rule.
-   */
+  static unsetInlineRule(regExp: RegExp) {
+    InlineLexer.newRules = InlineLexer.newRules.filter(
+      (R) => R.rule.toString() !== regExp.toString()
+    )
+
+    // Reset textBreak
+    const breakchars =
+      defaultTextBreak +
+      InlineLexer.newRules
+        .filter((R) => !defaultTextBreak.includes(R.breakChar))
+        .map((R) => R.breakChar)
+        // remove dulplicate
+        .filter((v, i, a) => a.indexOf(v) === i)
+        .join('')
+
+    if (this.options.textBreak !== breakchars) {
+      this.options.textBreak = breakchars
+      this.options.isTextBreakSync = false
+    }
+  }
+
   static setBlockRule(
     regExp: RegExp,
     renderer: NewRenderer,
     options: BlockRuleOption = {}
   ) {
-    const ruleType = 'SRule-' + (++this.rulesCounter)
+    const ruleType = regExp.toString()
 
     BlockLexer.newRules.push({
       rule: regExp,
@@ -84,25 +95,20 @@ export default class Smarkdown {
     })
   }
 
-  /**
-   * Accepts Markdown text and returns text in HTML format.
-   *
-   * @param src String of markdown source to be compiled.
-   * @param options Hash of options, merge with the default options.
-   */
-  static inlineParse(
-    src: string,
-    options: Options
-  ): string {
-    return new InlineLexer(InlineLexer, {}, this.getOptions(options)).output(src)
+  static unsetBlockRule(regExp: RegExp) {
+    const ruleType = regExp.toString()
+
+    BlockLexer.newRules = BlockLexer.newRules.filter((R) => R.type !== ruleType)
+
+    this.blockRenderers = this.blockRenderers.filter((R) => R.type !== ruleType)
   }
 
-  /**
-   * Accepts Markdown text and returns text in HTML format.
-   *
-   * @param src String of markdown source to be compiled.
-   * @param options Hash of options, merge with the default options.
-   */
+  static inlineParse(src: string, options: Options): string {
+    return new InlineLexer(InlineLexer, {}, this.getOptions(options)).output(
+      src
+    )
+  }
+
   static parse(src: string, options: Options): string {
     try {
       const opts = this.getOptions(options)

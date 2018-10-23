@@ -1,9 +1,8 @@
 const klawSync = require('klaw-sync')
-const fs = require('fs-extra')
-const { expect } = require('chai')
 const JSON5 = require('json5')
 
-exports.testFunc = function ({ dir, Smarkdown }) {
+exports.testFunc = function ({ dir, runAtFirstAndOnce }) {
+  console.log('test:', dir)
   const files = klawSync(dir, { nodir: true })
 
   for (const file of files) {
@@ -28,6 +27,10 @@ exports.testFunc = function ({ dir, Smarkdown }) {
     let [actual, expected] = text.split(/\n{4,}/)
 
     it(filename, function() {
+      if (runAtFirstAndOnce) {
+        runAtFirstAndOnce()
+        runAtFirstAndOnce = null
+      }
       expect(Smarkdown.parse(actual, options).trim()).to.equal(expected.trim())
     })
   }

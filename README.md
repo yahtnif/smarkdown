@@ -241,6 +241,14 @@ console.log(Smarkdown.parse(str))
 // <div class="warning">Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor.</div>
 ```
 
+### Unset
+
+```js
+Smarkdown.unsetInlineRule( regexp )
+
+Smarkdown.unsetBlockRule( regexp )
+```
+
 
 ## Renderer
 

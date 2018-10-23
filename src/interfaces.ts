@@ -240,6 +240,7 @@ export type BlockRuleOption = {
 }
 
 export interface InlineRule {
+  breakChar: string
   options: InlineRuleOption
   render: Function
   rule: RegExp

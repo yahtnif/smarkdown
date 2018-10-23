@@ -180,7 +180,7 @@ export class ExtendRegexp {
   }
 }
 
-// from a part of this.rules.text
+// from a part of InlineLexer.rules.text
 export const defaultTextBreak = '\\<![`*~'
 
 // match nothing

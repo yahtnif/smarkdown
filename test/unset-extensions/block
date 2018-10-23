@@ -1,0 +1,9 @@
+::: warning
+Lorem ipsum...
+:::
+
+
+
+<p>::: warning
+Lorem ipsum...
+:::</p>

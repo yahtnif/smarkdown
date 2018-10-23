@@ -3,18 +3,18 @@ function checkPreChar(char) {
   return !char || /\s|\B/.test(char)
 }
 
-const subRe = /^~(?=\S)([\s\S]*?\S)~/
-const supRe = /^\^(?=\S)([\s\S]*?\S)\^/
-const markRe = /^==(?=\S)([\s\S]*?\S)==/
-const hashtagRe = /^#([^\s#]+)((?:\b)|(?=\s|$))/
-const rubyAnnotationRe = /^\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
-const smallTextRe = /^--(?=\S)([\s\S]*?\S)--/
-const largeTextRe = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
+const subRegex = /^~(?=\S)([\s\S]*?\S)~/
+const supRegex = /^\^(?=\S)([\s\S]*?\S)\^/
+const markRegex = /^==(?=\S)([\s\S]*?\S)==/
+const hashtagRegex = /^#([^\s#]+)((?:\b)|(?=\s|$))/
+const rubyAnnotationRegex = /^\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
+const smallTextRegex = /^--(?=\S)([\s\S]*?\S)--/
+const largeTextRegex = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
 
-const extRe = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
+const extRegex = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
 
-const inlineRes = [subRe, supRe, markRe, hashtagRe, rubyAnnotationRe, smallTextRe, largeTextRe]
-const blockRes = [extRe]
+const inlineRes = [subRegex, supRegex, markRegex, hashtagRegex, rubyAnnotationRegex, smallTextRegex, largeTextRegex]
+const blockRes = [extRegex]
 
 exports.setExtensions = function() {
   /**
@@ -23,7 +23,7 @@ exports.setExtensions = function() {
    * H~2~O
    * H<sub>2</sub>O
    */
-  Smarkdown.setInlineRule(subRe, function(execArr) {
+  Smarkdown.setInlineRule(subRegex, function(execArr) {
     return `<sub>${this.output(execArr[1])}</sub>`
   })
 
@@ -33,7 +33,7 @@ exports.setExtensions = function() {
    * 1^st^
    * 1<sup>st</sup>
    */
-  Smarkdown.setInlineRule(supRe, function(execArr) {
+  Smarkdown.setInlineRule(supRegex, function(execArr) {
     return `<sup>${this.output(execArr[1])}</sup>`
   })
 
@@ -43,7 +43,7 @@ exports.setExtensions = function() {
    * ==Experience== is the best teacher.
    * <mark>Experience</mark> is the best teacher.
    */
-  Smarkdown.setInlineRule(markRe, function(execArr) {
+  Smarkdown.setInlineRule(markRegex, function(execArr) {
     return `<mark>${execArr[1]}</mark>`
   })
 
@@ -54,7 +54,7 @@ exports.setExtensions = function() {
    * <span class="hashtag">tag</span>
    */
   Smarkdown.setInlineRule(
-    hashtagRe,
+    hashtagRegex,
     function(execArr) {
       return `<span class="hashtag">${execArr[1]}</span>`
     },
@@ -68,7 +68,7 @@ exports.setExtensions = function() {
    * <ruby>注音<rt>zhuyin</rt></ruby>
    */
   Smarkdown.setInlineRule(
-    rubyAnnotationRe,
+    rubyAnnotationRegex,
     function(execArr) {
       return `<ruby>${execArr[1]}<rt>${execArr[2]}</rt></ruby>`
     },
@@ -82,8 +82,8 @@ exports.setExtensions = function() {
    *
    * --small text-- => <span class="small-text">small text</span>
    */
-  const smallTextRe = /^--(?=\S)([\s\S]*?\S)--/
-  Smarkdown.setInlineRule(smallTextRe, function(execArr) {
+  const smallTextRegex = /^--(?=\S)([\s\S]*?\S)--/
+  Smarkdown.setInlineRule(smallTextRegex, function(execArr) {
     return `<span class="small-text">${execArr[1]}</span>`
   })
 
@@ -94,8 +94,8 @@ exports.setExtensions = function() {
    * +++large text+++ => <span class="large-text is-2">large text</span>
    * ++++large text++++ => <span class="large-text is-3">large text</span>
    */
-  const largeTextRe = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
-  Smarkdown.setInlineRule(largeTextRe, function(execArr) {
+  const largeTextRegex = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
+  Smarkdown.setInlineRule(largeTextRegex, function(execArr) {
     let size = execArr[1].length - 1
 
     if (size > 3) {
@@ -113,7 +113,7 @@ Lorem ipsum...
 :::`
    * <div class="warning">Lorem ipsum...</div>
    */
-  Smarkdown.setBlockRule(extRe, (execArr) => {
+  Smarkdown.setBlockRule(extRegex, (execArr) => {
     return `<div class="${execArr[1]}">${execArr[2]}</div>`
   })
 

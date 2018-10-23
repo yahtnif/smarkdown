@@ -159,8 +159,8 @@ import Smarkdown from 'smarkdown'
  * H~2~O
  * H<sub>2</sub>O
  */
-const subRe = /^~(?=\S)([\s\S]*?\S)~/
-Smarkdown.setInlineRule(subRe, function(execArr) {
+const subRegex = /^~(?=\S)([\s\S]*?\S)~/
+Smarkdown.setInlineRule(subRegex, function(execArr) {
   return `<sub>${this.output(execArr[1])}</sub>`
 })
 
@@ -170,8 +170,8 @@ Smarkdown.setInlineRule(subRe, function(execArr) {
  * 1^st^
  * 1<sup>st</sup>
  */
-const supRe = /^\^(?=\S)([\s\S]*?\S)\^/
-Smarkdown.setInlineRule(supRe, function(execArr) {
+const supRegex = /^\^(?=\S)([\s\S]*?\S)\^/
+Smarkdown.setInlineRule(supRegex, function(execArr) {
   return `<sup>${this.output(execArr[1])}</sup>`
 })
 
@@ -181,8 +181,8 @@ Smarkdown.setInlineRule(supRe, function(execArr) {
  * ==Experience== is the best teacher.
  * <mark>Experience</mark> is the best teacher.
  */
-const markRe = /^==(?=\S)([\s\S]*?\S)==/
-Smarkdown.setInlineRule(markRe, function(execArr) {
+const markRegex = /^==(?=\S)([\s\S]*?\S)==/
+Smarkdown.setInlineRule(markRegex, function(execArr) {
   return `<mark>${this.output(execArr[1])}</mark>`
 })
 
@@ -192,9 +192,9 @@ Smarkdown.setInlineRule(markRe, function(execArr) {
  * #tag
  * <span class="hashtag">tag</span>
  */
-const hashtagRe = /^#([^\s#]+)((?:\b)|(?=\s|$))/
+const hashtagRegex = /^#([^\s#]+)((?:\b)|(?=\s|$))/
 Smarkdown.setInlineRule(
-  hashtagRe,
+  hashtagRegex,
   function(execArr) {
     return `<span class="hashtag">${execArr[1]}</span>`
   }, {
@@ -210,9 +210,9 @@ Smarkdown.setInlineRule(
  * [注音]{zhuyin}
  * <ruby>注音<rt>zhuyin</rt></ruby>
  */
-const rubyAnnotationRe = /^\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
+const rubyAnnotationRegex = /^\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
 Smarkdown.setInlineRule(
-  rubyAnnotationRe,
+  rubyAnnotationRegex,
   function(execArr) {
     return `<ruby>${execArr[1]}<rt>${execArr[2]}</rt></ruby>`
   },
@@ -226,8 +226,8 @@ Smarkdown.setInlineRule(
  *
  * --small text-- => <span class="small-text">small text</span>
  */
-const smallTextRe = /^--(?=\S)([\s\S]*?\S)--/
-Smarkdown.setInlineRule(smallTextRe, function(execArr) {
+const smallTextRegex = /^--(?=\S)([\s\S]*?\S)--/
+Smarkdown.setInlineRule(smallTextRegex, function(execArr) {
   return `<span class="small-text">${execArr[1]}</span>`
 })
 
@@ -238,8 +238,8 @@ Smarkdown.setInlineRule(smallTextRe, function(execArr) {
  * +++large text+++ => <span class="large-text is-2">large text</span>
  * ++++large text++++ => <span class="large-text is-3">large text</span>
  */
-const largeTextRe = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
-Smarkdown.setInlineRule(largeTextRe, function(execArr) {
+const largeTextRegex = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
+Smarkdown.setInlineRule(largeTextRegex, function(execArr) {
   let size = execArr[1].length - 1
 
   if (size > 3) {
@@ -258,8 +258,8 @@ Using `Smarkdown.setBlockRule( regexp, callback, [, options] )`, like `Smarkdown
 import Smarkdown from 'smarkdown'
 
 // block container
-const extRe = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
-Smarkdown.setBlockRule(extRe, (execArr) => {
+const extRegex = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
+Smarkdown.setBlockRule(extRegex, (execArr) => {
   return `<div class="${execArr[1]}">${execArr[2]}</div>`
 })
 

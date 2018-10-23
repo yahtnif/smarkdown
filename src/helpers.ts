@@ -12,7 +12,7 @@ const replacements: EmptyObject = {
 
 const escapeTestNoEncode = /[<>"']|&(?!#?\w+;)/
 const escapeReplaceNoEncode = /[<>"']|&(?!#?\w+;)/g
-const unescapeRe = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi
+const unescapeRegex = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi
 
 export function escape(html: string, encode?: boolean): string {
   if (encode) {
@@ -28,7 +28,7 @@ export function escape(html: string, encode?: boolean): string {
 
 export function unescape(html: string): string {
   // Explicitly match decimal, hex, and named HTML entities
-  return html.replace(unescapeRe, function(_, n) {
+  return html.replace(unescapeRegex, function(_, n) {
     n = n.toLowerCase()
 
     if (n === 'colon') return ':'
@@ -43,19 +43,19 @@ export function unescape(html: string): string {
   })
 }
 
-const htmlTagsRe: RegExp = /<(?:.|\n)*?>/gm
-const specialCharsRe: RegExp = /[!\"#$%&'\(\)\*\+,\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g
-const dotSpaceRe: RegExp = /(\s|\.)/g
+const htmlTagsRegex: RegExp = /<(?:.|\n)*?>/gm
+const specialCharsRegex: RegExp = /[!\"#$%&'\(\)\*\+,\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g
+const dotSpaceRegex: RegExp = /(\s|\.)/g
 
 export function slug(str: string): string {
   return (
     str
       // Remove html tags
-      .replace(htmlTagsRe, '')
+      .replace(htmlTagsRegex, '')
       // Remove special characters
-      .replace(specialCharsRe, '')
+      .replace(specialCharsRegex, '')
       // Replace dots and spaces with a separator
-      .replace(dotSpaceRe, '-')
+      .replace(dotSpaceRegex, '-')
       // Make the whole thing lowercase
       .toLowerCase()
   )
@@ -87,12 +87,12 @@ export function rtrim(str: string, c: string, invert: boolean = false): string {
   return str.substr(0, str.length - suffLen)
 }
 
-const originIndependentUrlRe = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i
-const noLastSlashUrlRe = /^[^:]+:\/*[^/]*$/
+const originIndependentUrlRegex = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i
+const noLastSlashUrlRegex = /^[^:]+:\/*[^/]*$/
 const baseUrls: EmptyObject = {}
 
 export function resolveUrl(base: string, href: string): string {
-  if (originIndependentUrlRe.test(href)) {
+  if (originIndependentUrlRegex.test(href)) {
     return href
   }
 
@@ -101,7 +101,7 @@ export function resolveUrl(base: string, href: string): string {
     // we can ignore everything in base after the last slash of its path component,
     // but we might need to add _that_
     // https://tools.ietf.org/html/rfc3986#section-3
-    if (noLastSlashUrlRe.test(base)) {
+    if (noLastSlashUrlRegex.test(base)) {
       baseUrls[baseUrlsKey] = base + '/'
     } else {
       baseUrls[baseUrlsKey] = rtrim(base, '/', true)
@@ -136,7 +136,7 @@ export function cleanUrl(sanitize: boolean, base: string, href: string): string 
       return null
     }
   }
-  if (base && !originIndependentUrlRe.test(href)) {
+  if (base && !originIndependentUrlRegex.test(href)) {
     href = resolveUrl(base, href)
   }
   try {
@@ -187,8 +187,8 @@ export const defaultTextBreak = '\\<![`*~'
 export const noopExec = /S^/
 
 // Escape RegExp special characters
-const escapeCharsRe = /[-|\\{}()[\]^$+*?.]/g
+const escapeCharsRegex = /[-|\\{}()[\]^$+*?.]/g
 
 export function escapeStringRegexp(str: string): string {
-  return str.replace(escapeCharsRe, '\\$&')
+  return str.replace(escapeCharsRegex, '\\$&')
 }

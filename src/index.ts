@@ -12,7 +12,7 @@ import {
   Options,
   Token
 } from './interfaces'
-import { defaultTextBreak } from './helpers'
+import { defaultTextBreak, escapeStringRegexp } from './helpers'
 
 export default class Smarkdown {
   static options = new Options()
@@ -44,9 +44,10 @@ export default class Smarkdown {
     renderer: NewRenderer,
     options: InlineRuleOption = {}
   ) {
-    const breakChar = regExp.toString().match(/^\/\^\(*\\?(.)/)[1]
+    let breakChar = regExp.toString().match(/^\/\^\(*\\?(.)/)[1]
 
     if (breakChar && !this.options.textBreak.includes(breakChar)) {
+      breakChar = escapeStringRegexp(breakChar)
       this.options.textBreak += breakChar
       this.options.isTextBreakSync = false
     }

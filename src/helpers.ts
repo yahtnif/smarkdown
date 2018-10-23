@@ -185,3 +185,10 @@ export const defaultTextBreak = '\\<![`*~'
 
 // match nothing
 export const noopExec = /S^/
+
+// Escape RegExp special characters
+const escapeCharsRegex = /[-|\\{}()[\]^$+*?.]/g
+
+export function escapeStringRegexp(str: string): string {
+  return str.replace(escapeCharsRegex, '\\$&')
+}

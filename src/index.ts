@@ -35,6 +35,10 @@ export default class Smarkdown {
     this.options = this.getOptions(options)
   }
 
+  static resetOptions() {
+    this.options = new Options()
+  }
+
   static setInlineRule(
     regExp: RegExp,
     renderer: NewRenderer,

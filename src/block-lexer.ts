@@ -147,7 +147,7 @@ export class BlockLexer {
       'a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub' +
       '|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)' +
       '\\b)\\w+(?!:|[^\\w\\s@]*@)\\b'
-    const regexHtml = new ExtendRegexp(new RegExp(html))
+    const htmlRe = new ExtendRegexp(new RegExp(html))
       .setGroup('comment', base._comment)
       .setGroup(/tag/g, tag)
       .getRegex()
@@ -155,7 +155,7 @@ export class BlockLexer {
     const pedantic: PedanticBlockRules = {
       ...base,
       ...{
-        html: regexHtml,
+        html: htmlRe,
         def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/
       }
     }

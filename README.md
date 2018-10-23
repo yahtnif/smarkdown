@@ -159,8 +159,8 @@ import Smarkdown from 'smarkdown'
  * H~2~O
  * H<sub>2</sub>O
  */
-const regSub = /^~(?=\S)([\s\S]*?\S)~/
-Smarkdown.setInlineRule(regSub, function(execArr) {
+const subRe = /^~(?=\S)([\s\S]*?\S)~/
+Smarkdown.setInlineRule(subRe, function(execArr) {
   return `<sub>${this.output(execArr[1])}</sub>`
 })
 
@@ -170,8 +170,8 @@ Smarkdown.setInlineRule(regSub, function(execArr) {
  * 1^st^
  * 1<sup>st</sup>
  */
-const regSup = /^\^(?=\S)([\s\S]*?\S)\^/
-Smarkdown.setInlineRule(regSup, function(execArr) {
+const supRe = /^\^(?=\S)([\s\S]*?\S)\^/
+Smarkdown.setInlineRule(supRe, function(execArr) {
   return `<sup>${this.output(execArr[1])}</sup>`
 })
 
@@ -181,8 +181,8 @@ Smarkdown.setInlineRule(regSup, function(execArr) {
  * ==Experience== is the best teacher.
  * <mark>Experience</mark> is the best teacher.
  */
-const regMark = /^==(?=\S)([\s\S]*?\S)==/
-Smarkdown.setInlineRule(regMark, function(execArr) {
+const markRe = /^==(?=\S)([\s\S]*?\S)==/
+Smarkdown.setInlineRule(markRe, function(execArr) {
   return `<mark>${this.output(execArr[1])}</mark>`
 })
 
@@ -192,9 +192,9 @@ Smarkdown.setInlineRule(regMark, function(execArr) {
  * #tag
  * <span class="hashtag">tag</span>
  */
-const regHashtag = /^#([^\s#]+)((?:\b)|(?=\s|$))/
+const hashtagRe = /^#([^\s#]+)((?:\b)|(?=\s|$))/
 Smarkdown.setInlineRule(
-  regHashtag,
+  hashtagRe,
   function(execArr) {
     return `<span class="hashtag">${execArr[1]}</span>`
   }, {
@@ -210,9 +210,9 @@ Smarkdown.setInlineRule(
  * [注音]{zhuyin}
  * <ruby>注音<rt>zhuyin</rt></ruby>
  */
-const regRubyAnnotation = /^\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
+const rubyAnnotationRe = /^\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
 Smarkdown.setInlineRule(
-  regRubyAnnotation,
+  rubyAnnotationRe,
   function(execArr) {
     return `<ruby>${execArr[1]}<rt>${execArr[2]}</rt></ruby>`
   },
@@ -230,8 +230,8 @@ Using `Smarkdown.setBlockRule( regexp, callback, [, options] )`, like `Smarkdown
 import Smarkdown from 'smarkdown'
 
 // block container
-const regExt = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
-Smarkdown.setBlockRule(regExt, (execArr) => {
+const extRe = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
+Smarkdown.setBlockRule(extRe, (execArr) => {
   return `<div class="${execArr[1]}">${execArr[2]}</div>`
 })
 

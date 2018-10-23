@@ -129,10 +129,10 @@ export class InlineLexer {
     if (this.pedanticRules) return this.pedanticRules
 
     const base = this.getBaseRules()
-    const regexLink = new ExtendRegexp(/^!?\[(label)\]\((.*?)\)/)
+    const linkRe = new ExtendRegexp(/^!?\[(label)\]\((.*?)\)/)
       .setGroup('label', base._label)
       .getRegex()
-    const regexReflink = new ExtendRegexp(/^!?\[(label)\]\s*\[([^\]]*)\]/)
+    const reflinkRe = new ExtendRegexp(/^!?\[(label)\]\s*\[([^\]]*)\]/)
       .setGroup('label', base._label)
       .getRegex()
 
@@ -140,8 +140,8 @@ export class InlineLexer {
       ...base,
       ...{
         em: /^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/,
-        link: regexLink,
-        reflink: regexReflink,
+        link: linkRe,
+        reflink: reflinkRe,
         strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/
       }
     })

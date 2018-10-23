@@ -28,18 +28,15 @@ export interface PedanticBlockRules extends BaseBlockRules {}
 export interface GfmBlockRules extends BaseBlockRules {
   checkbox: RegExp
   fences: RegExp
-}
-
-export interface TableBlockRules extends GfmBlockRules {
   nptable: RegExp
   table: RegExp
 }
 
-export interface ExtraBlockRules extends TableBlockRules {
+export interface ExtraBlockRules extends GfmBlockRules {
   footnote: RegExp
 }
 
-export type BlockRulesTypes = BaseBlockRules | GfmBlockRules | TableBlockRules | ExtraBlockRules
+export type BlockRulesTypes = BaseBlockRules | GfmBlockRules | ExtraBlockRules
 
 export type BlockRulesType = keyof(BlockRulesTypes)
 
@@ -163,7 +160,6 @@ export class Options {
   silent?: boolean = false
   smartLists?: boolean = false
   smartypants?: boolean = false
-  tables?: boolean = true
   trimLinkText?: Function
   /**
    * Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.)
@@ -206,7 +202,7 @@ export class Options {
   nop?: boolean = false
   /**
    * Break inline text
-   * Useful for set new inline rules
+   * Useful for setting new inline rules
    */
   textBreak?: string = defaultTextBreak
   isTextBreakSync?: boolean = true

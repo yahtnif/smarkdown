@@ -27,12 +27,8 @@ exports.testFunc = function ({ dir, Smarkdown }) {
 
     let [actual, expected] = text.split(/\n{4,}/)
 
-    if (!expected.endsWith('</div>') && !expected.endsWith('\n')) {
-      expected += '\n'
-    }
-
     it(filename, function() {
-      expect(Smarkdown.parse(actual, options)).to.equal(expected)
+      expect(Smarkdown.parse(actual, options).trim()).to.equal(expected.trim())
     })
   }
 }

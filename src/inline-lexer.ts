@@ -205,13 +205,13 @@ export class InlineLexer {
   protected static getExtraRules(options: Options): ExtraInlineRules {
     if (this.extraRules) return this.extraRules
 
-    const breaks = options.breaks ? this.getBreaksRules() : this.getGfmRules()
+    const rules = options.breaks ? this.getBreaksRules() : this.getGfmRules()
 
     return (this.extraRules = {
-      ...breaks,
+      ...rules,
       ...{
         fnref: new ExtendRegexp(/^!?\[\^(label)\]/)
-          .setGroup('label', breaks._label)
+          .setGroup('label', rules._label)
           .getRegex()
       }
     })

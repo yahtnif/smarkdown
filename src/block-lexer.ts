@@ -11,7 +11,6 @@ import {
   Links,
   Options,
   PedanticBlockRules,
-  TableBlockRules,
   Token,
   TokenType,
 } from './interfaces'
@@ -28,17 +27,12 @@ export class BlockLexer {
    */
   protected static gfmRules: GfmBlockRules
   /**
-   * GFM + Tables Block Grammar.
-   */
-  protected static tableRules: TableBlockRules
-  /**
-   * GFM + Tables + Extra Block Grammar.
+   * GFM + Extra Block Grammar.
    */
   protected static extraRules: ExtraBlockRules
 
   protected isExtra: boolean
   protected isGfm: boolean
-  protected isTable: boolean
   protected links: Links = Object.create(null)
   protected options: Options
   protected rules: BlockRulesTypes
@@ -186,7 +180,9 @@ export class BlockLexer {
         fences: /^ *(`{3,}|~{3,})[ \.]*(\S+)? *\n([\s\S]*?)\n? *\1 *(?:\n+|$)/,
         checkbox: /^\[([ xX])\] +/,
         paragraph: /^/,
-        heading: /^ *(#{1,6}) +([^\n]+?) *(#*) *(?:\n+|$)/
+        heading: /^ *(#{1,6}) +([^\n]+?) *(#*) *(?:\n+|$)/,
+        nptable: /^ *([^|\n ].*\|.*)\n *([-:]+ *\|[-| :]*)(?:\n((?:.*[^>\n ].*(?:\n|$))*)\n*|$)/,
+        table: /^ *\|(.+)\n *\|?( *[-:]+[-| :]*)(?:\n((?: *[^>\n ].*(?:\n|$))*)\n*|$)/
       }
     }
 
@@ -200,22 +196,10 @@ export class BlockLexer {
     return (this.gfmRules = gfm)
   }
 
-  protected static getTableRules(): TableBlockRules {
-    if (this.tableRules) return this.tableRules
-
-    return (this.tableRules = {
-      ...this.getGfmRules(),
-      ...{
-        nptable: /^ *([^|\n ].*\|.*)\n *([-:]+ *\|[-| :]*)(?:\n((?:.*[^>\n ].*(?:\n|$))*)\n*|$)/,
-        table: /^ *\|(.+)\n *\|?( *[-:]+[-| :]*)(?:\n((?: *[^>\n ].*(?:\n|$))*)\n*|$)/
-      }
-    })
-  }
-
   protected static getExtraRules(): ExtraBlockRules {
     if (this.extraRules) return this.extraRules
 
-    const table = this.getTableRules()
+    const table = this.getGfmRules()
 
     table.paragraph = new ExtendRegexp(table.paragraph)
       .setGroup(
@@ -236,11 +220,7 @@ export class BlockLexer {
     } else if (this.options.pedantic) {
       this.rules = this.self.getPedanticRules()
     } else if (this.options.gfm) {
-      if (this.options.tables) {
-        this.rules = this.self.getTableRules()
-      } else {
-        this.rules = this.self.getGfmRules()
-      }
+      this.rules = this.self.getGfmRules()
     } else {
       this.rules = this.self.getBaseRules()
     }
@@ -254,7 +234,6 @@ export class BlockLexer {
     )
 
     this.isGfm = (<GfmBlockRules>this.rules).fences !== undefined
-    this.isTable = (<TableBlockRules>this.rules).table !== undefined
     this.isExtra = (<ExtraBlockRules>this.rules).footnote !== undefined
   }
 
@@ -355,8 +334,8 @@ export class BlockLexer {
       // table no leading pipe (gfm)
       if (
         top &&
-        this.isTable &&
-        (execArr = (<TableBlockRules>this.rules).nptable.exec(nextPart))
+        this.isGfm &&
+        (execArr = (<GfmBlockRules>this.rules).nptable.exec(nextPart))
       ) {
         const item: Token = {
           type: TokenType.table,
@@ -566,8 +545,8 @@ export class BlockLexer {
       // table (gfm)
       if (
         top &&
-        this.isTable &&
-        (execArr = (<TableBlockRules>this.rules).table.exec(nextPart))
+        this.isGfm &&
+        (execArr = (<GfmBlockRules>this.rules).table.exec(nextPart))
       ) {
         const item: Token = {
           type: TokenType.table,

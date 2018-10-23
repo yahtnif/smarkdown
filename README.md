@@ -128,7 +128,6 @@ Smarkdown.setOptions({
 | slug | function | str => built_in_slug(str) | Slugify `id` attribute for heading and footnote. |
 | smartLists | boolean | false | If true, use smarter list behavior than those found in `markdown.pl`. |
 | smartypants | boolean | false | If true, use "smart" typographic punctuation for things like quotes and dashes. |
-| tables | boolean | true | If true and `gfm` is true, use [GFM Tables](https://github.github.com/gfm/#tables-extension) extension. |
 | trimLinkText | function | null | Useful for text truncation. |
 | xhtml | boolean | false | Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.) with a "/" as required by XHTML. |
 
@@ -235,8 +234,7 @@ Smarkdown.setBlockRule(regExt, (execArr) => {
 
 const str = `::: warning
 Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor.
-:::
-`
+:::`
 
 console.log(Smarkdown.parse(str))
 

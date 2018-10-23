@@ -3,6 +3,9 @@ mark: ==mark==
 ruby: [注音]{zhuyin}
 sub: H~2~O
 sup: 1^st^
+--small text--
+++large text++
++++large text+++
 
 
 
@@ -10,4 +13,7 @@ sup: 1^st^
 mark: ==mark==
 ruby: [注音]{zhuyin}
 sub: H~2~O
-sup: 1^st^</p>
+sup: 1^st^
+--small text--
+++large text++
++++large text+++</p>

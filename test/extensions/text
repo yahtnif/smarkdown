@@ -1,0 +1,9 @@
+--small text--
+++large text++
++++large text+++
+
+
+
+<p><span class="small-text">small text</span>
+<span class="large-text is-1">large text</span>
+<span class="large-text is-2">large text</span></p>

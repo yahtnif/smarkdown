@@ -220,6 +220,34 @@ Smarkdown.setInlineRule(
     priority: 1
   }
 )
+
+/**
+ * small text
+ *
+ * --small text-- => <span class="small-text">small text</span>
+ */
+const smallTextRe = /^--(?=\S)([\s\S]*?\S)--/
+Smarkdown.setInlineRule(smallTextRe, function(execArr) {
+  return `<span class="small-text">${execArr[1]}</span>`
+})
+
+/**
+ * large text
+ *
+ * ++large text++ => <span class="large-text is-1">large text</span>
+ * +++large text+++ => <span class="large-text is-2">large text</span>
+ * ++++large text++++ => <span class="large-text is-3">large text</span>
+ */
+const largeTextRe = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
+Smarkdown.setInlineRule(largeTextRe, function(execArr) {
+  let size = execArr[1].length - 1
+
+  if (size > 3) {
+    size = 3
+  }
+
+  return `<span class="large-text is-${size}">${execArr[2]}</span>`
+})
 ```
 
 ### Block

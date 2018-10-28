@@ -1,5 +1,13 @@
+import {
+  cleanUrl,
+  defaultTextBreak,
+  escape,
+  resolveUrl,
+  rtrim,
+  slug,
+  unescape
+} from './helpers'
 import { Renderer } from './renderer'
-import { escape, unescape, slug, rtrim, resolveUrl, cleanUrl, defaultTextBreak } from './helpers'
 
 export interface BaseBlockRules {
   blockquote: RegExp

@@ -1,7 +1,7 @@
 import { EmptyObject } from './interfaces'
 
-const escapeTest = /[&<>"']/
-const escapeReplace = /[&<>"']/g
+const escapeTestRegex = /[&<>"']/
+const escapeReplaceRegex = /[&<>"']/g
 const replacements: EmptyObject = {
   '&': '&amp;',
   '<': '&lt;',
@@ -10,17 +10,17 @@ const replacements: EmptyObject = {
   "'": '&#39;'
 }
 
-const escapeTestNoEncode = /[<>"']|&(?!#?\w+;)/
-const escapeReplaceNoEncode = /[<>"']|&(?!#?\w+;)/g
+const escapeTestNoEncodeRegex = /[<>"']|&(?!#?\w+;)/
+const escapeReplaceNoEncodeRegex = /[<>"']|&(?!#?\w+;)/g
 const unescapeRegex = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi
 
 export function escape(html: string, encode?: boolean): string {
   if (encode) {
-    if (escapeTest.test(html)) {
-      return html.replace(escapeReplace, (ch: string) => replacements[ch])
+    if (escapeTestRegex.test(html)) {
+      return html.replace(escapeReplaceRegex, (ch: string) => replacements[ch])
     }
-  } else if (escapeTestNoEncode.test(html)) {
-    return html.replace(escapeReplaceNoEncode, (ch: string) => replacements[ch])
+  } else if (escapeTestNoEncodeRegex.test(html)) {
+    return html.replace(escapeReplaceNoEncodeRegex, (ch: string) => replacements[ch])
   }
 
   return html
@@ -184,7 +184,7 @@ export class ExtendRegexp {
 export const defaultTextBreak = '\\<![`*~'
 
 // match nothing
-export const noopExec = /S^/
+export const noopRegex = /S^/
 
 // Escape RegExp special characters
 const escapeCharsRegex = /[-|\\{}()[\]^$+*?.]/g

@@ -1,7 +1,6 @@
-import { Parser } from './parser'
-import { Renderer } from './renderer'
-import { InlineLexer } from './inline-lexer'
 import { BlockLexer } from './block-lexer'
+import { defaultTextBreak, escapeStringRegexp } from './helpers'
+import { InlineLexer } from './inline-lexer'
 import {
   BlockRenderer,
   BlockRuleOption,
@@ -12,7 +11,8 @@ import {
   Options,
   Token
 } from './interfaces'
-import { defaultTextBreak, escapeStringRegexp } from './helpers'
+import { Parser } from './parser'
+import { Renderer } from './renderer'
 
 export default class Smarkdown {
   static options = new Options()

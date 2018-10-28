@@ -1,5 +1,4 @@
-import { ExtendRegexp, defaultTextBreak, noopExec } from './helpers'
-import { Renderer } from './renderer'
+import { defaultTextBreak, ExtendRegexp, noopRegex } from './helpers'
 import {
   BaseInlineRules,
   BreaksInlineRules,
@@ -14,6 +13,7 @@ import {
   Options,
   PedanticInlineRules,
 } from './interfaces'
+import { Renderer } from './renderer'
 
 /**
  * Inline Lexer & Compiler.
@@ -244,7 +244,7 @@ export class InlineLexer {
       (
         rule: InlineRulesType
       ) => {
-        this.rules[rule] = noopExec
+        this.rules[rule] = noopRegex
       }
     )
 

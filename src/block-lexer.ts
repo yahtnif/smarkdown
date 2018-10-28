@@ -1,4 +1,4 @@
-import { ExtendRegexp, noopExec } from './helpers'
+import { ExtendRegexp, noopRegex } from './helpers'
 import {
   Align,
   BaseBlockRules,
@@ -155,8 +155,8 @@ export class BlockLexer {
     const pedantic: PedanticBlockRules = {
       ...base,
       ...{
-        html: htmlRegex,
-        def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/
+        def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,
+        html: htmlRegex
       }
     }
 
@@ -223,7 +223,7 @@ export class BlockLexer {
       (
         rule: BlockRulesType
       ) => {
-        this.rules[rule] = noopExec
+        this.rules[rule] = noopRegex
       }
     )
 

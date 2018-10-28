@@ -1,4 +1,3 @@
-import { Renderer, TextRenderer } from './renderer'
 import { InlineLexer } from './inline-lexer'
 import {
   BlockRenderer,
@@ -8,6 +7,7 @@ import {
   Token,
   TokenType,
 } from './interfaces'
+import { Renderer, TextRenderer } from './renderer'
 
 /**
  * Parsing & Compiling.

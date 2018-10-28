@@ -1,4 +1,4 @@
-import { Options, Align } from './interfaces'
+import { Align, Options } from './interfaces'
 
 export class Renderer {
   _footnotes: string[] = []

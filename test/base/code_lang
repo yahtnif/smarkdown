@@ -1,0 +1,12 @@
+langAttribute: true
+langPrefix: 'lang-'
+
+===
+
+```js
+import Smarkdown from 'smarkdown'
+```
+
+
+
+<pre data-lang="js"><code class="lang-js">import Smarkdown from &#39;smarkdown&#39;</code></pre>

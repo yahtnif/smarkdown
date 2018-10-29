@@ -1,5 +1,10 @@
 `/link-in-code/users?email=one@two.com`
 
+```js
+import Smarkdown from 'smarkdown'
+```
+
 
 
 <p><code>/link-in-code/users?email=one@two.com</code></p>
+<pre><code class="language-js">import Smarkdown from &#39;smarkdown&#39;</code></pre>

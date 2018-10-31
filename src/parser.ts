@@ -4,6 +4,7 @@ import {
   EmptyObject,
   Links,
   Options,
+  TablecellFlags,
   Token,
   TokenType,
 } from './interfaces'
@@ -33,7 +34,7 @@ export class Parser {
   }
 
   static parse(tokens: Token[], links: Links, options?: Options): string {
-    const parser = new this(options)
+    const parser: Parser = new this(options)
     return parser.parse(links, tokens)
   }
 
@@ -53,7 +54,7 @@ export class Parser {
     )
     this.tokens = tokens.reverse()
 
-    let out = ''
+    let out: string = ''
 
     while (this.next()) {
       out += this.tok()
@@ -79,7 +80,7 @@ export class Parser {
   }
 
   protected parseText() {
-    let body = this.token.text
+    let body: string = this.token.text
     let nextElement: Token
 
     while (
@@ -113,10 +114,10 @@ export class Parser {
         )
       }
       case TokenType.listStart: {
-        let body = '',
-          ordered = this.token.ordered,
-          start = this.token.start,
-          isTaskList = false
+        let body: string = '',
+          ordered: boolean = this.token.ordered,
+          start: string | number = this.token.start,
+          isTaskList: boolean = false
 
         while (this.next().type != TokenType.listEnd) {
           if (this.token.checked !== null) {
@@ -129,9 +130,9 @@ export class Parser {
         return this.renderer.list(body, ordered, start, isTaskList)
       }
       case TokenType.listItemStart: {
-        let body = ''
-        const loose = this.token.loose
-        const checked = this.token.checked
+        let body: string = ''
+        const loose: boolean = this.token.loose
+        const checked: boolean = this.token.checked
 
         while (this.next().type != TokenType.listItemEnd) {
           body += !loose && this.token.type === <number>TokenType.text
@@ -155,15 +156,18 @@ export class Parser {
         )
       }
       case TokenType.table: {
-        let header = '',
-          body = '',
-          cell = '',
-          row
+        let header: string = '',
+          body: string = '',
+          cell: string = '',
+          row: string | string[]
 
         // header
         for (let i = 0; i < this.token.header.length; i++) {
-          const flags = { header: true, align: this.token.align[i] }
-          const out = this.inlineLexer.output(this.token.header[i])
+          const flags: TablecellFlags = {
+            header: true,
+            align: this.token.align[i]
+          }
+          const out: string = this.inlineLexer.output(this.token.header[i])
 
           cell += this.renderer.tablecell(out, flags)
         }
@@ -188,7 +192,7 @@ export class Parser {
         return this.renderer.table(header, body)
       }
       case TokenType.blockquoteStart: {
-        let body = ''
+        let body: string = ''
 
         while (this.next().type != TokenType.blockquoteEnd) {
           body += this.tok()
@@ -213,7 +217,7 @@ export class Parser {
           }
         }
 
-        const errMsg = `Token with "${this.token.type}" type was not found.`
+        const errMsg: string = `Token with "${this.token.type}" type was not found.`
 
         if (this.options.silent) {
           console.log(errMsg)

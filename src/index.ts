@@ -1,5 +1,5 @@
 import { BlockLexer } from './block-lexer'
-import { defaultTextBreak, escapeStringRegexp } from './helpers'
+import { defaultTextBreak, escapeStringRegexp, getBreakChar, getRuleType } from './helpers'
 import { InlineLexer } from './inline-lexer'
 import {
   BlockRenderer,
@@ -15,11 +15,11 @@ import { Parser } from './parser'
 import { Renderer } from './renderer'
 
 export default class Smarkdown {
-  static options = new Options()
-  static Renderer = Renderer
+  static options: Options = new Options()
+  static Renderer: typeof Renderer = Renderer
   protected static blockRenderers: BlockRenderer[] = []
 
-  static getOptions(options: Options) {
+  static getOptions(options: Options): Options {
     if (!options) {
       return this.options
     }
@@ -44,7 +44,7 @@ export default class Smarkdown {
     renderer: NewRenderer,
     options: InlineRuleOption = {}
   ) {
-    let breakChar = regExp.toString().match(/^\/\^\(*\\?(.)/)[1]
+    let breakChar: string = getBreakChar(regExp)
 
     if (breakChar && !this.options.textBreak.includes(breakChar)) {
       breakChar = escapeStringRegexp(breakChar)
@@ -55,18 +55,18 @@ export default class Smarkdown {
     InlineLexer.newRules.push({
       breakChar,
       options,
-      rule: regExp,
-      render: renderer
+      render: renderer,
+      rule: regExp
     })
   }
 
   static unsetInlineRule(regExp: RegExp) {
     InlineLexer.newRules = InlineLexer.newRules.filter(
-      (R) => R.rule.toString() !== regExp.toString()
+      (R) => getRuleType(R.rule) !== getRuleType(regExp)
     )
 
     // Reset textBreak
-    const breakchars =
+    const breakchars: string =
       defaultTextBreak +
       InlineLexer.newRules
         .filter((R) => !defaultTextBreak.includes(R.breakChar))
@@ -86,11 +86,11 @@ export default class Smarkdown {
     renderer: NewRenderer,
     options: BlockRuleOption = {}
   ) {
-    const ruleType = regExp.toString()
+    const ruleType: string = getRuleType(regExp)
 
     BlockLexer.newRules.push({
-      rule: regExp,
       options,
+      rule: regExp,
       type: ruleType
     })
 
@@ -101,7 +101,7 @@ export default class Smarkdown {
   }
 
   static unsetBlockRule(regExp: RegExp) {
-    const ruleType = regExp.toString()
+    const ruleType: string = getRuleType(regExp)
 
     BlockLexer.newRules = BlockLexer.newRules.filter((R) => R.type !== ruleType)
 
@@ -116,7 +116,7 @@ export default class Smarkdown {
 
   static parse(src: string, options: Options): string {
     try {
-      const opts = this.getOptions(options)
+      const opts: Options = this.getOptions(options)
       const { tokens, links } = this.callBlockLexer(src, opts)
       return this.callParser(tokens, links, opts)
     } catch (e) {
@@ -150,7 +150,7 @@ export default class Smarkdown {
     options?: Options
   ): string {
     if (this.blockRenderers.length) {
-      const parser = new Parser(options)
+      const parser: Parser = new Parser(options)
       parser.blockRenderers = this.blockRenderers
       return parser.parse(links, tokens)
     } else {

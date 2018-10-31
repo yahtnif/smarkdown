@@ -48,14 +48,14 @@ export class BlockLexer {
     options?: Options,
     top?: boolean
   ): LexerReturns {
-    const lexer = new this(this, options)
+    const lexer: BlockLexer = new this(this, options)
     return lexer.getTokens(src, top)
   }
 
   protected static getBaseRules(): BaseBlockRules {
     if (this.baseRules) return this.baseRules
 
-    const html =
+    const html: string =
       '^ {0,3}(?:' + // optional indentation
       '<(script|pre|style)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)' + // (1)
       '|comment[^\\n]*(\\n+|$)' + // (2)
@@ -104,14 +104,14 @@ export class BlockLexer {
       .setGroup('def', '\\n+(?=' + base.def.source + ')')
       .getRegex()
 
-    const tag =
+    const tag: string =
       'address|article|aside|base|basefont|blockquote|body|caption' +
       '|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption' +
       '|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe' +
       '|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option' +
       '|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr' +
       '|track|ul'
-    const attribute = / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/
+    const attribute: RegExp = / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/
 
     base.html = new ExtendRegexp(base.html, 'i')
       .setGroup('comment', base._comment)
@@ -136,7 +136,7 @@ export class BlockLexer {
   protected static getPedanticRules(): PedanticBlockRules {
     if (this.pedanticRules) return this.pedanticRules
 
-    const base = this.getBaseRules()
+    const base: BaseBlockRules = this.getBaseRules()
 
     const html =
       '^ *(?:comment *(?:\\n|\\s*$)' +
@@ -166,7 +166,7 @@ export class BlockLexer {
   protected static getGfmRules(): GfmBlockRules {
     if (this.gfmRules) return this.gfmRules
 
-    const base = this.getBaseRules()
+    const base: BaseBlockRules = this.getBaseRules()
 
     const gfm: GfmBlockRules = {
       ...base,
@@ -180,8 +180,8 @@ export class BlockLexer {
       }
     }
 
-    const group1 = gfm.fences.source.replace('\\1', '\\2')
-    const group2 = base.list.source.replace('\\1', '\\3')
+    const group1: string = gfm.fences.source.replace('\\1', '\\2')
+    const group2: string = base.list.source.replace('\\1', '\\3')
 
     gfm.paragraph = new ExtendRegexp(base.paragraph)
       .setGroup('(?!', `(?!${group1}|${group2}|`)
@@ -193,9 +193,9 @@ export class BlockLexer {
   protected static getExtraRules(): ExtraBlockRules {
     if (this.extraRules) return this.extraRules
 
-    const table = this.getGfmRules()
+    const gfm: GfmBlockRules = this.getGfmRules()
 
-    table.paragraph = new ExtendRegexp(table.paragraph)
+    gfm.paragraph = new ExtendRegexp(gfm.paragraph)
       .setGroup(
         'footnote',
         /^\[\^([^\]]+)\]: *([^\n]*(?:\n+|$)(?: {1,}[^\n]*(?:\n+|$))*)/
@@ -203,7 +203,7 @@ export class BlockLexer {
       .getRegex()
 
     return (this.extraRules = {
-      ...table,
+      ...gfm,
       footnote: /^\[\^([^\]]+)\]: ([^\n]+)/
     })
   }
@@ -235,13 +235,13 @@ export class BlockLexer {
    * Lexing.
    */
   protected getTokens(src: string, top?: boolean): LexerReturns {
-    let nextPart = src
+    let nextPart: string = src
     let execArr: RegExpExecArray
-    const newRules = this.self.newRules || []
-    const newRulesBefore = newRules.filter(
+    const newRules: BlockRule[] = this.self.newRules || []
+    const newRulesBefore: BlockRule[] = newRules.filter(
       (rule) => rule.options.priority
     ).sort((a, b) => b.options.priority - a.options.priority)
-    const newRulesAfter = newRules.filter(
+    const newRulesAfter: BlockRule[] = newRules.filter(
       (rule) => !rule.options.priority
     )
 
@@ -272,7 +272,7 @@ export class BlockLexer {
       // code
       if ((execArr = this.rules.code.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
-        const code = execArr[0].replace(/^ {4}/gm, '')
+        const code: string = execArr[0].replace(/^ {4}/gm, '')
 
         this.tokens.push({
           type: TokenType.code,
@@ -383,7 +383,7 @@ export class BlockLexer {
         this.tokens.push({
           type: TokenType.blockquoteStart
         })
-        const str = execArr[0].replace(/^ *> ?/gm, '')
+        const str: string = execArr[0].replace(/^ *> ?/gm, '')
 
         // Pass `top` to keep the current
         // "toplevel" state. This is exactly
@@ -399,7 +399,7 @@ export class BlockLexer {
       if ((execArr = this.rules.list.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
         const bull: string = execArr[2]
-        const isordered = bull.length > 1
+        const isordered: boolean = bull.length > 1
 
         const listStart = {
           type: TokenType.listStart,
@@ -411,9 +411,9 @@ export class BlockLexer {
         this.tokens.push(listStart)
 
         // Get each top-level item.
-        const str = execArr[0].match(this.rules.item)
-        const listItems = []
-        const length = str.length
+        const arr: RegExpMatchArray = execArr[0].match(this.rules.item)
+        const listItems: Token[] = []
+        const length: number = arr.length
 
         let next: boolean = false,
           space: number,
@@ -421,7 +421,7 @@ export class BlockLexer {
           loose: boolean
 
         for (let i = 0; i < length; i++) {
-          let item = str[i]
+          let item: string = arr[i]
           let checked: boolean | null = null
 
           // Remove the list item's bullet, so it is seen as the next token.
@@ -450,13 +450,13 @@ export class BlockLexer {
           if (this.options.smartLists && i !== length - 1) {
             blockBullet = this.self
               .getBaseRules()
-              .bullet.exec(str[i + 1])[0]
+              .bullet.exec(arr[i + 1])[0]
 
             if (
               bull !== blockBullet &&
               !(bull.length > 1 && blockBullet.length > 1)
             ) {
-              nextPart = str.slice(i + 1).join('\n') + nextPart
+              nextPart = arr.slice(i + 1).join('\n') + nextPart
               i = length - 1
             }
           }
@@ -476,7 +476,7 @@ export class BlockLexer {
             listStart.loose = true
           }
 
-          const token = {
+          const token: Token = {
             loose,
             checked,
             type: TokenType.listItemStart
@@ -507,8 +507,8 @@ export class BlockLexer {
       // html
       if ((execArr = this.rules.html.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
-        const attr = execArr[1]
-        const isPre = attr === 'pre' || attr === 'script' || attr === 'style'
+        const attr: string = execArr[1]
+        const isPre: boolean = attr === 'pre' || attr === 'script' || attr === 'style'
 
         this.tokens.push({
           type: this.options.sanitize ? TokenType.paragraph : TokenType.html,
@@ -522,10 +522,10 @@ export class BlockLexer {
       if (top && (execArr = this.rules.def.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
 
-        const tag = execArr[1].toLowerCase().replace(/\s+/g, ' ')
+        const tag: string = execArr[1].toLowerCase().replace(/\s+/g, ' ')
 
         if (!this.links[tag]) {
-          let title = execArr[3]
+          let title: string = execArr[3]
 
           if (title) {
             title = title.substring(1, title.length - 1)
@@ -568,7 +568,7 @@ export class BlockLexer {
             }
           }
 
-          const td = execArr[3].replace(/(?: *\| *)?\n$/, '').split('\n')
+          const td: string[] = execArr[3].replace(/(?: *\| *)?\n$/, '').split('\n')
 
           for (let i = 0; i < td.length; i++) {
             item.cells[i] = this.splitCells(
@@ -650,9 +650,9 @@ export class BlockLexer {
   protected splitCells(tableRow: string, count?: number) {
     // ensure that every cell-delimiting pipe has a space
     // before it to distinguish it from an escaped pipe
-    let row = tableRow.replace(/\|/g, function(match, offset, str) {
-        let escaped = false,
-          curr = offset
+    let row: string = tableRow.replace(/\|/g, function(match, offset, str) {
+        let escaped: boolean = false,
+          curr: number = offset
         while (--curr >= 0 && str[curr] === '\\') escaped = !escaped
         if (escaped) {
           // odd number of slashes means | is escaped
@@ -663,7 +663,7 @@ export class BlockLexer {
           return ' |'
         }
       })
-    let cells = row.split(/ \|/)
+    let cells: string[] = row.split(/ \|/)
 
     if (cells.length > count) {
       cells.splice(count)

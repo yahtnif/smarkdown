@@ -62,14 +62,14 @@ export class InlineLexer {
    * Static Lexing/Compiling Method.
    */
   static output(src: string, links: Links, options: Options): string {
-    const inlineLexer = new this(this, links, options)
+    const inlineLexer: InlineLexer = new this(this, links, options)
     return inlineLexer.output(src)
   }
 
   protected static getBaseRules(): BaseInlineRules {
     if (this.baseRules) return this.baseRules
 
-    const tag = '^comment'
+    const tag: string = '^comment'
       + '|^</[a-zA-Z][\\w:-]*\\s*>' // self-closing tag
       + '|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>' // open tag
       + '|^<\\?[\\s\\S]*?\\?>' // processing instruction, e.g. <?php ?>
@@ -105,7 +105,7 @@ export class InlineLexer {
       .setGroup('email', base._email)
       .getRegex()
 
-    const comment = /<!--(?!-?>)[\s\S]*?-->/ // block comment
+    const comment: RegExp = /<!--(?!-?>)[\s\S]*?-->/ // block comment
 
     base.tag = new ExtendRegexp(base.tag)
       .setGroup('comment', comment)
@@ -128,11 +128,11 @@ export class InlineLexer {
   protected static getPedanticRules(): PedanticInlineRules {
     if (this.pedanticRules) return this.pedanticRules
 
-    const base = this.getBaseRules()
-    const linkRegex = new ExtendRegexp(/^!?\[(label)\]\((.*?)\)/)
+    const base: BaseInlineRules = this.getBaseRules()
+    const linkRegex: RegExp = new ExtendRegexp(/^!?\[(label)\]\((.*?)\)/)
       .setGroup('label', base._label)
       .getRegex()
-    const reflinkRegex = new ExtendRegexp(/^!?\[(label)\]\s*\[([^\]]*)\]/)
+    const reflinkRegex: RegExp = new ExtendRegexp(/^!?\[(label)\]\s*\[([^\]]*)\]/)
       .setGroup('label', base._label)
       .getRegex()
 
@@ -150,19 +150,19 @@ export class InlineLexer {
   protected static getGfmRules(): GfmInlineRules {
     if (this.gfmRules) return this.gfmRules
 
-    const base = this.getBaseRules()
+    const base: BaseInlineRules = this.getBaseRules()
 
-    const escape = new ExtendRegexp(base.escape)
+    const escape: RegExp = new ExtendRegexp(base.escape)
       .setGroup('])', '~|])')
       .getRegex()
 
-    const _extended_email = /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/
-    const _url = /^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/
-    const url = new ExtendRegexp(_url)
+    const _extended_email: RegExp = /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/
+    const _url: RegExp = /^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/
+    const url: RegExp = new ExtendRegexp(_url)
       .setGroup('email', _extended_email)
       .getRegex()
 
-    const _backpedal = /(?:[^?!.,:;*_~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_~)]+(?!$))+/
+    const _backpedal: RegExp = /(?:[^?!.,:;*_~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_~)]+(?!$))+/
 
     /**
      * [GFM Strikethrough](https://github.github.com/gfm/#strikethrough-extension-)
@@ -172,9 +172,9 @@ export class InlineLexer {
      *
      * const del = /^~+(?=\S)([\s\S]*?\S)~+/
      */
-    const del = /^~~(?=\S)([\s\S]*?\S)~~/
+    const del: RegExp = /^~~(?=\S)([\s\S]*?\S)~~/
 
-    const text = new ExtendRegexp(base.text)
+    const text: RegExp = new ExtendRegexp(base.text)
       .setGroup(']|', '~]|')
       .setGroup(
         '|$',
@@ -191,7 +191,7 @@ export class InlineLexer {
   protected static getBreaksRules(): BreaksInlineRules {
     if (this.breaksRules) return this.breaksRules
 
-    const gfm = this.getGfmRules()
+    const gfm: GfmInlineRules = this.getGfmRules()
 
     return (this.breaksRules = {
       ...gfm,
@@ -205,7 +205,7 @@ export class InlineLexer {
   protected static getExtraRules(options: Options): ExtraInlineRules {
     if (this.extraRules) return this.extraRules
 
-    const rules = options.breaks ? this.getBreaksRules() : this.getGfmRules()
+    const rules: BreaksInlineRules | GfmInlineRules = options.breaks ? this.getBreaksRules() : this.getGfmRules()
 
     return (this.extraRules = {
       ...rules,
@@ -231,7 +231,7 @@ export class InlineLexer {
     }
 
     if (!this.options.isTextBreakSync) {
-      const textRuleStr = this.rules.text.toString()
+      const textRuleStr: string = this.rules.text.toString()
 
       this.rules.text = new RegExp(
         textRuleStr.replace(this.textBreak.slice(4), this.options.textBreak.slice(4)).slice(1, -1)
@@ -260,15 +260,14 @@ export class InlineLexer {
    * Lexing/Compiling.
    */
   output(nextPart: string): string {
-    nextPart = nextPart
     let execArr: RegExpExecArray
-    let out = ''
-    const preParts = [nextPart, nextPart]
-    const newRules = this.self.newRules || []
-    const newRulesBefore = newRules.filter(
+    let out: string = ''
+    const preParts: string[] = [nextPart, nextPart]
+    const newRules: InlineRule[] = this.self.newRules || []
+    const newRulesBefore: InlineRule[] = newRules.filter(
       (rule) => rule.options.priority
     ).sort((a, b) => b.options.priority - a.options.priority)
-    const newRulesAfter = newRules.filter(
+    const newRulesAfter: InlineRule[] = newRules.filter(
       (rule) => !rule.options.priority
     )
 
@@ -413,8 +412,8 @@ export class InlineLexer {
         (execArr = this.rules.nolink.exec(nextPart))
       ) {
         nextPart = nextPart.substring(execArr[0].length)
-        const keyLink = (execArr[2] || execArr[1]).replace(/\s+/g, ' ')
-        const link = this.links[keyLink.toLowerCase()]
+        const keyLink: string = (execArr[2] || execArr[1]).replace(/\s+/g, ' ')
+        const link: Link = this.links[keyLink.toLowerCase()]
 
         if (!link || !link.href) {
           out += execArr[0].charAt(0)
@@ -505,8 +504,8 @@ export class InlineLexer {
    * Compile Link.
    */
   protected outputLink(execArr: RegExpExecArray, link: Link) {
-    const href = link.href
-    const title = link.title ? this.options.escape(link.title) : null
+    const href: string = link.href
+    const title: string | null = link.title ? this.options.escape(link.title) : null
 
     return execArr[0].charAt(0) !== '!'
       ? this.renderer.link(href, title, this.output(execArr[1]))
@@ -519,23 +518,21 @@ export class InlineLexer {
   protected smartypants(text: string) {
     if (!this.options.smartypants) return text
 
-    return (
-      text
-        // em-dashes
-        .replace(/---/g, '\u2014')
-        // en-dashes
-        .replace(/--/g, '\u2013')
-        // opening singles
-        .replace(/(^|[-\u2014/(\[{"\s])'/g, '$1\u2018')
-        // closing singles & apostrophes
-        .replace(/'/g, '\u2019')
-        // opening doubles
-        .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, '$1\u201c')
-        // closing doubles
-        .replace(/"/g, '\u201d')
-        // ellipses
-        .replace(/\.{3}/g, '\u2026')
-    )
+    return text
+      // em-dashes
+      .replace(/---/g, '\u2014')
+      // en-dashes
+      .replace(/--/g, '\u2013')
+      // opening singles
+      .replace(/(^|[-\u2014/(\[{"\s])'/g, '$1\u2018')
+      // closing singles & apostrophes
+      .replace(/'/g, '\u2019')
+      // opening doubles
+      .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, '$1\u201c')
+      // closing doubles
+      .replace(/"/g, '\u201d')
+      // ellipses
+      .replace(/\.{3}/g, '\u2026')
   }
 
   /**
@@ -544,9 +541,8 @@ export class InlineLexer {
   protected mangle(text: string) {
     if (!this.options.mangle) return text
 
-    let out = ''
-    let length = text.length
-    for (let i = 0; i < length; i++) {
+    let out: string = ''
+    for (let i = 0; i < text.length; i++) {
       let ch: string | number = text.charCodeAt(i)
 
       if (Math.random() > 0.5) {

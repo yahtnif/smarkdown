@@ -1,4 +1,4 @@
-import { Align, Options } from './interfaces'
+import { Options, TablecellFlags } from './interfaces'
 
 export class Renderer {
   _footnotes: string[] = []
@@ -19,7 +19,7 @@ ${quote}</blockquote>
 
   code(code: string, lang?: string, escaped?: boolean): string {
     if (this.options.highlight) {
-      const out = this.options.highlight(code, lang)
+      const out: string = this.options.highlight(code, lang)
 
       if (out != null && out !== code) {
         escaped = true
@@ -31,7 +31,7 @@ ${quote}</blockquote>
       return `<pre><code>${escaped ? code : this.options.escape(code, true)}</code></pre>`
     }
 
-    const dataLang = this.options.langAttribute
+    const dataLang: string = this.options.langAttribute
       ? ` data-lang="${this.options.escape(lang, true)}"`
       : ''
 
@@ -43,7 +43,7 @@ ${quote}</blockquote>
   }
 
   footnote(footnotes: { [key: string]: string }): string {
-    let out = `<div class="footnotes" role="doc-endnotes">${this.hr()}<ol>`
+    let out: string = `<div class="footnotes" role="doc-endnotes">${this.hr()}<ol>`
 
     for (const refname of this._footnotes) {
       out += `<li id="fn:${refname}" role="doc-endnote"><span class="cite-text">${footnotes[
@@ -61,14 +61,15 @@ ${quote}</blockquote>
 
   heading(text: string, level: number, raw: string, ends: string): string {
     const { headerId } = this.options
-    let attr = ''
+    let attr: string = ''
+
     if (
       (headerId === true) ||
       (headerId === 'off' && ends) ||
       (headerId === 'on' && !ends)
     ) {
       let id: string = this.options.slug(raw)
-      const count = this._headings.filter((h) => h === raw).length
+      const count: number = this._headings.filter((h) => h === raw).length
       if (count > 0) {
         id += `-${count}`
       }
@@ -89,8 +90,8 @@ ${quote}</blockquote>
   }
 
   list(body: string, ordered?: boolean, start?: string | number, isTaskList?: boolean): string {
-    const type = ordered ? 'ol' : 'ul'
-    const startatt = (ordered && start !== 1) ? (' start="' + start + '"') : ''
+    const type: string = ordered ? 'ol' : 'ul'
+    const startatt: string = (ordered && start !== 1) ? (' start="' + start + '"') : ''
 
     return `<${type}${startatt}>\n${body}</${type}>\n`
   }
@@ -127,11 +128,11 @@ ${content}</tr>
 
   tablecell(
     content: string,
-    flags: { header?: boolean, align?: Align }
+    flags: TablecellFlags
   ): string {
     const { header, align } = flags
-    const type = header ? 'th' : 'td'
-    const tag = align
+    const type: string = header ? 'th' : 'td'
+    const tag: string = align
       ? '<' + type + ' align="' + align + '">'
       : '<' + type + '>'
     return tag + content + '</' + type + '>\n'
@@ -170,7 +171,7 @@ ${content}</tr>
 
     if (href === null) return text
 
-    let out = '<img src="' + href + '" alt="' + text + '"'
+    let out: string = '<img src="' + href + '" alt="' + text + '"'
 
     if (title) {
       out += ' title="' + title + '"'
@@ -186,16 +187,17 @@ ${content}</tr>
 
     if (href === null) return text
 
-    let out = '<a href="' + this.options.escape(href) + '"'
+    let out: string = '<a href="' + this.options.escape(href) + '"'
 
     if (title) {
       out += ' title="' + title + '"'
     }
 
     const { linksInNewTab, trimLinkText } = this.options
-    const targetBlank =
+    const targetBlank: boolean =
       linksInNewTab === true ||
       (typeof linksInNewTab === 'function' && linksInNewTab.call(this, href))
+
     if (typeof targetBlank === 'string') {
       out += targetBlank
     } else if (targetBlank) {

@@ -58,8 +58,7 @@ export interface Links {
 }
 
 export enum TokenType {
-  space = 1,
-  blockquoteEnd,
+  blockquoteEnd = 1,
   blockquoteStart,
   code,
   footnote,
@@ -73,6 +72,7 @@ export enum TokenType {
   looseItemEnd,
   looseItemStart,
   paragraph,
+  space,
   table,
   text,
 }
@@ -258,4 +258,9 @@ export interface BlockRule {
   options: BlockRuleOption
   rule: RegExp
   type: string
+}
+
+export interface TablecellFlags {
+  header?: boolean,
+  align?: Align
 }

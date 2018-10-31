@@ -146,7 +146,7 @@ Extension options:
 
 ### Inline
 
-Using `Smarkdown.setInlineRule( regexp, callback, [, options] )`, which takes a regular expression as the first argument, and returns result `regexp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
+Using `Smarkdown.setInlineRule(regexp, callback, [, options])`, which takes a regular expression as the first argument, and returns result `regexp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
 
 `regexp` **MUST** start with `^`.
 
@@ -252,7 +252,7 @@ Smarkdown.setInlineRule(largeTextRegex, function(execArr) {
 
 ### Block
 
-Using `Smarkdown.setBlockRule( regexp, callback, [, options] )`, like `Smarkdown.setInlineRule( regexp, callback, [, options] )`
+Using `Smarkdown.setBlockRule(regexp, callback, [, options])`, like `Smarkdown.setInlineRule(regexp, callback, [, options])`
 
 ```js
 import Smarkdown from 'smarkdown'
@@ -275,9 +275,9 @@ console.log(Smarkdown.parse(str))
 ### Unset
 
 ```js
-Smarkdown.unsetInlineRule( regexp )
+Smarkdown.unsetInlineRule(regexp)
 
-Smarkdown.unsetBlockRule( regexp )
+Smarkdown.unsetBlockRule(regexp)
 ```
 
 

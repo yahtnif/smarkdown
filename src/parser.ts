@@ -14,15 +14,14 @@ import { Renderer, TextRenderer } from './renderer'
  * Parsing & Compiling.
  */
 export class Parser {
-  protected footnotes: EmptyObject = {}
-  protected inlineLexer: InlineLexer
-  protected inlineTextLexer: InlineLexer
-  protected line: number = 0
-  protected options: Options
-  protected renderer: Renderer
-  protected textRenderer: TextRenderer
-  protected token: Token
-  protected tokens: Token[]
+  private footnotes: EmptyObject = {}
+  private inlineLexer: InlineLexer
+  private inlineTextLexer: InlineLexer
+  private options: Options
+  private renderer: Renderer
+  private textOptions: Options
+  private token: Token
+  private tokens: Token[]
   blockRenderers: BlockRenderer[] = []
 
   constructor(options?: Options) {
@@ -31,6 +30,9 @@ export class Parser {
     this.options = options
     this.renderer = this.options.renderer || new Renderer(this.options)
     this.renderer.options = this.options
+    this.textOptions = Object.assign({}, this.options, {
+      renderer: new TextRenderer()
+    })
   }
 
   static parse(tokens: Token[], links: Links, options?: Options): string {
@@ -48,9 +50,7 @@ export class Parser {
     this.inlineTextLexer = new InlineLexer(
       InlineLexer,
       links,
-      Object.assign({}, this.options, {
-        renderer: new TextRenderer()
-      })
+      this.textOptions
     )
     this.tokens = tokens.reverse()
 

@@ -1,5 +1,5 @@
 import { BlockLexer } from './block-lexer'
-import { defaultTextBreak, escapeStringRegexp, getBreakChar, getRuleType } from './helpers'
+import { defaultTextBreak, escapeStringRegex, getBreakChar, getRuleType } from './helpers'
 import { InlineLexer } from './inline-lexer'
 import {
   BlockRenderer,
@@ -28,7 +28,10 @@ export default class Smarkdown {
       options.renderer = new (<typeof Renderer>options.renderer)(this.options)
     }
 
-    return Object.assign({}, this.options, options)
+    return {
+      ...this.options,
+      ...options
+    }
   }
 
   static setOptions(options: Options) {
@@ -53,7 +56,7 @@ export default class Smarkdown {
     let breakChar: string = getBreakChar(regExp)
 
     if (breakChar && !this.options.textBreak.includes(breakChar)) {
-      breakChar = escapeStringRegexp(breakChar)
+      breakChar = escapeStringRegex(breakChar)
       this.options.textBreak += breakChar
       this.options.isTextBreakSync = false
     }
@@ -139,10 +142,9 @@ export default class Smarkdown {
     src: string = '',
     options?: Options
   ): LexerReturns {
-    if (typeof src != 'string')
-      throw new Error(
-        `Expected that the 'src' parameter would have a 'string' type, got '${typeof src}'`
-      )
+    if (typeof src != 'string') {
+      throw new Error(`Expected that the 'src' parameter would have a 'string' type, got '${typeof src}'`)
+    }
 
     // Preprocessing.
     src = src
@@ -171,11 +173,7 @@ export default class Smarkdown {
 
   protected static callError(err: Error) {
     if (this.options.silent) {
-      return (
-        '<p>An error occurred:</p><pre>' +
-        this.options.escape(err.message + '', true) +
-        '</pre>'
-      )
+      return `<p>An error occurred:</p><pre>${this.options.escape(err.message + '', true)}</pre>`
     }
 
     throw err

@@ -1,7 +1,7 @@
 import { Options, TablecellFlags } from './interfaces'
 
 export class Renderer {
-  _footnotes: string[] = []
+  private _footnotes: string[] = []
   _headings: string[] = []
   options: Options
 

@@ -225,12 +225,6 @@ export interface EmptyObject {
   [key: string]: string
 }
 
-export interface InlineRulesCallback {
-  condition(): RegExp
-  regexp?: RegExp
-  tokenize(execArr: RegExpExecArray): void
-}
-
 export type NewRenderer = (execArr?: RegExpExecArray) => string
 
 export interface BlockRenderer {

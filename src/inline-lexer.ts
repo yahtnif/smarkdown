@@ -5,7 +5,6 @@ import {
   ExtraInlineRules,
   GfmInlineRules,
   InlineRule,
-  InlineRulesCallback,
   InlineRulesType,
   InlineRulesTypes,
   Link,
@@ -20,31 +19,30 @@ import { Renderer } from './renderer'
  */
 export class InlineLexer {
   static newRules: InlineRule[] = []
-  protected static baseRules: BaseInlineRules
+  private static baseRules: BaseInlineRules
   /**
    * Pedantic Inline Grammar.
    */
-  protected static pedanticRules: PedanticInlineRules
+  private static pedanticRules: PedanticInlineRules
   /**
    * GFM Inline Grammar
    */
-  protected static gfmRules: GfmInlineRules
+  private static gfmRules: GfmInlineRules
   /**
    * GFM + Line Breaks Inline Grammar.
    */
-  protected static breaksRules: BreaksInlineRules
+  private static breaksRules: BreaksInlineRules
   /**
    * GFM + Line Breaks + Extra Inline Grammar.
    */
-  protected static extraRules: ExtraInlineRules
-  protected inLink: boolean
-  protected inRawBlock: boolean
-  protected isExtra: boolean
-  protected isGfm: boolean
-  protected renderer: Renderer
-  protected ruleCallbacks: InlineRulesCallback[]
-  protected rules: InlineRulesTypes
-  protected textBreak: string = defaultTextBreak
+  private static extraRules: ExtraInlineRules
+  private inLink: boolean
+  private inRawBlock: boolean
+  private isExtra: boolean
+  private isGfm: boolean
+  private renderer: Renderer
+  private rules: InlineRulesTypes
+  private textBreak: string = defaultTextBreak
 
   constructor(
     protected self: typeof InlineLexer,
@@ -66,7 +64,7 @@ export class InlineLexer {
     return inlineLexer.output(src)
   }
 
-  protected static getBaseRules(): BaseInlineRules {
+  private static getBaseRules(): BaseInlineRules {
     if (this.baseRules) return this.baseRules
 
     const tag: string = '^comment'
@@ -125,7 +123,7 @@ export class InlineLexer {
     return (this.baseRules = base)
   }
 
-  protected static getPedanticRules(): PedanticInlineRules {
+  private static getPedanticRules(): PedanticInlineRules {
     if (this.pedanticRules) return this.pedanticRules
 
     const base: BaseInlineRules = this.getBaseRules()
@@ -147,7 +145,7 @@ export class InlineLexer {
     })
   }
 
-  protected static getGfmRules(): GfmInlineRules {
+  private static getGfmRules(): GfmInlineRules {
     if (this.gfmRules) return this.gfmRules
 
     const base: BaseInlineRules = this.getBaseRules()
@@ -188,7 +186,7 @@ export class InlineLexer {
     })
   }
 
-  protected static getBreaksRules(): BreaksInlineRules {
+  private static getBreaksRules(): BreaksInlineRules {
     if (this.breaksRules) return this.breaksRules
 
     const gfm: GfmInlineRules = this.getGfmRules()
@@ -202,7 +200,7 @@ export class InlineLexer {
     })
   }
 
-  protected static getExtraRules(options: Options): ExtraInlineRules {
+  private static getExtraRules(options: Options): ExtraInlineRules {
     if (this.extraRules) return this.extraRules
 
     const rules: BreaksInlineRules | GfmInlineRules = options.breaks ? this.getBreaksRules() : this.getGfmRules()
@@ -217,7 +215,7 @@ export class InlineLexer {
     })
   }
 
-  protected setRules() {
+  private setRules() {
     if (this.options.extra) {
       this.rules = this.self.getExtraRules(this.options)
     } else if (this.options.pedantic) {
@@ -252,9 +250,11 @@ export class InlineLexer {
     this.isExtra = (<ExtraInlineRules>this.rules).fnref !== undefined
   }
 
-  protected escapes (text: string) {
+  private escapes (text: string) {
     return text ? text.replace(this.rules._escapes, '$1') : text
   }
+
+  private sortByPriority = (a: InlineRule, b: InlineRule) => b.options.priority - a.options.priority
 
   /**
    * Lexing/Compiling.
@@ -264,14 +264,21 @@ export class InlineLexer {
     let out: string = ''
     const preParts: string[] = [nextPart, nextPart]
     const newRules: InlineRule[] = this.self.newRules || []
-    const newRulesBefore: InlineRule[] = newRules.filter(
-      (rule) => rule.options.priority
-    ).sort((a, b) => b.options.priority - a.options.priority)
-    const newRulesAfter: InlineRule[] = newRules.filter(
-      (rule) => !rule.options.priority
-    )
+    const newRulesBefore: InlineRule[] = []
+    const newRulesAfter: InlineRule[] = []
 
-    mainLoop: while (nextPart) {
+    for (const R of newRules) {
+      if (R.options.priority) {
+        newRulesBefore.push(R)
+      } else {
+        newRulesAfter.push(R)
+      }
+    }
+
+    newRulesBefore.sort(this.sortByPriority)
+    newRulesAfter.sort(this.sortByPriority)
+
+    while (nextPart) {
       // escape
       if ((execArr = this.rules.escape.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
@@ -280,14 +287,14 @@ export class InlineLexer {
       }
 
       // new rules before
-      for (const sr of newRulesBefore) {
-        if ((execArr = sr.rule.exec(nextPart))) {
+      for (const R of newRulesBefore) {
+        if ((execArr = R.rule.exec(nextPart))) {
           preParts[0] = preParts[1]
           preParts[1] = nextPart
-          if (!sr.options.checkPreChar || sr.options.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
+          if (!R.options.checkPreChar || R.options.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
             nextPart = nextPart.substring(execArr[0].length)
-            out += sr.render.call(this, execArr)
-            continue mainLoop
+            out += R.render.call(this, execArr)
+            continue
           }
         }
       }
@@ -468,14 +475,14 @@ export class InlineLexer {
       }
 
       // new rules after
-      for (const sr of newRulesAfter) {
-        if ((execArr = sr.rule.exec(nextPart))) {
+      for (const R of newRulesAfter) {
+        if ((execArr = R.rule.exec(nextPart))) {
           preParts[0] = preParts[1]
           preParts[1] = nextPart
-          if (!sr.options.checkPreChar || sr.options.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
+          if (!R.options.checkPreChar || R.options.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
             nextPart = nextPart.substring(execArr[0].length)
-            out += sr.render.call(this, execArr)
-            continue mainLoop
+            out += R.render.call(this, execArr)
+            continue
           }
         }
       }
@@ -493,8 +500,9 @@ export class InlineLexer {
         continue
       }
 
-      if (nextPart)
+      if (nextPart) {
         throw new Error('Infinite loop on byte: ' + nextPart.charCodeAt(0))
+      }
     }
 
     return out
@@ -503,7 +511,7 @@ export class InlineLexer {
   /**
    * Compile Link.
    */
-  protected outputLink(execArr: RegExpExecArray, link: Link) {
+  private outputLink(execArr: RegExpExecArray, link: Link) {
     const href: string = link.href
     const title: string | null = link.title ? this.options.escape(link.title) : null
 
@@ -515,7 +523,7 @@ export class InlineLexer {
   /**
    * Smartypants Transformations.
    */
-  protected smartypants(text: string) {
+  private smartypants(text: string) {
     if (!this.options.smartypants) return text
 
     return text
@@ -538,7 +546,7 @@ export class InlineLexer {
   /**
    * Mangle Links.
    */
-  protected mangle(text: string) {
+  private mangle(text: string) {
     if (!this.options.mangle) return text
 
     let out: string = ''

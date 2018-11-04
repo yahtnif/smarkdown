@@ -17,25 +17,25 @@ import {
 
 export class BlockLexer {
   static newRules: BlockRule[] = []
-  protected static baseRules: BaseBlockRules
+  private static baseRules: BaseBlockRules
   /**
    * Pedantic Block Grammar.
    */
-  protected static pedanticRules: PedanticBlockRules
+  private static pedanticRules: PedanticBlockRules
   /**
    * GFM Block Grammar.
    */
-  protected static gfmRules: GfmBlockRules
+  private static gfmRules: GfmBlockRules
   /**
    * GFM + Extra Block Grammar.
    */
-  protected static extraRules: ExtraBlockRules
-  protected isExtra: boolean
-  protected isGfm: boolean
-  protected links: Links = Object.create(null)
-  protected options: Options
-  protected rules: BlockRulesTypes
-  protected tokens: Token[] = []
+  private static extraRules: ExtraBlockRules
+  private isExtra: boolean
+  private isGfm: boolean
+  private links: Links = Object.create(null)
+  private options: Options
+  private rules: BlockRulesTypes
+  private tokens: Token[] = []
 
   constructor(protected self: typeof BlockLexer, options?: object) {
     this.options = options
@@ -52,7 +52,7 @@ export class BlockLexer {
     return lexer.getTokens(src, top)
   }
 
-  protected static getBaseRules(): BaseBlockRules {
+  private static getBaseRules(): BaseBlockRules {
     if (this.baseRules) return this.baseRules
 
     const html: string =
@@ -133,21 +133,21 @@ export class BlockLexer {
     return (this.baseRules = base)
   }
 
-  protected static getPedanticRules(): PedanticBlockRules {
+  private static getPedanticRules(): PedanticBlockRules {
     if (this.pedanticRules) return this.pedanticRules
 
     const base: BaseBlockRules = this.getBaseRules()
 
-    const html =
+    const html: string =
       '^ *(?:comment *(?:\\n|\\s*$)' +
       '|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)' + // closed tag
       '|<tag(?:"[^"]*"|\'[^\']*\'|\\s[^\'"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))'
-    const tag =
+    const tag: string =
       '(?!(?:' +
       'a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub' +
       '|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)' +
       '\\b)\\w+(?!:|[^\\w\\s@]*@)\\b'
-    const htmlRegex = new ExtendRegexp(new RegExp(html))
+    const htmlRegex: RegExp = new ExtendRegexp(new RegExp(html))
       .setGroup('comment', base._comment)
       .setGroup(/tag/g, tag)
       .getRegex()
@@ -163,7 +163,7 @@ export class BlockLexer {
     return (this.pedanticRules = pedantic)
   }
 
-  protected static getGfmRules(): GfmBlockRules {
+  private static getGfmRules(): GfmBlockRules {
     if (this.gfmRules) return this.gfmRules
 
     const base: BaseBlockRules = this.getBaseRules()
@@ -190,7 +190,7 @@ export class BlockLexer {
     return (this.gfmRules = gfm)
   }
 
-  protected static getExtraRules(): ExtraBlockRules {
+  private static getExtraRules(): ExtraBlockRules {
     if (this.extraRules) return this.extraRules
 
     const gfm: GfmBlockRules = this.getGfmRules()
@@ -208,7 +208,7 @@ export class BlockLexer {
     })
   }
 
-  protected setRules() {
+  private setRules() {
     if (this.options.extra) {
       this.rules = this.self.getExtraRules()
     } else if (this.options.pedantic) {
@@ -234,18 +234,18 @@ export class BlockLexer {
   /**
    * Lexing.
    */
-  protected getTokens(src: string, top?: boolean): LexerReturns {
+  private getTokens(src: string, top?: boolean): LexerReturns {
     let nextPart: string = src
     let execArr: RegExpExecArray
     const newRules: BlockRule[] = this.self.newRules || []
     const newRulesBefore: BlockRule[] = newRules.filter(
-      (rule) => rule.options.priority
+      (R) => R.options.priority
     ).sort((a, b) => b.options.priority - a.options.priority)
     const newRulesAfter: BlockRule[] = newRules.filter(
-      (rule) => !rule.options.priority
+      (R) => !R.options.priority
     )
 
-    mainLoop: while (nextPart) {
+    while (nextPart) {
       // newline
       if ((execArr = this.rules.newline.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
@@ -258,14 +258,14 @@ export class BlockLexer {
       }
 
       // new rules before
-      for (const sr of newRulesBefore) {
-        if ((execArr = sr.rule.exec(nextPart))) {
+      for (const R of newRulesBefore) {
+        if ((execArr = R.rule.exec(nextPart))) {
           nextPart = nextPart.substring(execArr[0].length)
           this.tokens.push({
-            type: sr.type,
+            type: R.type,
             execArr: execArr
           })
-          continue mainLoop
+          continue
         }
       }
 
@@ -401,7 +401,7 @@ export class BlockLexer {
         const bull: string = execArr[2]
         const isordered: boolean = bull.length > 1
 
-        const listStart = {
+        const listStart: Token = {
           type: TokenType.listStart,
           ordered: isordered,
           start: isordered ? +bull : '',
@@ -583,14 +583,14 @@ export class BlockLexer {
       }
 
       // new rules
-      for (const sr of newRulesAfter) {
-        if ((execArr = sr.rule.exec(nextPart))) {
+      for (const R of newRulesAfter) {
+        if ((execArr = R.rule.exec(nextPart))) {
           nextPart = nextPart.substring(execArr[0].length)
           this.tokens.push({
-            type: sr.type,
+            type: R.type,
             execArr: execArr
           })
-          continue mainLoop
+          continue
         }
       }
 
@@ -647,13 +647,15 @@ export class BlockLexer {
     return { tokens: this.tokens, links: this.links }
   }
 
-  protected splitCells(tableRow: string, count?: number) {
+  private splitCells(tableRow: string, count?: number) {
     // ensure that every cell-delimiting pipe has a space
     // before it to distinguish it from an escaped pipe
     let row: string = tableRow.replace(/\|/g, function(match, offset, str) {
         let escaped: boolean = false,
           curr: number = offset
+
         while (--curr >= 0 && str[curr] === '\\') escaped = !escaped
+
         if (escaped) {
           // odd number of slashes means | is escaped
           // so we leave it alone

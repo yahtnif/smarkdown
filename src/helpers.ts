@@ -191,7 +191,7 @@ export const noopRegex: RegExp = /S^/
 // Escape RegExp special characters
 const escapeCharsRegex: RegExp = /[-|\\{}()[\]^$+*?.]/g
 
-export function escapeStringRegexp(str: string): string {
+export function escapeStringRegex(str: string): string {
   return str.replace(escapeCharsRegex, '\\$&')
 }
 

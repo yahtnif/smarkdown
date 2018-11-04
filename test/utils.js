@@ -1,7 +1,7 @@
 const klawSync = require('klaw-sync')
 const JSON5 = require('json5')
 
-exports.testFunc = function ({ dir, runAtFirstAndOnce }) {
+exports.testFunc = function ({ dir, runAtFirstAndOnce, title }) {
   const files = klawSync(dir, { nodir: true })
 
   for (const file of files) {
@@ -25,7 +25,9 @@ exports.testFunc = function ({ dir, runAtFirstAndOnce }) {
 
     let [actual, expected] = text.split(/\n{4,}/)
 
-    it(filename, function() {
+    let testTitle = title ? `${title} - ${filename}` : filename
+
+    it(testTitle, function() {
       if (runAtFirstAndOnce) {
         runAtFirstAndOnce()
         runAtFirstAndOnce = null

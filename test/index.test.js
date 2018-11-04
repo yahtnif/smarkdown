@@ -28,14 +28,23 @@ describe('Smarkdown', () => {
         setExtensions()
       }
     })
-  })
 
-  describe('unset-extensions', () => {
     testFunc({
+      title: 'unset',
       dir: 'test/unset-extensions',
       runAtFirstAndOnce() {
         unsetExtensions()
       }
+    })
+
+    it('no-duplicate', function() {
+      const testRegex = /^$/
+
+      Smarkdown.setBlockRule(testRegex, () => 'old')
+      Smarkdown.setBlockRule(testRegex, () => 'new')
+
+      expect(Smarkdown.blockRenderers[0].renderer()).to.equal('new')
+      expect(Smarkdown.blockRenderers.length).to.equal(1)
     })
   })
 })

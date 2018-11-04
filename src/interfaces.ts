@@ -252,6 +252,7 @@ export interface InlineRule {
   options: InlineRuleOption
   render: Function
   rule: RegExp
+  type: string
 }
 
 export interface BlockRule {

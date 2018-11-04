@@ -3,6 +3,8 @@
 
 ## Unreleased
 
+* Ensure unique rules
+
 
 ## 0.6.1 / 2018-10-23
 

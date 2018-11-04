@@ -8,12 +8,14 @@
 
 > Markdown parser, simplicity and extensibility. Fork of [marked](https://github.com/markedjs/marked) and [marked-ts](https://github.com/KostyaTretyak/marked-ts).
 
+
 ## Features
 
 * **Awesome:** ES6, TypeScript, Rollup, Prettier...
 * **Extensible:** Add your own [extensions](#extensions)
 * **Fast:** Low-level compiler for parsing markdown without caching or blocking for long periods of time
 * **Lightweight:** It's 9kb of minified and gzipped
+
 
 ## Table of contents
 

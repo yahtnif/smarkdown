@@ -44,6 +44,12 @@ export default class Smarkdown {
     renderer: NewRenderer,
     options: InlineRuleOption = {}
   ) {
+    const ruleType: string = getRuleType(regExp)
+
+    if (InlineLexer.newRules.some(R => R.type !== ruleType)) {
+      this.unsetInlineRule(regExp)
+    }
+
     let breakChar: string = getBreakChar(regExp)
 
     if (breakChar && !this.options.textBreak.includes(breakChar)) {
@@ -56,14 +62,15 @@ export default class Smarkdown {
       breakChar,
       options,
       render: renderer,
-      rule: regExp
+      rule: regExp,
+      type: ruleType
     })
   }
 
   static unsetInlineRule(regExp: RegExp) {
-    InlineLexer.newRules = InlineLexer.newRules.filter(
-      (R) => getRuleType(R.rule) !== getRuleType(regExp)
-    )
+    const ruleType: string = getRuleType(regExp)
+
+    InlineLexer.newRules = InlineLexer.newRules.filter(R => R.type !== ruleType)
 
     // Reset textBreak
     const breakchars: string =
@@ -88,6 +95,10 @@ export default class Smarkdown {
   ) {
     const ruleType: string = getRuleType(regExp)
 
+    if (BlockLexer.newRules.some(R => R.type === ruleType)) {
+      this.unsetBlockRule(regExp)
+    }
+
     BlockLexer.newRules.push({
       options,
       rule: regExp,
@@ -103,9 +114,9 @@ export default class Smarkdown {
   static unsetBlockRule(regExp: RegExp) {
     const ruleType: string = getRuleType(regExp)
 
-    BlockLexer.newRules = BlockLexer.newRules.filter((R) => R.type !== ruleType)
+    BlockLexer.newRules = BlockLexer.newRules.filter(R => R.type !== ruleType)
 
-    this.blockRenderers = this.blockRenderers.filter((R) => R.type !== ruleType)
+    this.blockRenderers = this.blockRenderers.filter(R => R.type !== ruleType)
   }
 
   static inlineParse(src: string, options: Options): string {

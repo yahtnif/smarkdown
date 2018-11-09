@@ -15,9 +15,9 @@ describe('Smarkdown', () => {
     })
   })
 
-  describe('advanced', () => {
+  describe('options', () => {
     testFunc({
-      dir: 'test/advanced'
+      dir: 'test/options'
     })
   })
 

@@ -102,8 +102,7 @@ export class Parser {
         return this.renderer.paragraph(this.inlineLexer.output(this.token.text))
       }
       case TokenType.text: {
-        if (this.options.nop) return this.parseText()
-        else return this.renderer.paragraph(this.parseText())
+        return this.options.nop ? this.parseText() : this.renderer.paragraph(this.parseText())
       }
       case TokenType.heading: {
         return this.renderer.heading(

@@ -1,0 +1,9 @@
+linksInNewTab: true
+
+===
+
+[link](https://example.com)
+
+
+
+<p><a href="https://example.com" target="_blank">link</a></p>

@@ -239,10 +239,10 @@ export class BlockLexer {
     let execArr: RegExpExecArray
     const newRules: BlockRule[] = this.self.newRules || []
     const newRulesBefore: BlockRule[] = newRules.filter(
-      (R) => R.options.priority
+      R => R.options.priority
     ).sort((a, b) => b.options.priority - a.options.priority)
     const newRulesAfter: BlockRule[] = newRules.filter(
-      (R) => !R.options.priority
+      R => !R.options.priority
     )
 
     while (nextPart) {
@@ -636,11 +636,7 @@ export class BlockLexer {
       }
 
       if (nextPart) {
-        throw new Error(
-          'Infinite loop on byte: ' +
-            nextPart.charCodeAt(0) +
-            `, near text '${nextPart.slice(0, 30)}...'`
-        )
+        throw new Error(`Infinite loop on byte: ${nextPart.charCodeAt(0)}, near text '${nextPart.slice(0, 30)}...'`)
       }
     }
 

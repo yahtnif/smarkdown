@@ -14,6 +14,7 @@ const escapeTestNoEncodeRegex: RegExp = /[<>"']|&(?!#?\w+;)/
 const escapeReplaceNoEncodeRegex: RegExp = /[<>"']|&(?!#?\w+;)/g
 const unescapeRegex: RegExp = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/gi
 
+// Escape HTML entities.
 export function escape(html: string, encode?: boolean): string {
   if (encode) {
     if (escapeTestRegex.test(html)) {
@@ -26,6 +27,7 @@ export function escape(html: string, encode?: boolean): string {
   return html
 }
 
+// Unescape HTML entities.
 export function unescape(html: string): string {
   // Explicitly match decimal, hex, and named HTML entities
   return html.replace(unescapeRegex, function(_, n) {
@@ -89,6 +91,7 @@ const originIndependentUrlRegex: RegExp = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i
 const noLastSlashUrlRegex: RegExp = /^[^:]+:\/*[^/]*$/
 const baseUrls: EmptyObject = {}
 
+// Render image/link URLs relative to a base url.
 export function resolveUrl(base: string, href: string): string {
   if (originIndependentUrlRegex.test(href)) {
     return href

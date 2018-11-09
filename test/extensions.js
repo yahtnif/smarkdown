@@ -13,8 +13,8 @@ const largeTextRegex = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
 
 const extRegex = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
 
-const inlineRes = [subRegex, supRegex, markRegex, hashtagRegex, rubyAnnotationRegex, smallTextRegex, largeTextRegex]
-const blockRes = [extRegex]
+const inlineRules = [subRegex, supRegex, markRegex, hashtagRegex, rubyAnnotationRegex, smallTextRegex, largeTextRegex]
+const blockRules = [extRegex]
 
 exports.setExtensions = function() {
   /**
@@ -121,11 +121,11 @@ Lorem ipsum...
 }
 
 exports.unsetExtensions = function() {
-  inlineRes.forEach(R => {
+  inlineRules.forEach(R => {
     Smarkdown.unsetInlineRule(R)
   })
 
-  blockRes.forEach(R => {
+  blockRules.forEach(R => {
     Smarkdown.unsetBlockRule(R)
   })
 }

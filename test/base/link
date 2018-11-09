@@ -2,7 +2,7 @@ autolink: <https://example.com>
 
 Link: [constructor][].
 
-[constructor]: https://example.org/
+[constructor]: https://example.com/
 
 (See https://www.example.com/example.)
 
@@ -11,6 +11,6 @@ Link: [constructor][].
 
 
 <p>autolink: <a href="https://example.com">https://example.com</a></p>
-<p>Link: <a href="https://example.org/">constructor</a>.</p>
+<p>Link: <a href="https://example.com/">constructor</a>.</p>
 <p>(See <a href="https://www.example.com/example">https://www.example.com/example</a>.)</p>
 <p>((<a href="https://example.com">https://example.com</a>))</p>

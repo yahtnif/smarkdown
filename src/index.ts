@@ -76,17 +76,17 @@ export default class Smarkdown {
     InlineLexer.newRules = InlineLexer.newRules.filter(R => R.type !== ruleType)
 
     // Reset textBreak
-    const breakchars: string =
+    const breakChars: string =
       defaultTextBreak +
       InlineLexer.newRules
-        .filter((R) => !defaultTextBreak.includes(R.breakChar))
-        .map((R) => R.breakChar)
+        .filter(R => !defaultTextBreak.includes(R.breakChar))
+        .map(R => R.breakChar)
         // remove dulplicate
         .filter((v, i, a) => a.indexOf(v) === i)
         .join('')
 
-    if (this.options.textBreak !== breakchars) {
-      this.options.textBreak = breakchars
+    if (this.options.textBreak !== breakChars) {
+      this.options.textBreak = breakChars
       this.options.isTextBreakSync = false
     }
   }
@@ -132,6 +132,7 @@ export default class Smarkdown {
     try {
       const opts: Options = this.getOptions(options)
       const { tokens, links } = this.callBlockLexer(src, opts)
+
       return this.callParser(tokens, links, opts)
     } catch (e) {
       return this.callError(e)
@@ -165,6 +166,7 @@ export default class Smarkdown {
     if (this.blockRenderers.length) {
       const parser: Parser = new Parser(options)
       parser.blockRenderers = this.blockRenderers
+
       return parser.parse(links, tokens)
     } else {
       return Parser.parse(tokens, links, options)

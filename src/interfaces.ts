@@ -10,6 +10,9 @@ import {
 import { Renderer } from './renderer'
 
 export interface BaseBlockRules {
+  _comment: RegExp
+  _label: RegExp
+  _title: RegExp
   blockquote: RegExp
   bullet: RegExp
   code: RegExp
@@ -17,18 +20,12 @@ export interface BaseBlockRules {
   heading: RegExp
   hr: RegExp
   html: RegExp
+  item: RegExp // List item (<li>)
   lheading: RegExp
   list: RegExp
   newline: RegExp
   paragraph: RegExp
   text: RegExp
-  _comment: RegExp
-  _label: RegExp
-  _title: RegExp
-  /**
-   * List item (<li>).
-   */
-  item: RegExp
 }
 
 export interface PedanticBlockRules extends BaseBlockRules {}
@@ -174,26 +171,10 @@ export class Options {
    * with a "/" as required by XHTML.
    */
   xhtml?: boolean = false
-  /**
-   * The function that will be using to escape HTML entities.
-   * By default using inner helper.
-   */
   escape?: (html: string, encode?: boolean) => string = escape
-  /**
-   * The function that will be using to unescape HTML entities.
-   * By default using inner helper.
-   */
   unescape?: (html: string) => string = unescape
-  /**
-   * The function that will be using to slug string.
-   * By default using inner helper.
-   */
   slug?: (str: string) => string = slug
   rtrim?: (str: string, c: string, invert?: boolean) => string = rtrim
-  /**
-   * The function that will be using to render image/link URLs relative to a base url.
-   * By default using inner helper.
-   */
   resolveUrl?: (base: string, href: string) => string = resolveUrl
   cleanUrl?: (sanitize: boolean, base: string, href: string) => string = cleanUrl
   /**
@@ -202,9 +183,7 @@ export class Options {
    * ```js
    * Smarkdown.parse('some text') // returns '<p>some text</p>'
    *
-   * Smarkdown.setOptions({nop: true})
-   *
-   * Smarkdown.parse('some text') // returns 'some text'
+   * Smarkdown.parse('some text', {nop: true}) // returns 'some text'
    * ```
    */
   nop?: boolean = false
@@ -212,8 +191,8 @@ export class Options {
    * Break inline text
    * Useful for setting new inline rules
    */
-  textBreak?: string = defaultTextBreak
   isTextBreakSync?: boolean = true
+  textBreak?: string = defaultTextBreak
 }
 
 export interface LexerReturns {
@@ -256,6 +235,6 @@ export interface BlockRule {
 }
 
 export interface TablecellFlags {
-  header?: boolean,
   align?: Align
+  header?: boolean,
 }

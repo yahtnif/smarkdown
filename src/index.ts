@@ -143,7 +143,7 @@ export default class Smarkdown {
     src: string = '',
     options?: Options
   ): LexerReturns {
-    if (typeof src != 'string') {
+    if (typeof src !== 'string') {
       throw new Error(`Expected that the 'src' parameter would have a 'string' type, got '${typeof src}'`)
     }
 

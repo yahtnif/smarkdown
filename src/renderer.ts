@@ -21,7 +21,7 @@ ${quote}</blockquote>
     if (this.options.highlight) {
       const out: string = this.options.highlight(code, lang)
 
-      if (out != null && out !== code) {
+      if (out !== null && out !== code) {
         escaped = true
         code = out
       }

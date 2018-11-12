@@ -118,7 +118,7 @@ export class Parser {
           start: string | number = this.token.start,
           isTaskList: boolean = false
 
-        while (this.next().type != TokenType.listEnd) {
+        while (this.next().type !== TokenType.listEnd) {
           if (this.token.checked !== null) {
             isTaskList = true
           }
@@ -133,7 +133,7 @@ export class Parser {
         const loose: boolean = this.token.loose
         const checked: boolean = this.token.checked
 
-        while (this.next().type != TokenType.listItemEnd) {
+        while (this.next().type !== TokenType.listItemEnd) {
           body += !loose && this.token.type === <number>TokenType.text
             ? this.parseText()
             : this.tok()
@@ -193,7 +193,7 @@ export class Parser {
       case TokenType.blockquoteStart: {
         let body: string = ''
 
-        while (this.next().type != TokenType.blockquoteEnd) {
+        while (this.next().type !== TokenType.blockquoteEnd) {
           body += this.tok()
         }
 

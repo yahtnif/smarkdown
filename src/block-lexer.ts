@@ -245,7 +245,7 @@ export class BlockLexer {
       R => !R.options.priority
     )
 
-    while (nextPart) {
+    mainLoop: while (nextPart) {
       // newline
       if ((execArr = this.rules.newline.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
@@ -265,7 +265,7 @@ export class BlockLexer {
             type: R.type,
             execArr: execArr
           })
-          continue
+          continue mainLoop
         }
       }
 
@@ -590,7 +590,7 @@ export class BlockLexer {
             type: R.type,
             execArr: execArr
           })
-          continue
+          continue mainLoop
         }
       }
 

@@ -278,7 +278,7 @@ export class InlineLexer {
     newRulesBefore.sort(this.sortByPriority)
     newRulesAfter.sort(this.sortByPriority)
 
-    while (nextPart) {
+    mainLoop: while (nextPart) {
       // escape
       if ((execArr = this.rules.escape.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
@@ -294,7 +294,7 @@ export class InlineLexer {
           if (!R.options.checkPreChar || R.options.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
             nextPart = nextPart.substring(execArr[0].length)
             out += R.render.call(this, execArr)
-            continue
+            continue mainLoop
           }
         }
       }
@@ -482,7 +482,7 @@ export class InlineLexer {
           if (!R.options.checkPreChar || R.options.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
             nextPart = nextPart.substring(execArr[0].length)
             out += R.render.call(this, execArr)
-            continue
+            continue mainLoop
           }
         }
       }

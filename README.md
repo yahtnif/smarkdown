@@ -370,5 +370,3 @@ Smarkdown.setOptions({ renderer: MyRenderer })
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
-
-See LICENSE for more info.

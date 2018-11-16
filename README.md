@@ -113,28 +113,28 @@ Smarkdown.setOptions({
 | Name | Type | Default | Note |
 | :-: | :-: | :-: | :-: |
 | baseUrl | String | null | A prefix url for any relative link. |
-| breaks | boolean | false | If true, use GFM hard and soft line breaks. Requires `gfm` be `true`. |
-| disabledRules | array | [] | If set to `['lheading']`, will disable headers of an underline-ish style. |
-| extra | boolean | false | If true, enable `footnote`. Requires `gfm` be `true`. |
-| gfm | boolean | true | If true, use approved [GitHub Flavored Markdown (GFM) specification](https://github.github.com/gfm/). |
-| headerId | boolean \| string | false | Include an `id` attribute when emitting headings.<br>If true, for all headings.<br>If set to `on`, for “non-close” atx-style headings (## h2, etc).<br>If set to `off`, for “close” atx-style headings (## h2 ##, etc).|
-| headerPrefix | string | '' | A string to prefix the id attribute when emitting headings. |
-| highlight | function | (code, lang) => string | A function to highlight code blocks, see [Syntax highlighting](#syntax-highlighting) |
-| langAttribute | boolean | false | If `true`, add `data-lang` attribute to highlight block code. |
-| langPrefix | string | 'language-' | A string to prefix the className in a `<code>` block. Useful for syntax highlighting. |
+| breaks | Boolean | false | If true, use GFM hard and soft line breaks. Requires `gfm` be `true`. |
+| disabledRules | Array | [] | If set to `['lheading']`, will disable headers of an underline-ish style. |
+| extra | Boolean | false | If true, enable `footnote`. Requires `gfm` be `true`. |
+| gfm | Boolean | true | If true, use approved [GitHub Flavored Markdown (GFM) specification](https://github.github.com/gfm/). |
+| headerId | Boolean \| String | false | Include an `id` attribute when emitting headings.<br>If true, for all headings.<br>If set to `on`, for “non-close” atx-style headings (## h2, etc).<br>If set to `off`, for “close” atx-style headings (## h2 ##, etc).|
+| headerPrefix | String | '' | A string to prefix the id attribute when emitting headings. |
+| highlight | Function | (code, lang) => string | A function to highlight code blocks, see [Syntax highlighting](#syntax-highlighting) |
+| langAttribute | Boolean | false | If `true`, add `data-lang` attribute to highlight block code. |
+| langPrefix | String | 'language-' | A string to prefix the className in a `<code>` block. Useful for syntax highlighting. |
 | linksInNewTab | boolean \| function | false | If true, open links in new tabs. |
-| mangle | boolean | true | If true, autolinked email address is escaped with HTML character references. |
-| nop | boolean | false | If `true`, an inline text will not be taken in paragraph. |
-| pedantic | boolean | false | If true, conform to the original `markdown.pl` as much as possible. Don't fix original markdown bugs or behavior. Turns off and overrides `gfm`. |
+| mangle | Boolean | true | If true, autolinked email address is escaped with HTML character references. |
+| nop | Boolean | false | If `true`, an inline text will not be taken in paragraph. |
+| pedantic | Boolean | false | If true, conform to the original `markdown.pl` as much as possible. Don't fix original markdown bugs or behavior. Turns off and overrides `gfm`. |
 | renderer | Renderer | Renderer | An object containing functions to render tokens to HTML. See [Renderer](#renderer) for more details. |
-| sanitize | boolean | false | If true, sanitize the HTML passed into `markdownString` with the `sanitizer` function. |
-| sanitizer | function | null | A function to sanitize the HTML passed into `markdownString`. |
-| silent | boolean | false | If true, the parser does not throw any exception. |
-| slug | function | str => built_in_slug(str) | Slugify `id` attribute for heading and footnote. |
-| smartLists | boolean | false | If true, use smarter list behavior than those found in `markdown.pl`. |
-| smartypants | boolean | false | If true, use "smart" typographic punctuation for things like quotes and dashes. |
-| trimLinkText | function | null | Useful for text truncation. |
-| xhtml | boolean | false | Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.) with a "/" as required by XHTML. |
+| sanitize | Boolean | false | If true, sanitize the HTML passed into `markdownString` with the `sanitizer` function. |
+| sanitizer | Function | null | A function to sanitize the HTML passed into `markdownString`. |
+| silent | Boolean | false | If true, the parser does not throw any exception. |
+| slug | Function | str => built_in_slug(str) | Slugify `id` attribute for heading and footnote. |
+| smartLists | Boolean | false | If true, use smarter list behavior than those found in `markdown.pl`. |
+| smartypants | Boolean | false | If true, use "smart" typographic punctuation for things like quotes and dashes. |
+| trimLinkText | Function | null | Useful for text truncation. |
+| xhtml | Boolean | false | Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.) with a "/" as required by XHTML. |
 
 
 ## Extensions
@@ -143,8 +143,8 @@ Extension options:
 
 | Name | Type | Default | inline | block |
 | :-: | :-: | :-: | :-: | :-: |
-| priority | number | null | ✓ | ✓ |
-| checkPreChar | function | null | ✓ | |
+| priority | Number | null | ✓ | ✓ |
+| checkPreChar | Function | null | ✓ | |
 
 ### Inline
 
@@ -294,9 +294,9 @@ blockquote(quote)
 
 code(code, lang, escaped)
 
-footnote(footnotes:
+footnote(footnotes)
 
-heading(text, level: number, raw, ends)
+heading(text, level, raw, ends)
 
 hr()
 
@@ -335,12 +335,12 @@ strong(text)
 text(text)
 ```
 
-### Overriding renderer methods
+### Overriding Renderer methods
 
 ```js
 import Smarkdown from 'smarkdown'
 
-class MyRenderer extends Smarkdown.Renderer {
+class NewRenderer extends Smarkdown.Renderer {
   // Overriding parent method.
   table(header, body) {
     if (body) body = '<tbody>' + body + '</tbody>'
@@ -355,7 +355,9 @@ ${body}</table>
   }
 }
 
-Smarkdown.setOptions({ renderer: MyRenderer })
+Smarkdown.setOptions({ renderer: NewRenderer })
+// or pass new options to new Renderer
+Smarkdown.setOptions({ renderer: new NewRenderer(NewOptions) })
 ```
 
 

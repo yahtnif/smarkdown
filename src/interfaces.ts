@@ -236,5 +236,5 @@ export interface BlockRule {
 
 export interface TablecellFlags {
   align?: Align
-  header?: boolean,
+  header?: boolean
 }

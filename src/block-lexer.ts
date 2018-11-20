@@ -568,7 +568,9 @@ export class BlockLexer {
             }
           }
 
-          const td: string[] = execArr[3].replace(/(?: *\| *)?\n$/, '').split('\n')
+          const td: string[] = execArr[3]
+            .replace(/(?: *\| *)?\n$/, '')
+            .split('\n')
 
           for (let i = 0; i < td.length; i++) {
             item.cells[i] = this.splitCells(

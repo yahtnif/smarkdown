@@ -122,7 +122,7 @@ Smarkdown.setOptions({
 | highlight | Function | (code, lang) => string | A function to highlight code blocks, see [Syntax highlighting](#syntax-highlighting) |
 | langAttribute | Boolean | false | If `true`, add `data-lang` attribute to highlight block code. |
 | langPrefix | String | 'language-' | A string to prefix the className in a `<code>` block. Useful for syntax highlighting. |
-| linksInNewTab | boolean \| function | false | If true, open links in new tabs. |
+| linksInNewTab | Boolean \| Function | false | If true, open links in new tabs. |
 | mangle | Boolean | true | If true, autolinked email address is escaped with HTML character references. |
 | nop | Boolean | false | If `true`, an inline text will not be taken in paragraph. |
 | pedantic | Boolean | false | If true, conform to the original `markdown.pl` as much as possible. Don't fix original markdown bugs or behavior. Turns off and overrides `gfm`. |

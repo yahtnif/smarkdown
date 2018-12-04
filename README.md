@@ -113,7 +113,7 @@ Smarkdown.setOptions({
 | Name | Type | Default | Note |
 | :-: | :-: | :-: | :-: |
 | baseUrl | String | null | A prefix url for any relative link. |
-| breaks | Boolean | false | If true, use GFM hard and soft line breaks. Requires `gfm` be `true`. |
+| breaks | Boolean | false | If true, add `<br>` on a single line break (copies GitHub). Requires `gfm` be `true`. |
 | disabledRules | Array | [] | If set to `['lheading']`, will disable headers of an underline-ish style. |
 | extra | Boolean | false | If true, enable `footnote`. Requires `gfm` be `true`. |
 | gfm | Boolean | true | If true, use approved [GitHub Flavored Markdown (GFM) specification](https://github.github.com/gfm/). |

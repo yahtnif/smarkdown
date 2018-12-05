@@ -13,8 +13,7 @@ const largeTextRegex = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
 
 const extRegex = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
 
-const inlineRules = [subRegex, supRegex, markRegex, hashtagRegex, rubyAnnotationRegex, smallTextRegex, largeTextRegex]
-const blockRules = [extRegex]
+const rules = [subRegex, supRegex, markRegex, hashtagRegex, rubyAnnotationRegex, smallTextRegex, largeTextRegex, extRegex, extRegex]
 
 exports.setExtensions = function() {
   /**
@@ -23,7 +22,7 @@ exports.setExtensions = function() {
    * H~2~O
    * H<sub>2</sub>O
    */
-  Smarkdown.setInlineRule(subRegex, function(execArr) {
+  Smarkdown.setRule(subRegex, function(execArr) {
     return `<sub>${this.output(execArr[1])}</sub>`
   })
 
@@ -33,7 +32,7 @@ exports.setExtensions = function() {
    * 1^st^
    * 1<sup>st</sup>
    */
-  Smarkdown.setInlineRule(supRegex, function(execArr) {
+  Smarkdown.setRule(supRegex, function(execArr) {
     return `<sup>${this.output(execArr[1])}</sup>`
   })
 
@@ -43,7 +42,7 @@ exports.setExtensions = function() {
    * ==Experience== is the best teacher.
    * <mark>Experience</mark> is the best teacher.
    */
-  Smarkdown.setInlineRule(markRegex, function(execArr) {
+  Smarkdown.setRule(markRegex, function(execArr) {
     return `<mark>${execArr[1]}</mark>`
   })
 
@@ -53,7 +52,7 @@ exports.setExtensions = function() {
    * #tag
    * <span class="hashtag">tag</span>
    */
-  Smarkdown.setInlineRule(
+  Smarkdown.setRule(
     hashtagRegex,
     function(execArr) {
       return `<span class="hashtag">${execArr[1]}</span>`
@@ -67,7 +66,7 @@ exports.setExtensions = function() {
    * [注音]{zhuyin}
    * <ruby>注音<rt>zhuyin</rt></ruby>
    */
-  Smarkdown.setInlineRule(
+  Smarkdown.setRule(
     rubyAnnotationRegex,
     function(execArr) {
       return `<ruby>${execArr[1]}<rt>${execArr[2]}</rt></ruby>`
@@ -83,7 +82,7 @@ exports.setExtensions = function() {
    * --small text-- => <span class="small-text">small text</span>
    */
   const smallTextRegex = /^--(?=\S)([\s\S]*?\S)--/
-  Smarkdown.setInlineRule(smallTextRegex, function(execArr) {
+  Smarkdown.setRule(smallTextRegex, function(execArr) {
     return `<span class="small-text">${execArr[1]}</span>`
   })
 
@@ -95,7 +94,7 @@ exports.setExtensions = function() {
    * ++++large text++++ => <span class="large-text is-3">large text</span>
    */
   const largeTextRegex = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
-  Smarkdown.setInlineRule(largeTextRegex, function(execArr) {
+  Smarkdown.setRule(largeTextRegex, function(execArr) {
     let size = execArr[1].length - 1
 
     if (size > 3) {
@@ -113,7 +112,7 @@ Lorem ipsum...
 :::`
    * <div class="warning">Lorem ipsum...</div>
    */
-  Smarkdown.setBlockRule(extRegex, (execArr) => {
+  Smarkdown.setRule(extRegex, (execArr) => {
     return `<div class="${execArr[1]}">${execArr[2]}</div>`
   })
 
@@ -121,11 +120,7 @@ Lorem ipsum...
 }
 
 exports.unsetExtensions = function() {
-  inlineRules.forEach(R => {
-    Smarkdown.unsetInlineRule(R)
-  })
-
-  blockRules.forEach(R => {
-    Smarkdown.unsetBlockRule(R)
+  rules.forEach(R => {
+    Smarkdown.unsetRule(R)
   })
 }

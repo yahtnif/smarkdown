@@ -199,11 +199,11 @@ export function escapeStringRegex(str: string): string {
 }
 
 export function getRuleType(regExp: RegExp): string {
-  return regExp.toString()
+  return regExp.source
 }
 
-const breakCharRegex: RegExp = /^\/\^\(*\\?(.)/
+const breakCharRegex: RegExp = /^\^\(*\\?(.)/
 
 export function getBreakChar(regExp: RegExp): string {
-  return regExp.toString().match(breakCharRegex)[1]
+  return regExp.source.match(breakCharRegex)[1]
 }

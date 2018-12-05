@@ -182,7 +182,13 @@ export class InlineLexer {
 
     return (this.gfmRules = {
       ...base,
-      ...{ escape, url, _backpedal, del, text }
+      ...{
+        _backpedal,
+        del,
+        escape,
+        text,
+        url
+      }
     })
   }
 
@@ -216,10 +222,10 @@ export class InlineLexer {
   }
 
   private setRules() {
-    if (this.options.extra) {
-      this.rules = this.self.getExtraRules(this.options)
-    } else if (this.options.pedantic) {
+     if (this.options.pedantic) {
       this.rules = this.self.getPedanticRules()
+    } else if (this.options.extra) {
+      this.rules = this.self.getExtraRules(this.options)
     } else if (this.options.gfm) {
       this.rules = this.options.breaks
         ? this.self.getBreaksRules()
@@ -263,7 +269,7 @@ export class InlineLexer {
     let execArr: RegExpExecArray
     let out: string = ''
     const preParts: string[] = [nextPart, nextPart]
-    const newRules: InlineRule[] = this.self.newRules || []
+    const newRules: InlineRule[] = this.self.newRules.sort(this.sortByPriority) || []
     const newRulesBefore: InlineRule[] = []
     const newRulesAfter: InlineRule[] = []
 
@@ -274,9 +280,6 @@ export class InlineLexer {
         newRulesAfter.push(R)
       }
     }
-
-    newRulesBefore.sort(this.sortByPriority)
-    newRulesAfter.sort(this.sortByPriority)
 
     mainLoop: while (nextPart) {
       // escape

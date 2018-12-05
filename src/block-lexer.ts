@@ -209,10 +209,10 @@ export class BlockLexer {
   }
 
   private setRules() {
-    if (this.options.extra) {
-      this.rules = this.self.getExtraRules()
-    } else if (this.options.pedantic) {
+    if (this.options.pedantic) {
       this.rules = this.self.getPedanticRules()
+    } else if (this.options.extra) {
+      this.rules = this.self.getExtraRules()
     } else if (this.options.gfm) {
       this.rules = this.self.getGfmRules()
     } else {

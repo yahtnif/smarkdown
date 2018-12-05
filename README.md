@@ -139,6 +139,10 @@ Smarkdown.setOptions({
 
 ## Extensions
 
+Using `Smarkdown.setRule(regexp, callback, [, options])`, which takes a regular expression as the first argument, and returns result `regexp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
+
+`regexp` **MUST** start with `^`.
+
 Extension options:
 
 | Name | Type | Default | inline | block |
@@ -148,13 +152,7 @@ Extension options:
 
 ### Inline
 
-Using `Smarkdown.setInlineRule(regexp, callback, [, options])`, which takes a regular expression as the first argument, and returns result `regexp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
-
-`regexp` **MUST** start with `^`.
-
 ```js
-import Smarkdown from 'smarkdown'
-
 /**
  * sub
  *
@@ -162,7 +160,7 @@ import Smarkdown from 'smarkdown'
  * H<sub>2</sub>O
  */
 const subRegex = /^~(?=\S)([\s\S]*?\S)~/
-Smarkdown.setInlineRule(subRegex, function(execArr) {
+Smarkdown.setRule(subRegex, function(execArr) {
   return `<sub>${this.output(execArr[1])}</sub>`
 })
 
@@ -173,7 +171,7 @@ Smarkdown.setInlineRule(subRegex, function(execArr) {
  * 1<sup>st</sup>
  */
 const supRegex = /^\^(?=\S)([\s\S]*?\S)\^/
-Smarkdown.setInlineRule(supRegex, function(execArr) {
+Smarkdown.setRule(supRegex, function(execArr) {
   return `<sup>${this.output(execArr[1])}</sup>`
 })
 
@@ -184,7 +182,7 @@ Smarkdown.setInlineRule(supRegex, function(execArr) {
  * <mark>Experience</mark> is the best teacher.
  */
 const markRegex = /^==(?=\S)([\s\S]*?\S)==/
-Smarkdown.setInlineRule(markRegex, function(execArr) {
+Smarkdown.setRule(markRegex, function(execArr) {
   return `<mark>${this.output(execArr[1])}</mark>`
 })
 
@@ -195,7 +193,7 @@ Smarkdown.setInlineRule(markRegex, function(execArr) {
  * <span class="hashtag">tag</span>
  */
 const hashtagRegex = /^#([^\s#]+)((?:\b)|(?=\s|$))/
-Smarkdown.setInlineRule(
+Smarkdown.setRule(
   hashtagRegex,
   function(execArr) {
     return `<span class="hashtag">${execArr[1]}</span>`
@@ -213,7 +211,7 @@ Smarkdown.setInlineRule(
  * <ruby>注音<rt>zhuyin</rt></ruby>
  */
 const rubyAnnotationRegex = /^\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
-Smarkdown.setInlineRule(
+Smarkdown.setRule(
   rubyAnnotationRegex,
   function(execArr) {
     return `<ruby>${execArr[1]}<rt>${execArr[2]}</rt></ruby>`
@@ -229,7 +227,7 @@ Smarkdown.setInlineRule(
  * --small text-- => <span class="small-text">small text</span>
  */
 const smallTextRegex = /^--(?=\S)([\s\S]*?\S)--/
-Smarkdown.setInlineRule(smallTextRegex, function(execArr) {
+Smarkdown.setRule(smallTextRegex, function(execArr) {
   return `<span class="small-text">${execArr[1]}</span>`
 })
 
@@ -241,7 +239,7 @@ Smarkdown.setInlineRule(smallTextRegex, function(execArr) {
  * ++++large text++++ => <span class="large-text is-3">large text</span>
  */
 const largeTextRegex = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
-Smarkdown.setInlineRule(largeTextRegex, function(execArr) {
+Smarkdown.setRule(largeTextRegex, function(execArr) {
   let size = execArr[1].length - 1
 
   if (size > 3) {
@@ -254,14 +252,10 @@ Smarkdown.setInlineRule(largeTextRegex, function(execArr) {
 
 ### Block
 
-Using `Smarkdown.setBlockRule(regexp, callback, [, options])`, like `Smarkdown.setInlineRule(regexp, callback, [, options])`
-
 ```js
-import Smarkdown from 'smarkdown'
-
 // block container
 const extRegex = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
-Smarkdown.setBlockRule(extRegex, (execArr) => {
+Smarkdown.setRule(extRegex, (execArr) => {
   return `<div class="${execArr[1]}">${execArr[2]}</div>`
 })
 
@@ -277,9 +271,7 @@ console.log(Smarkdown.parse(str))
 ### Unset
 
 ```js
-Smarkdown.unsetInlineRule(regexp)
-
-Smarkdown.unsetBlockRule(regexp)
+Smarkdown.unsetRule(regexp)
 ```
 
 

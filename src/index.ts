@@ -1,5 +1,5 @@
 import { BlockLexer } from './block-lexer'
-import { defaultTextBreak, escapeStringRegex, getBreakChar, getRuleType } from './helpers'
+import { defaultTextBreak, escapeStringRegex, getBreakChar, getRuleType, isBlockRule } from './helpers'
 import { InlineLexer } from './inline-lexer'
 import {
   BlockRenderer,
@@ -42,6 +42,26 @@ export default class Smarkdown {
     this.options = new Options()
   }
 
+  static setRule(
+    regExp: RegExp,
+    renderer: NewRenderer,
+    options: InlineRuleOption | BlockRuleOption = {}
+  ) {
+    if (isBlockRule(regExp)) {
+      this.setBlockRule(regExp, renderer, options)
+    } else {
+      this.setInlineRule(regExp, renderer, options)
+    }
+  }
+
+  static unsetRule(regExp: RegExp) {
+    if (isBlockRule(regExp)) {
+      this.unsetBlockRule(regExp)
+    } else {
+      this.unsetInlineRule(regExp)
+    }
+  }
+
   static setInlineRule(
     regExp: RegExp,
     renderer: NewRenderer,
@@ -55,7 +75,7 @@ export default class Smarkdown {
 
     let breakChar: string = getBreakChar(regExp)
 
-    if (breakChar && !this.options.textBreak.includes(breakChar)) {
+    if (breakChar && this.options.textBreak.indexOf(breakChar) === -1) {
       breakChar = escapeStringRegex(breakChar)
       this.options.textBreak += breakChar
       this.options.isTextBreakSync = false
@@ -79,7 +99,7 @@ export default class Smarkdown {
     const breakChars: string =
       defaultTextBreak +
       InlineLexer.newRules
-        .filter(R => !defaultTextBreak.includes(R.breakChar))
+        .filter(R => defaultTextBreak.indexOf(R.breakChar) === -1)
         .map(R => R.breakChar)
         // remove dulplicate
         .filter((v, i, a) => a.indexOf(v) === i)

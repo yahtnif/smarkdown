@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [0.7.0](https://github.com/yahtnif/smarkdown/releases/tag/v0.7.0) - 2018-12-05
+
+### Added
+
+* Add `setRule` and `unsetRule`
+
+### Changed
+
+* Use indexOf instead of includes
+* Use .source instead of .toString()
+* Update setRules
+
+
 ## [0.6.3](https://github.com/yahtnif/smarkdown/releases/tag/v0.6.3) - 2018-11-12
 
 ### Fixed

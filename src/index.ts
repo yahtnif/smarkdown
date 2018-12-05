@@ -1,5 +1,5 @@
 import { BlockLexer } from './block-lexer'
-import { defaultTextBreak, escapeStringRegex, getBreakChar, getRuleType } from './helpers'
+import { defaultTextBreak, escapeStringRegex, getBreakChar, getRuleType, isBlockRule } from './helpers'
 import { InlineLexer } from './inline-lexer'
 import {
   BlockRenderer,
@@ -40,6 +40,26 @@ export default class Smarkdown {
 
   static resetOptions() {
     this.options = new Options()
+  }
+
+  static setRule(
+    regExp: RegExp,
+    renderer: NewRenderer,
+    options: InlineRuleOption | BlockRuleOption = {}
+  ) {
+    if (isBlockRule(regExp)) {
+      this.setBlockRule(regExp, renderer, options)
+    } else {
+      this.setInlineRule(regExp, renderer, options)
+    }
+  }
+
+  static unsetRule(regExp: RegExp) {
+    if (isBlockRule(regExp)) {
+      this.unsetBlockRule(regExp)
+    } else {
+      this.unsetInlineRule(regExp)
+    }
   }
 
   static setInlineRule(

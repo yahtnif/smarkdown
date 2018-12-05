@@ -207,3 +207,7 @@ const breakCharRegex: RegExp = /^\^\(*\\?(.)/
 export function getBreakChar(regExp: RegExp): string {
   return regExp.source.match(breakCharRegex)[1]
 }
+
+export function isBlockRule(regExp: RegExp): boolean {
+  return regExp.source.indexOf('\\n') > -1
+}

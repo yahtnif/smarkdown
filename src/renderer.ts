@@ -157,7 +157,7 @@ ${content}</tr>
   }
 
   fnref(refname: string): string {
-    if (!this._footnotes.includes(refname)) {
+    if (this._footnotes.indexOf(refname) === -1) {
       this._footnotes.push(refname)
     }
 

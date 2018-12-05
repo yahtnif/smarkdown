@@ -55,7 +55,7 @@ export default class Smarkdown {
 
     let breakChar: string = getBreakChar(regExp)
 
-    if (breakChar && !this.options.textBreak.includes(breakChar)) {
+    if (breakChar && this.options.textBreak.indexOf(breakChar) === -1) {
       breakChar = escapeStringRegex(breakChar)
       this.options.textBreak += breakChar
       this.options.isTextBreakSync = false
@@ -79,7 +79,7 @@ export default class Smarkdown {
     const breakChars: string =
       defaultTextBreak +
       InlineLexer.newRules
-        .filter(R => !defaultTextBreak.includes(R.breakChar))
+        .filter(R => defaultTextBreak.indexOf(R.breakChar) === -1)
         .map(R => R.breakChar)
         // remove dulplicate
         .filter((v, i, a) => a.indexOf(v) === i)

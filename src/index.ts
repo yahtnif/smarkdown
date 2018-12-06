@@ -48,6 +48,10 @@ export default class Smarkdown {
     renderer: NewRenderer,
     options: InlineRuleOption | BlockRuleOption = {}
   ) {
+    if (!regExp.source.startsWith('^')) {
+      throw new Error(`[setRule] RegExp MUST start with '^', please check: '${regExp.source}'`)
+    }
+
     if (isBlockRule(regExp)) {
       BlockLexer.setRule(regExp, renderer, options)
     } else {

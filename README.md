@@ -139,9 +139,9 @@ Smarkdown.setOptions({
 
 ## Extensions
 
-Using `Smarkdown.setRule(regexp, callback, [, options])`, which takes a regular expression as the first argument, and returns result `regexp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
+Using `Smarkdown.setRule(regExp, callback, [, options])`, which takes a regular expression as the first argument, and returns result `regExp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
 
-`regexp` **MUST** start with `^`.
+`regExp` **MUST** start with `^`.
 
 Extension options:
 
@@ -271,7 +271,7 @@ console.log(Smarkdown.parse(str))
 ### Unset
 
 ```js
-Smarkdown.unsetRule(regexp)
+Smarkdown.unsetRule(regExp)
 ```
 
 

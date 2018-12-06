@@ -8,7 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+* Add setNewRule and unsetNewRule to InlineLexer
+* Add setNewRule and unsetNewRule to BlockLexer
+* Export: BlockLexer, InlineLexer, Parser
+
+### Changed
+
+* Remove: setBlockRule, unsetBlockRule, setInlineRule, unsetInlineRule
+
+### Fixed
+
 * Fix emphasis followed by a punctuation, marked#1383
+* Ensure RegExp in setRule MUST start with '^'
 
 
 ## [0.7.0](https://github.com/yahtnif/smarkdown/releases/tag/v0.7.0) - 2018-12-05

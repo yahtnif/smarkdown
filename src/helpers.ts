@@ -211,3 +211,5 @@ export function getBreakChar(regExp: RegExp): string {
 export function isBlockRule(regExp: RegExp): boolean {
   return regExp.source.indexOf('\\n') > -1
 }
+
+export const blockCommentRegex = /<!--(?!-?>)[\s\S]*?-->/

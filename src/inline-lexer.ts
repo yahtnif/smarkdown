@@ -1,4 +1,4 @@
-import { defaultTextBreak, ExtendRegexp, noopRegex } from './helpers'
+import { blockCommentRegex, defaultTextBreak, ExtendRegexp, noopRegex } from './helpers'
 import {
   BaseInlineRules,
   BreaksInlineRules,
@@ -78,13 +78,8 @@ export class InlineLexer {
      * Inline-Level Grammar.
      */
     const base: BaseInlineRules = {
-      _attribute: /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/,
-      _email: /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/,
       _escapes: /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g,
-      _href: /\s*(<(?:\\[<>]?|[^\s<>\\])*>|(?:\\[()]?|\([^\s\x00-\x1f\\]*\)|[^\s\x00-\x1f()\\])*?)/,
       _label: /(?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|[^\[\]\\])*?/,
-      _scheme: /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/,
-      _title: /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/,
       autolink: /^<(scheme:[^\s\x00-\x1f<>]*|email)>/,
       br: /^( {2,}|\\)\n(?!\s*$)/,
       code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
@@ -98,22 +93,26 @@ export class InlineLexer {
       text: /^(`+|[^`])[\s\S]*?(?=[\\<!\[`*]|\b_| {2,}\n|$)/
     }
 
+    const _attribute: RegExp = /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/
+    const _email: RegExp = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/
+    const _href: RegExp = /\s*(<(?:\\[<>]?|[^\s<>\\])*>|(?:\\[()]?|\([^\s\x00-\x1f\\]*\)|[^\s\x00-\x1f()\\])*?)/
+    const _scheme: RegExp = /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/
+    const _title: RegExp = /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/
+
     base.autolink = new ExtendRegexp(base.autolink)
-      .setGroup('scheme', base._scheme)
-      .setGroup('email', base._email)
+      .setGroup('scheme', _scheme)
+      .setGroup('email', _email)
       .getRegex()
 
-    const comment: RegExp = /<!--(?!-?>)[\s\S]*?-->/ // block comment
-
     base.tag = new ExtendRegexp(base.tag)
-      .setGroup('comment', comment)
-      .setGroup('attribute', base._attribute)
+      .setGroup('comment', blockCommentRegex)
+      .setGroup('attribute', _attribute)
       .getRegex()
 
     base.link = new ExtendRegexp(base.link)
       .setGroup('label', base._label)
-      .setGroup('href', base._href)
-      .setGroup('title', base._title)
+      .setGroup('href', _href)
+      .setGroup('title', _title)
       .getRegex()
 
     base.reflink = new ExtendRegexp(base.reflink)

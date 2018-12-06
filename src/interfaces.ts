@@ -11,8 +11,6 @@ import { Renderer } from './renderer'
 
 export interface BaseBlockRules {
   _comment: RegExp
-  _label: RegExp
-  _title: RegExp
   blockquote: RegExp
   bullet: RegExp
   code: RegExp
@@ -104,13 +102,8 @@ export interface Token {
 }
 
 export interface BaseInlineRules {
-  _attribute: RegExp
-  _email: RegExp
   _escapes: RegExp
-  _href: RegExp
   _label: RegExp
-  _scheme: RegExp
-  _title: RegExp
   autolink: RegExp
   br: RegExp
   code: RegExp

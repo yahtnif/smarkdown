@@ -1,4 +1,4 @@
-import { ExtendRegexp, noopRegex } from './helpers'
+import { blockCommentRegex, ExtendRegexp, noopRegex } from './helpers'
 import {
   Align,
   BaseBlockRules,
@@ -68,9 +68,7 @@ export class BlockLexer {
       ')'
 
     const base: BaseBlockRules = {
-      _comment: /<!--(?!-?>)[\s\S]*?-->/,
-      _label: /(?!\s*\])(?:\\[\[\]]|[^\[\]])+/,
-      _title: /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/,
+      _comment: blockCommentRegex,
       blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
       bullet: /(?:[*+-]|\d+\.)/,
       code: /^( {4}[^\n]+\n*)+/,
@@ -86,9 +84,12 @@ export class BlockLexer {
       text: /^[^\n]+/
     }
 
+    const _label: RegExp = /(?!\s*\])(?:\\[\[\]]|[^\[\]])+/
+    const _title: RegExp = /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/
+
     base.def = new ExtendRegexp(base.def)
-      .setGroup('label', base._label)
-      .setGroup('title', base._title)
+      .setGroup('label', _label)
+      .setGroup('title', _title)
       .getRegex()
 
     base.item = new ExtendRegexp(base.item, 'gm')

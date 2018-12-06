@@ -34,7 +34,7 @@ export class InlineLexer {
    */
   private static breaksRules: BreaksInlineRules
   /**
-   * GFM + Line Breaks + Extra Inline Grammar.
+   * GFM + Extra Inline Grammar.
    */
   private static extraRules: ExtraInlineRules
   private inLink: boolean
@@ -67,7 +67,7 @@ export class InlineLexer {
     return inlineLexer.output(src)
   }
 
-  static setNewRule(
+  static setRule(
     regExp: RegExp,
     renderer: NewRenderer,
     options: InlineRuleOption = {}
@@ -75,7 +75,7 @@ export class InlineLexer {
     const ruleType: string = getRuleType(regExp)
 
     if (this.newRules.some(R => R.type !== ruleType)) {
-      this.unsetNewRule(regExp)
+      this.unsetRule(regExp)
     }
 
     this.newRules.push({
@@ -89,7 +89,7 @@ export class InlineLexer {
     this.isTextBreakSync = false
   }
 
-  static unsetNewRule(regExp: RegExp) {
+  static unsetRule(regExp: RegExp) {
     const ruleType: string = getRuleType(regExp)
 
     InlineLexer.newRules = InlineLexer.newRules.filter(R => R.type !== ruleType)

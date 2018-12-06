@@ -55,7 +55,7 @@ export default class Smarkdown {
     if (isBlockRule(regExp)) {
       BlockLexer.setRule(regExp, renderer, options)
     } else {
-      InlineLexer.setNewRule(regExp, renderer, options)
+      InlineLexer.setRule(regExp, renderer, options)
     }
   }
 
@@ -63,7 +63,7 @@ export default class Smarkdown {
     if (isBlockRule(regExp)) {
       BlockLexer.unsetRule(regExp)
     } else {
-      InlineLexer.unsetNewRule(regExp)
+      InlineLexer.unsetRule(regExp)
     }
   }
 

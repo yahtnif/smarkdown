@@ -1,14 +1,16 @@
-import { blockCommentRegex, defaultTextBreak, ExtendRegexp, noopRegex } from './helpers'
+import { blockCommentRegex, ExtendRegexp, getBreakChar, getRuleType, noopRegex } from './helpers'
 import {
   BaseInlineRules,
   BreaksInlineRules,
   ExtraInlineRules,
   GfmInlineRules,
   InlineRule,
+  InlineRuleOption,
   InlineRulesType,
   InlineRulesTypes,
   Link,
   Links,
+  NewRenderer,
   Options,
   PedanticInlineRules,
 } from './interfaces'
@@ -18,7 +20,6 @@ import { Renderer } from './renderer'
  * Inline Lexer & Compiler.
  */
 export class InlineLexer {
-  static newRules: InlineRule[] = []
   private static baseRules: BaseInlineRules
   /**
    * Pedantic Inline Grammar.
@@ -33,7 +34,7 @@ export class InlineLexer {
    */
   private static breaksRules: BreaksInlineRules
   /**
-   * GFM + Line Breaks + Extra Inline Grammar.
+   * GFM + Extra Inline Grammar.
    */
   private static extraRules: ExtraInlineRules
   private inLink: boolean
@@ -42,7 +43,9 @@ export class InlineLexer {
   private isGfm: boolean
   private renderer: Renderer
   private rules: InlineRulesTypes
-  private textBreak: string = defaultTextBreak
+  private defaultTextBreak: string
+  static isTextBreakSync: boolean = true
+  static newRules: InlineRule[] = []
 
   constructor(
     protected self: typeof InlineLexer,
@@ -62,6 +65,36 @@ export class InlineLexer {
   static output(src: string, links: Links, options: Options): string {
     const inlineLexer: InlineLexer = new this(this, links, options)
     return inlineLexer.output(src)
+  }
+
+  static setRule(
+    regExp: RegExp,
+    renderer: NewRenderer,
+    options: InlineRuleOption = {}
+  ) {
+    const ruleType: string = getRuleType(regExp)
+
+    if (this.newRules.some(R => R.type !== ruleType)) {
+      this.unsetRule(regExp)
+    }
+
+    this.newRules.push({
+      breakChar: getBreakChar(regExp),
+      options,
+      render: renderer,
+      rule: regExp,
+      type: ruleType
+    })
+
+    this.isTextBreakSync = false
+  }
+
+  static unsetRule(regExp: RegExp) {
+    const ruleType: string = getRuleType(regExp)
+
+    InlineLexer.newRules = InlineLexer.newRules.filter(R => R.type !== ruleType)
+
+    this.isTextBreakSync = false
   }
 
   private static getBaseRules(): BaseInlineRules {
@@ -228,7 +261,7 @@ export class InlineLexer {
   }
 
   private setRules() {
-     if (this.options.pedantic) {
+    if (this.options.pedantic) {
       this.rules = this.self.getPedanticRules()
     } else if (this.options.extra) {
       this.rules = this.self.getExtraRules(this.options)
@@ -240,14 +273,20 @@ export class InlineLexer {
       this.rules = this.self.getBaseRules()
     }
 
-    if (!this.options.isTextBreakSync) {
-      const textRuleStr: string = this.rules.text.toString()
+    if (!this.self.isTextBreakSync) {
+      const textRuleStr: string = this.rules.text.source
 
-      this.rules.text = new RegExp(
-        textRuleStr.replace(this.textBreak.slice(4), this.options.textBreak.slice(4)).slice(1, -1)
-      )
-      this.textBreak = this.options.textBreak
-      this.options.isTextBreakSync = true
+      if (!this.defaultTextBreak) {
+        this.defaultTextBreak = textRuleStr.match(/\?=\[(.+?)\]/)[1]
+      }
+
+      const textBreak: string = this.defaultTextBreak + InlineLexer.newRules
+        .filter(R => this.defaultTextBreak.indexOf(R.breakChar) === -1)
+        .map(R => R.breakChar)
+        // remove dulplicate
+        .filter((v, i, a) => a.indexOf(v) === i)
+        .join('')
+      this.rules.text = new RegExp(textRuleStr.replace(this.defaultTextBreak, textBreak))
     }
 
     this.options.disabledRules.forEach(

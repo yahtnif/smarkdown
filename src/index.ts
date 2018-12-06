@@ -1,8 +1,7 @@
 import { BlockLexer } from './block-lexer'
-import { defaultTextBreak, escapeStringRegex, getBreakChar, getRuleType, isBlockRule } from './helpers'
+import { isBlockRule } from './helpers'
 import { InlineLexer } from './inline-lexer'
 import {
-  BlockRenderer,
   BlockRuleOption,
   InlineRuleOption,
   LexerReturns,
@@ -15,9 +14,11 @@ import { Parser } from './parser'
 import { Renderer } from './renderer'
 
 export default class Smarkdown {
+  static BlockLexer: typeof BlockLexer = BlockLexer
+  static InlineLexer: typeof InlineLexer = InlineLexer
   static options: Options = new Options()
+  static Parser: typeof Parser = Parser
   static Renderer: typeof Renderer = Renderer
-  protected static blockRenderers: BlockRenderer[] = []
 
   static getOptions(options: Options): Options {
     if (!options) {
@@ -47,105 +48,31 @@ export default class Smarkdown {
     renderer: NewRenderer,
     options: InlineRuleOption | BlockRuleOption = {}
   ) {
+    if (!regExp.source.startsWith('^')) {
+      throw new Error(`[setRule] RegExp MUST start with '^', please check: '${regExp.source}'`)
+    }
+
     if (isBlockRule(regExp)) {
-      this.setBlockRule(regExp, renderer, options)
+      BlockLexer.setRule(regExp, renderer, options)
     } else {
-      this.setInlineRule(regExp, renderer, options)
+      InlineLexer.setRule(regExp, renderer, options)
     }
   }
 
   static unsetRule(regExp: RegExp) {
     if (isBlockRule(regExp)) {
-      this.unsetBlockRule(regExp)
+      BlockLexer.unsetRule(regExp)
     } else {
-      this.unsetInlineRule(regExp)
+      InlineLexer.unsetRule(regExp)
     }
-  }
-
-  static setInlineRule(
-    regExp: RegExp,
-    renderer: NewRenderer,
-    options: InlineRuleOption = {}
-  ) {
-    const ruleType: string = getRuleType(regExp)
-
-    if (InlineLexer.newRules.some(R => R.type !== ruleType)) {
-      this.unsetInlineRule(regExp)
-    }
-
-    let breakChar: string = getBreakChar(regExp)
-
-    if (breakChar && this.options.textBreak.indexOf(breakChar) === -1) {
-      breakChar = escapeStringRegex(breakChar)
-      this.options.textBreak += breakChar
-      this.options.isTextBreakSync = false
-    }
-
-    InlineLexer.newRules.push({
-      breakChar,
-      options,
-      render: renderer,
-      rule: regExp,
-      type: ruleType
-    })
-  }
-
-  static unsetInlineRule(regExp: RegExp) {
-    const ruleType: string = getRuleType(regExp)
-
-    InlineLexer.newRules = InlineLexer.newRules.filter(R => R.type !== ruleType)
-
-    // Reset textBreak
-    const breakChars: string =
-      defaultTextBreak +
-      InlineLexer.newRules
-        .filter(R => defaultTextBreak.indexOf(R.breakChar) === -1)
-        .map(R => R.breakChar)
-        // remove dulplicate
-        .filter((v, i, a) => a.indexOf(v) === i)
-        .join('')
-
-    if (this.options.textBreak !== breakChars) {
-      this.options.textBreak = breakChars
-      this.options.isTextBreakSync = false
-    }
-  }
-
-  static setBlockRule(
-    regExp: RegExp,
-    renderer: NewRenderer,
-    options: BlockRuleOption = {}
-  ) {
-    const ruleType: string = getRuleType(regExp)
-
-    if (BlockLexer.newRules.some(R => R.type === ruleType)) {
-      this.unsetBlockRule(regExp)
-    }
-
-    BlockLexer.newRules.push({
-      options,
-      rule: regExp,
-      type: ruleType
-    })
-
-    this.blockRenderers.push({
-      renderer,
-      type: ruleType
-    })
-  }
-
-  static unsetBlockRule(regExp: RegExp) {
-    const ruleType: string = getRuleType(regExp)
-
-    BlockLexer.newRules = BlockLexer.newRules.filter(R => R.type !== ruleType)
-
-    this.blockRenderers = this.blockRenderers.filter(R => R.type !== ruleType)
   }
 
   static inlineParse(src: string, options: Options): string {
-    return new InlineLexer(InlineLexer, {}, this.getOptions(options)).output(
-      src
-    )
+    return new InlineLexer(
+      InlineLexer,
+      {},
+      this.getOptions(options)
+    ).output(src)
   }
 
   static parse(src: string, options: Options): string {
@@ -183,9 +110,9 @@ export default class Smarkdown {
     links: Links,
     options?: Options
   ): string {
-    if (this.blockRenderers.length) {
+    if (BlockLexer.blockRenderers.length) {
       const parser: Parser = new Parser(options)
-      parser.blockRenderers = this.blockRenderers
+      parser.blockRenderers = BlockLexer.blockRenderers
 
       return parser.parse(links, tokens)
     } else {

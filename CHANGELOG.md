@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+
+## [0.8.0](https://github.com/yahtnif/smarkdown/releases/tag/v0.8.0) - 2018-12-06
+
 ### Added
 
 * Add setRule and unsetRule to InlineLexer and BlockLexer

@@ -83,7 +83,7 @@ export class InlineLexer {
       autolink: /^<(scheme:[^\s\x00-\x1f<>]*|email)>/,
       br: /^( {2,}|\\)\n(?!\s*$)/,
       code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
-      em: /^_([^\s_])_(?!_)|^\*([^\s*"<\[])\*(?!\*)|^_([^\s][\s\S]*?[^\s_])_(?!_|[^\s.])|^_([^\s_][\s\S]*?[^\s])_(?!_|[^\s.])|^\*([^\s"<\[][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*"<\[][\s\S]*?[^\s])\*(?!\*)/,
+      em: /^_([^\s_])_(?!_)|^\*([^\s*"<\[])\*(?!\*)|^_([^\s][\s\S]*?[^\s_])_(?!_|[^\spunctuation])|^_([^\s_][\s\S]*?[^\s])_(?!_|[^\spunctuation])|^\*([^\s"<\[][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*"<\[][\s\S]*?[^\s])\*(?!\*)/,
       escape: /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,
       link: /^!?\[(label)\]\(href(?:\s+(title))?\s*\)/,
       nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
@@ -96,8 +96,15 @@ export class InlineLexer {
     const _attribute: RegExp = /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/
     const _email: RegExp = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/
     const _href: RegExp = /\s*(<(?:\\[<>]?|[^\s<>\\])*>|(?:\\[()]?|\([^\s\x00-\x1f\\]*\)|[^\s\x00-\x1f()\\])*?)/
+    const _punctuation: string = '!"#$%&\'()*+,\\-./:;<=>?@\\[^_{|}~'
     const _scheme: RegExp = /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/
     const _title: RegExp = /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/
+
+    // list of punctuation marks from common mark spec
+    // without ` and ] to workaround Rule 17 (inline code blocks/links)
+    base.em = new ExtendRegexp(base.em)
+      .setGroup(/punctuation/g, _punctuation)
+      .getRegex()
 
     base.autolink = new ExtendRegexp(base.autolink)
       .setGroup('scheme', _scheme)

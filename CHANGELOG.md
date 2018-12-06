@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+* Fix emphasis followed by a punctuation, marked#1383
+
 
 ## [0.7.0](https://github.com/yahtnif/smarkdown/releases/tag/v0.7.0) - 2018-12-05
 

@@ -1,7 +1,9 @@
-import { blockCommentRegex, ExtendRegexp, noopRegex } from './helpers'
+import { blockCommentRegex, ExtendRegexp, getRuleType, noopRegex } from './helpers'
 import {
   Align,
   BaseBlockRules,
+  BlockRenderer,
+  BlockRuleOption,
   BlockRule,
   BlockRulesType,
   BlockRulesTypes,
@@ -9,6 +11,7 @@ import {
   GfmBlockRules,
   LexerReturns,
   Links,
+  NewRenderer,
   Options,
   PedanticBlockRules,
   Token,
@@ -16,7 +19,6 @@ import {
 } from './interfaces'
 
 export class BlockLexer {
-  static newRules: BlockRule[] = []
   private static baseRules: BaseBlockRules
   /**
    * Pedantic Block Grammar.
@@ -36,6 +38,8 @@ export class BlockLexer {
   private options: Options
   private rules: BlockRulesTypes
   private tokens: Token[] = []
+  static blockRenderers: BlockRenderer[] = []
+  static newRules: BlockRule[] = []
 
   constructor(protected self: typeof BlockLexer, options?: object) {
     this.options = options
@@ -50,6 +54,37 @@ export class BlockLexer {
   ): LexerReturns {
     const lexer: BlockLexer = new this(this, options)
     return lexer.getTokens(src, top)
+  }
+
+  static setRule(
+    regExp: RegExp,
+    renderer: NewRenderer,
+    options: BlockRuleOption = {}
+  ) {
+    const ruleType: string = getRuleType(regExp)
+
+    if (BlockLexer.newRules.some(R => R.type === ruleType)) {
+      this.unsetRule(regExp)
+    }
+
+    BlockLexer.newRules.push({
+      options,
+      rule: regExp,
+      type: ruleType
+    })
+
+    this.blockRenderers.push({
+      renderer,
+      type: ruleType
+    })
+  }
+
+  static unsetRule(regExp: RegExp) {
+    const ruleType: string = getRuleType(regExp)
+
+    BlockLexer.newRules = BlockLexer.newRules.filter(R => R.type !== ruleType)
+
+    this.blockRenderers = this.blockRenderers.filter(R => R.type !== ruleType)
   }
 
   private static getBaseRules(): BaseBlockRules {

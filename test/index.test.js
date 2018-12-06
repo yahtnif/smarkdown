@@ -38,13 +38,13 @@ describe('Smarkdown', () => {
     })
 
     it('no-duplicate', function() {
-      const testRegex = /^$/
+      const testRegex = /^\n$/
 
-      Smarkdown.setBlockRule(testRegex, () => 'old')
-      Smarkdown.setBlockRule(testRegex, () => 'new')
+      Smarkdown.setRule(testRegex, () => 'old')
+      Smarkdown.setRule(testRegex, () => 'new')
 
-      expect(Smarkdown.blockRenderers[0].renderer()).to.equal('new')
-      expect(Smarkdown.blockRenderers.length).to.equal(1)
+      expect(Smarkdown.BlockLexer.blockRenderers[0].renderer()).to.equal('new')
+      expect(Smarkdown.BlockLexer.blockRenderers.length).to.equal(1)
     })
   })
 })

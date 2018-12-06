@@ -20,7 +20,6 @@ import { Renderer } from './renderer'
  * Inline Lexer & Compiler.
  */
 export class InlineLexer {
-  static newRules: InlineRule[] = []
   private static baseRules: BaseInlineRules
   /**
    * Pedantic Inline Grammar.
@@ -44,8 +43,9 @@ export class InlineLexer {
   private isGfm: boolean
   private renderer: Renderer
   private rules: InlineRulesTypes
-  static isTextBreakSync: boolean = true
   private defaultTextBreak: string
+  static isTextBreakSync: boolean = true
+  static newRules: InlineRule[] = []
 
   constructor(
     protected self: typeof InlineLexer,

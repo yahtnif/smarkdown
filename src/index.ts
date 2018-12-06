@@ -1,8 +1,7 @@
 import { BlockLexer } from './block-lexer'
-import { getRuleType, isBlockRule } from './helpers'
+import { isBlockRule } from './helpers'
 import { InlineLexer } from './inline-lexer'
 import {
-  BlockRenderer,
   BlockRuleOption,
   InlineRuleOption,
   LexerReturns,
@@ -15,9 +14,11 @@ import { Parser } from './parser'
 import { Renderer } from './renderer'
 
 export default class Smarkdown {
+  static BlockLexer: typeof BlockLexer = BlockLexer
+  static InlineLexer: typeof InlineLexer = InlineLexer
   static options: Options = new Options()
+  static Parser: typeof Parser = Parser
   static Renderer: typeof Renderer = Renderer
-  protected static blockRenderers: BlockRenderer[] = []
 
   static getOptions(options: Options): Options {
     if (!options) {
@@ -48,7 +49,7 @@ export default class Smarkdown {
     options: InlineRuleOption | BlockRuleOption = {}
   ) {
     if (isBlockRule(regExp)) {
-      this.setBlockRule(regExp, renderer, options)
+      BlockLexer.setRule(regExp, renderer, options)
     } else {
       InlineLexer.setNewRule(regExp, renderer, options)
     }
@@ -56,47 +57,18 @@ export default class Smarkdown {
 
   static unsetRule(regExp: RegExp) {
     if (isBlockRule(regExp)) {
-      this.unsetBlockRule(regExp)
+      BlockLexer.unsetRule(regExp)
     } else {
       InlineLexer.unsetNewRule(regExp)
     }
   }
 
-  static setBlockRule(
-    regExp: RegExp,
-    renderer: NewRenderer,
-    options: BlockRuleOption = {}
-  ) {
-    const ruleType: string = getRuleType(regExp)
-
-    if (BlockLexer.newRules.some(R => R.type === ruleType)) {
-      this.unsetBlockRule(regExp)
-    }
-
-    BlockLexer.newRules.push({
-      options,
-      rule: regExp,
-      type: ruleType
-    })
-
-    this.blockRenderers.push({
-      renderer,
-      type: ruleType
-    })
-  }
-
-  static unsetBlockRule(regExp: RegExp) {
-    const ruleType: string = getRuleType(regExp)
-
-    BlockLexer.newRules = BlockLexer.newRules.filter(R => R.type !== ruleType)
-
-    this.blockRenderers = this.blockRenderers.filter(R => R.type !== ruleType)
-  }
-
   static inlineParse(src: string, options: Options): string {
-    return new InlineLexer(InlineLexer, {}, this.getOptions(options)).output(
-      src
-    )
+    return new InlineLexer(
+      InlineLexer,
+      {},
+      this.getOptions(options)
+    ).output(src)
   }
 
   static parse(src: string, options: Options): string {
@@ -134,9 +106,9 @@ export default class Smarkdown {
     links: Links,
     options?: Options
   ): string {
-    if (this.blockRenderers.length) {
+    if (BlockLexer.blockRenderers.length) {
       const parser: Parser = new Parser(options)
-      parser.blockRenderers = this.blockRenderers
+      parser.blockRenderers = BlockLexer.blockRenderers
 
       return parser.parse(links, tokens)
     } else {

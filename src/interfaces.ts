@@ -1,6 +1,5 @@
 import {
   cleanUrl,
-  defaultTextBreak,
   escape,
   resolveUrl,
   rtrim,
@@ -180,12 +179,6 @@ export class Options {
    * ```
    */
   nop?: boolean = false
-  /**
-   * Break inline text
-   * Useful for setting new inline rules
-   */
-  isTextBreakSync?: boolean = true
-  textBreak?: string = defaultTextBreak
 }
 
 export interface LexerReturns {

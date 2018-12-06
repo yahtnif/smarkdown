@@ -1,5 +1,5 @@
 import { BlockLexer } from './block-lexer'
-import { defaultTextBreak, escapeStringRegex, getBreakChar, getRuleType, isBlockRule } from './helpers'
+import { getRuleType, isBlockRule } from './helpers'
 import { InlineLexer } from './inline-lexer'
 import {
   BlockRenderer,
@@ -50,7 +50,7 @@ export default class Smarkdown {
     if (isBlockRule(regExp)) {
       this.setBlockRule(regExp, renderer, options)
     } else {
-      this.setInlineRule(regExp, renderer, options)
+      InlineLexer.setNewRule(regExp, renderer, options)
     }
   }
 
@@ -58,56 +58,7 @@ export default class Smarkdown {
     if (isBlockRule(regExp)) {
       this.unsetBlockRule(regExp)
     } else {
-      this.unsetInlineRule(regExp)
-    }
-  }
-
-  static setInlineRule(
-    regExp: RegExp,
-    renderer: NewRenderer,
-    options: InlineRuleOption = {}
-  ) {
-    const ruleType: string = getRuleType(regExp)
-
-    if (InlineLexer.newRules.some(R => R.type !== ruleType)) {
-      this.unsetInlineRule(regExp)
-    }
-
-    let breakChar: string = getBreakChar(regExp)
-
-    if (breakChar && this.options.textBreak.indexOf(breakChar) === -1) {
-      breakChar = escapeStringRegex(breakChar)
-      this.options.textBreak += breakChar
-      this.options.isTextBreakSync = false
-    }
-
-    InlineLexer.newRules.push({
-      breakChar,
-      options,
-      render: renderer,
-      rule: regExp,
-      type: ruleType
-    })
-  }
-
-  static unsetInlineRule(regExp: RegExp) {
-    const ruleType: string = getRuleType(regExp)
-
-    InlineLexer.newRules = InlineLexer.newRules.filter(R => R.type !== ruleType)
-
-    // Reset textBreak
-    const breakChars: string =
-      defaultTextBreak +
-      InlineLexer.newRules
-        .filter(R => defaultTextBreak.indexOf(R.breakChar) === -1)
-        .map(R => R.breakChar)
-        // remove dulplicate
-        .filter((v, i, a) => a.indexOf(v) === i)
-        .join('')
-
-    if (this.options.textBreak !== breakChars) {
-      this.options.textBreak = breakChars
-      this.options.isTextBreakSync = false
+      InlineLexer.unsetNewRule(regExp)
     }
   }
 

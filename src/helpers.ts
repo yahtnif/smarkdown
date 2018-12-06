@@ -185,27 +185,17 @@ export class ExtendRegexp {
   }
 }
 
-// from a part of InlineLexer.rules.text
-export const defaultTextBreak: string = '\\<![`*~'
-
 // match nothing
 export const noopRegex: RegExp = /S^/
 
-// Escape RegExp special characters
-const escapeCharsRegex: RegExp = /[-|\\{}()[\]^$+*?.]/g
+const breakCharRegex: RegExp = /^\^\(*\\*./
 
-export function escapeStringRegex(str: string): string {
-  return str.replace(escapeCharsRegex, '\\$&')
+export function getBreakChar(regExp: RegExp): string {
+  return regExp.source.match(breakCharRegex)[0].slice(1)
 }
 
 export function getRuleType(regExp: RegExp): string {
   return regExp.source
-}
-
-const breakCharRegex: RegExp = /^\^\(*\\?(.)/
-
-export function getBreakChar(regExp: RegExp): string {
-  return regExp.source.match(breakCharRegex)[1]
 }
 
 export function isBlockRule(regExp: RegExp): boolean {

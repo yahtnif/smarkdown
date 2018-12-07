@@ -10,6 +10,8 @@ Link: [constructor][].
 
 bold around autolink: __test@test.com__
 
+hTtP://fOo.CoM
+
 
 
 <p>autolink: <a href="https://example.com">https://example.com</a></p>
@@ -17,3 +19,4 @@ bold around autolink: __test@test.com__
 <p>(See <a href="https://www.example.com/example">https://www.example.com/example</a>.)</p>
 <p>((<a href="https://example.com">https://example.com</a>))</p>
 <p>bold around autolink: <strong><a href="mailto:test@test.com">test@test.com</a></strong></p>
+<p><a href="hTtP://fOo.CoM">hTtP://fOo.CoM</a></p>

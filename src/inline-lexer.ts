@@ -195,7 +195,7 @@ export class InlineLexer {
 
     const _extended_email: RegExp = /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/
     const _url: RegExp = /^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/
-    const url: RegExp = new ExtendRegexp(_url)
+    const url: RegExp = new ExtendRegexp(_url, 'i')
       .setGroup('email', _extended_email)
       .getRegex()
 

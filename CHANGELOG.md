@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+* Make autolinks case insensitive, marked#1384
 * Fix bold around autolink email address, marked#1385
 
 

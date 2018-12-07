@@ -24,7 +24,7 @@
 * [Options](#options)
 * [Extensions](#extensions)
 * [Renderer](#renderer)
-* [Size Comparison](#size-comparison)
+* [Comparison](#comparison)
 * [License](#license)
 
 
@@ -353,7 +353,7 @@ Smarkdown.setOptions({ renderer: new NewRenderer(NewOptions) })
 ```
 
 
-## Size Comparison
+## Comparison
 
 | | Smarkdown | Marked | markdown-it |
 | :-: | :-: | :-: | :-: |

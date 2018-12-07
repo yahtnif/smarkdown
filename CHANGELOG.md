@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+* Fix bold around autolink email address, marked#1385
+
 
 ## [0.8.0](https://github.com/yahtnif/smarkdown/releases/tag/v0.8.0) - 2018-12-06
 

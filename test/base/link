@@ -8,9 +8,12 @@ Link: [constructor][].
 
 ((https://example.com))
 
+bold around autolink: __test@test.com__
+
 
 
 <p>autolink: <a href="https://example.com">https://example.com</a></p>
 <p>Link: <a href="https://example.com/">constructor</a>.</p>
 <p>(See <a href="https://www.example.com/example">https://www.example.com/example</a>.)</p>
 <p>((<a href="https://example.com">https://example.com</a>))</p>
+<p>bold around autolink: <strong><a href="mailto:test@test.com">test@test.com</a></strong></p>

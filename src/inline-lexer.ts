@@ -347,55 +347,6 @@ export class InlineLexer {
         }
       }
 
-      // autolink
-      if ((execArr = this.rules.autolink.exec(nextPart))) {
-        let text: string, href: string
-        nextPart = nextPart.substring(execArr[0].length)
-        if (execArr[2] === '@') {
-          text = this.options.escape(this.mangle(execArr[1]))
-          href = 'mailto:' + text
-        } else {
-          text = this.options.escape(execArr[1])
-          href = text
-        }
-
-        out += this.renderer.link(href, null, text)
-        continue
-      }
-
-      // url (gfm)
-      if (
-        !this.inLink &&
-        this.isGfm &&
-        (execArr = (<GfmInlineRules>this.rules).url.exec(nextPart))
-      ) {
-        let text: string, href: string, prevCapZero: string
-
-        if (execArr[2] === '@') {
-          text = this.options.escape(execArr[0])
-          href = 'mailto:' + text
-        } else {
-          // do extended autolink path validation
-          do {
-            prevCapZero = execArr[0]
-            execArr[0] = (<GfmInlineRules>this.rules)._backpedal.exec(execArr[0])[0]
-          } while (prevCapZero !== execArr[0])
-
-          text = this.options.escape(execArr[0])
-
-          if (execArr[1] === 'www.') {
-            href = 'http://' + text
-          } else {
-            href = text
-          }
-        }
-
-        nextPart = nextPart.substring(execArr[0].length)
-        out += this.renderer.link(href, null, text)
-
-        continue
-      }
-
       // tag
       if ((execArr = this.rules.tag.exec(nextPart))) {
         if (!this.inLink && /^<a /i.test(execArr[0])) {
@@ -519,6 +470,55 @@ export class InlineLexer {
       ) {
         nextPart = nextPart.substring(execArr[0].length)
         out += this.renderer.del(this.output(execArr[1]))
+        continue
+      }
+
+      // autolink
+      if ((execArr = this.rules.autolink.exec(nextPart))) {
+        let text: string, href: string
+        nextPart = nextPart.substring(execArr[0].length)
+        if (execArr[2] === '@') {
+          text = this.options.escape(this.mangle(execArr[1]))
+          href = 'mailto:' + text
+        } else {
+          text = this.options.escape(execArr[1])
+          href = text
+        }
+
+        out += this.renderer.link(href, null, text)
+        continue
+      }
+
+      // url (gfm)
+      if (
+        !this.inLink &&
+        this.isGfm &&
+        (execArr = (<GfmInlineRules>this.rules).url.exec(nextPart))
+      ) {
+        let text: string, href: string, prevCapZero: string
+
+        if (execArr[2] === '@') {
+          text = this.options.escape(execArr[0])
+          href = 'mailto:' + text
+        } else {
+          // do extended autolink path validation
+          do {
+            prevCapZero = execArr[0]
+            execArr[0] = (<GfmInlineRules>this.rules)._backpedal.exec(execArr[0])[0]
+          } while (prevCapZero !== execArr[0])
+
+          text = this.options.escape(execArr[0])
+
+          if (execArr[1] === 'www.') {
+            href = 'http://' + text
+          } else {
+            href = text
+          }
+        }
+
+        nextPart = nextPart.substring(execArr[0].length)
+        out += this.renderer.link(href, null, text)
+
         continue
       }
 

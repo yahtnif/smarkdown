@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+
+## [0.9.0](https://github.com/yahtnif/smarkdown/releases/tag/v0.9.0) - 2018-12-07
+
+### Added
+
+* Jest
+
 ### Changed
 
 * Rename: setOptions -> setOption, resetOptions -> resetOption

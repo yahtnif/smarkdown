@@ -75,7 +75,7 @@ export default class Smarkdown {
     ).output(src)
   }
 
-  static parse(src: string, option: Option): string {
+  static parse(src: string, option?: Option): string {
     try {
       const opts: Option = this.getOption(option)
       const { tokens, links } = this.callBlockLexer(src, opts)

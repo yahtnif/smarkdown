@@ -21,8 +21,8 @@
 
 * [Installation](#installation)
 * [Usage](#usage)
-* [Options](#options)
-* [Extensions](#extensions)
+* [Option](#option)
+* [Extension](#extension)
 * [Renderer](#renderer)
 * [Comparison](#comparison)
 * [License](#license)
@@ -59,11 +59,11 @@ Or import the library with a script tag:
 Example:
 
 ```js
-// Resetting options
-Smarkdown.resetOptions()
+// Resetting option
+Smarkdown.resetOption()
 
-// Setting options
-Smarkdown.setOptions({
+// Setting option
+Smarkdown.setOption({
   breaks: true
 })
 
@@ -83,7 +83,7 @@ console.log(Smarkdown.parse(str, { nop: true }))
 import Smarkdown from 'smarkdown'
 import { highlight } from 'highlight.js'
 
-Smarkdown.setOptions({
+Smarkdown.setOption({
   highlight: (code, lang) => {
     return lang && highlight.getLanguage(lang)
       ? highlight.highlight(lang, code).value
@@ -98,7 +98,7 @@ import Smarkdown from 'smarkdown'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-markdown'
 
-Smarkdown.setOptions({
+Smarkdown.setOption({
   highlight: (code, lang) => {
     const language = Prism.languages[lang] ? lang : 'markdown'
 
@@ -108,7 +108,7 @@ Smarkdown.setOptions({
 ````
 
 
-## Options
+## Option
 
 | Name | Type | Default | Note |
 | :-: | :-: | :-: | :-: |
@@ -137,13 +137,13 @@ Smarkdown.setOptions({
 | xhtml | Boolean | false | Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.) with a "/" as required by XHTML. |
 
 
-## Extensions
+## Extension
 
-Using `Smarkdown.setRule(regExp, callback, [, options])`, which takes a regular expression as the first argument, and returns result `regExp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
+Using `Smarkdown.setRule(regExp, callback, [, option])`, which takes a regular expression as the first argument, and returns result `regExp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
 
 `regExp` **MUST** start with `^`.
 
-Extension options:
+Extension option:
 
 | Name | Type | Default | inline | block |
 | :-: | :-: | :-: | :-: | :-: |
@@ -347,9 +347,9 @@ ${body}</table>
   }
 }
 
-Smarkdown.setOptions({ renderer: NewRenderer })
-// or pass new options to new Renderer
-Smarkdown.setOptions({ renderer: new NewRenderer(NewOptions) })
+Smarkdown.setOption({ renderer: NewRenderer })
+// or pass new option to new Renderer
+Smarkdown.setOption({ renderer: new NewRenderer(NewOption) })
 ```
 
 

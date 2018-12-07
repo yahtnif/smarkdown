@@ -137,7 +137,7 @@ export type InlineRulesTypes = BaseInlineRules | PedanticInlineRules | GfmInline
 
 export type InlineRulesType = keyof(InlineRulesTypes)
 
-export class Options {
+export class Option {
   baseUrl?: string = null
   breaks?: boolean = false
   disabledRules?: string[] = []
@@ -208,14 +208,14 @@ export type BlockRuleOption = {
 
 export interface InlineRule {
   breakChar: string
-  options: InlineRuleOption
+  option: InlineRuleOption
   render: Function
   rule: RegExp
   type: string
 }
 
 export interface BlockRule {
-  options: BlockRuleOption
+  option: BlockRuleOption
   rule: RegExp
   type: string
 }

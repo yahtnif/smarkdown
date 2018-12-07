@@ -12,7 +12,7 @@ import {
   LexerReturns,
   Links,
   NewRenderer,
-  Options,
+  Option,
   PedanticBlockRules,
   Token,
   TokenType,
@@ -35,31 +35,31 @@ export class BlockLexer {
   private isExtra: boolean
   private isGfm: boolean
   private links: Links = Object.create(null)
-  private options: Options
+  private option: Option
   private rules: BlockRulesTypes
   private tokens: Token[] = []
   static blockRenderers: BlockRenderer[] = []
   static newRules: BlockRule[] = []
 
-  constructor(protected self: typeof BlockLexer, options?: object) {
-    this.options = options
+  constructor(protected self: typeof BlockLexer, option?: object) {
+    this.option = option
     this.setRules()
   }
 
   // Accepts Markdown text and returns object with tokens and links.
   static lex(
     src: string,
-    options?: Options,
+    option?: Option,
     top?: boolean
   ): LexerReturns {
-    const lexer: BlockLexer = new this(this, options)
+    const lexer: BlockLexer = new this(this, option)
     return lexer.getTokens(src, top)
   }
 
   static setRule(
     regExp: RegExp,
     renderer: NewRenderer,
-    options: BlockRuleOption = {}
+    option: BlockRuleOption = {}
   ) {
     const ruleType: string = getRuleType(regExp)
 
@@ -68,7 +68,7 @@ export class BlockLexer {
     }
 
     BlockLexer.newRules.push({
-      options,
+      option,
       rule: regExp,
       type: ruleType
     })
@@ -245,17 +245,17 @@ export class BlockLexer {
   }
 
   private setRules() {
-    if (this.options.pedantic) {
+    if (this.option.pedantic) {
       this.rules = this.self.getPedanticRules()
-    } else if (this.options.extra) {
+    } else if (this.option.extra) {
       this.rules = this.self.getExtraRules()
-    } else if (this.options.gfm) {
+    } else if (this.option.gfm) {
       this.rules = this.self.getGfmRules()
     } else {
       this.rules = this.self.getBaseRules()
     }
 
-    this.options.disabledRules.forEach(
+    this.option.disabledRules.forEach(
       (
         rule: BlockRulesType
       ) => {
@@ -275,10 +275,10 @@ export class BlockLexer {
     let execArr: RegExpExecArray
     const newRules: BlockRule[] = this.self.newRules || []
     const newRulesBefore: BlockRule[] = newRules.filter(
-      R => R.options.priority
-    ).sort((a, b) => b.options.priority - a.options.priority)
+      R => R.option.priority
+    ).sort((a, b) => b.option.priority - a.option.priority)
     const newRulesAfter: BlockRule[] = newRules.filter(
-      R => !R.options.priority
+      R => !R.option.priority
     )
 
     mainLoop: while (nextPart) {
@@ -312,7 +312,7 @@ export class BlockLexer {
 
         this.tokens.push({
           type: TokenType.code,
-          text: !this.options.pedantic ? this.options.rtrim(code, '\n') : code
+          text: !this.option.pedantic ? this.option.rtrim(code, '\n') : code
         })
         continue
       }
@@ -341,7 +341,7 @@ export class BlockLexer {
 
         const item: Token = {
           type: TokenType.footnote,
-          refname: this.options.slug(execArr[1]),
+          refname: this.option.slug(execArr[1]),
           text: execArr[2]
         }
 
@@ -476,14 +476,14 @@ export class BlockLexer {
           // Outdent whatever the list item contains. Hacky.
           if (item.indexOf('\n ') !== -1) {
             space -= item.length
-            item = !this.options.pedantic
+            item = !this.option.pedantic
               ? item.replace(new RegExp('^ {1,' + space + '}', 'gm'), '')
               : item.replace(/^ {1,4}/gm, '')
           }
 
           // Determine whether the next list item belongs here.
           // Backpedal if it does not belong in this list.
-          if (this.options.smartLists && i !== length - 1) {
+          if (this.option.smartLists && i !== length - 1) {
             blockBullet = this.self
               .getBaseRules()
               .bullet.exec(arr[i + 1])[0]
@@ -547,8 +547,8 @@ export class BlockLexer {
         const isPre: boolean = attr === 'pre' || attr === 'script' || attr === 'style'
 
         this.tokens.push({
-          type: this.options.sanitize ? TokenType.paragraph : TokenType.html,
-          pre: !this.options.sanitizer && isPre,
+          type: this.option.sanitize ? TokenType.paragraph : TokenType.html,
+          pre: !this.option.sanitizer && isPre,
           text: execArr[0]
         })
         continue

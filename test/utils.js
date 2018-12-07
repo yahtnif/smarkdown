@@ -9,18 +9,18 @@ exports.testFunc = function ({ dir, runAtFirstAndOnce, title }) {
 
     const data = fs.readFileSync(file.path, 'utf-8')
 
-    let [options, text] = data.split('\n===\n')
+    let [option, text] = data.split('\n===\n')
 
     if (text) {
-      options = options
+      option = option
         .trim()
         .split(/\n+/)
         .map(s => s + ',')
         .join('\n')
-      options = JSON5.parse(`{${options}}`)
+      option = JSON5.parse(`{${option}}`)
     } else {
-      text = options
-      options = null
+      text = option
+      option = null
     }
 
     let [actual, expected] = text.split(/\n{4,}/)
@@ -32,7 +32,7 @@ exports.testFunc = function ({ dir, runAtFirstAndOnce, title }) {
         runAtFirstAndOnce()
         runAtFirstAndOnce = null
       }
-      expect(Smarkdown.parse(actual, options).trim()).to.equal(expected.trim())
+      expect(Smarkdown.parse(actual, option).trim()).to.equal(expected.trim())
     })
   }
 }

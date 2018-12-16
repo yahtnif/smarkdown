@@ -19,7 +19,7 @@
 
 ## Table of contents
 
-* [Installation](#installation)
+* [Install](#install)
 * [Usage](#usage)
 * [Option](#option)
 * [Extension](#extension)
@@ -28,18 +28,15 @@
 * [License](#license)
 
 
-## Installation
+## Install
 
 ```sh
-npm install smarkdown
-# or
 yarn add smarkdown
+# or
+npm install smarkdown
 ```
 
-**browser (CDN):**
-
-* [jsDelivr](https://www.jsdelivr.com/package/npm/smarkdown)
-* [unpkg](https://unpkg.com/smarkdown/)
+**browser (CDN):** [jsDelivr](https://www.jsdelivr.com/package/npm/smarkdown) | [unpkg](https://unpkg.com/smarkdown/)
 
 
 ## Usage

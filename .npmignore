@@ -1,5 +1,0 @@
-*
-!dist/*.js
-!dist/src/*.d.ts
-!package.json
-!README.md

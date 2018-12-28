@@ -51,6 +51,10 @@
   "engines": {
     "node": ">=8"
   },
+  "files": [
+    "dist/*.js",
+    "dist/src/*.d.ts"
+  ],
   "devDependencies": {
     "@types/fs-extra": "^5.0.4",
     "@types/jest": "^23.3.10",

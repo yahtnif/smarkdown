@@ -55,15 +55,15 @@ function checkPreChar(char: string): boolean {
   return !char || /\s|\B/.test(char)
 }
 
-const subRegex: RegExp = /^~(?=\S)([\s\S]*?\S)~/
-const supRegex: RegExp = /^\^(?=\S)([\s\S]*?\S)\^/
-const markRegex: RegExp = /^==(?=\S)([\s\S]*?\S)==/
-const hashtagRegex: RegExp = /^#([^\s#]+)((?:\b)|(?=\s|$))/
-const rubyAnnotationRegex: RegExp = /^\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
-const smallTextRegex: RegExp = /^--(?=\S)([\s\S]*?\S)--/
-const largeTextRegex: RegExp = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
+const subRegex: RegExp = /~(?=\S)([\s\S]*?\S)~/
+const supRegex: RegExp = /\^(?=\S)([\s\S]*?\S)\^/
+const markRegex: RegExp = /==(?=\S)([\s\S]*?\S)==/
+const hashtagRegex: RegExp = /#([^\s#]+)((?:\b)|(?=\s|$))/
+const rubyAnnotationRegex: RegExp = /\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
+const smallTextRegex: RegExp = /--(?=\S)([\s\S]*?\S)--/
+const largeTextRegex: RegExp = /(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
 
-const extRegex: RegExp = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
+const extRegex: RegExp = /::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
 
 const rules = [
   subRegex,
@@ -143,7 +143,7 @@ function setExtensions() {
    *
    * --small text-- => <span class="small-text">small text</span>
    */
-  const smallTextRegex = /^--(?=\S)([\s\S]*?\S)--/
+  const smallTextRegex = /--(?=\S)([\s\S]*?\S)--/
   Smarkdown.setRule(smallTextRegex, function(execArr) {
     return `<span class="small-text">${execArr[1]}</span>`
   })
@@ -155,7 +155,7 @@ function setExtensions() {
    * +++large text+++ => <span class="large-text is-2">large text</span>
    * ++++large text++++ => <span class="large-text is-3">large text</span>
    */
-  const largeTextRegex = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
+  const largeTextRegex = /(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
   Smarkdown.setRule(largeTextRegex, function(execArr) {
     let size = execArr[1].length - 1
 
@@ -216,13 +216,15 @@ describe('Smarkdown', () => {
     })
 
     it('no-duplicate-rule', function() {
-      const testRegex: RegExp = /^\n$/
+      const testRegex: RegExp = /\n$/
 
       Smarkdown.setRule(testRegex, () => 'old')
       Smarkdown.setRule(testRegex, () => 'new')
 
       expect(Smarkdown.BlockLexer.blockRenderers[0].renderer()).toEqual('new')
       expect(Smarkdown.BlockLexer.blockRenderers.length).toBe(1)
+
+      Smarkdown.unsetRule(testRegex)
     })
   })
 })

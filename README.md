@@ -132,8 +132,6 @@ Smarkdown.setOptions({
 
 Using `Smarkdown.setRule(regExp, callback, [, options])`, which takes a regular expression as the first argument, and returns result `regExp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
 
-`regExp` **MUST** start with `^`.
-
 Extension options:
 
 |     Name     |   Type   | Default | inline | block |
@@ -150,7 +148,7 @@ Extension options:
  * H~2~O
  * H<sub>2</sub>O
  */
-const subRegex = /^~(?=\S)([\s\S]*?\S)~/
+const subRegex = /~(?=\S)([\s\S]*?\S)~/
 Smarkdown.setRule(subRegex, function(execArr) {
   return `<sub>${this.output(execArr[1])}</sub>`
 })
@@ -161,7 +159,7 @@ Smarkdown.setRule(subRegex, function(execArr) {
  * 1^st^
  * 1<sup>st</sup>
  */
-const supRegex = /^\^(?=\S)([\s\S]*?\S)\^/
+const supRegex = /\^(?=\S)([\s\S]*?\S)\^/
 Smarkdown.setRule(supRegex, function(execArr) {
   return `<sup>${this.output(execArr[1])}</sup>`
 })
@@ -172,7 +170,7 @@ Smarkdown.setRule(supRegex, function(execArr) {
  * ==Experience== is the best teacher.
  * <mark>Experience</mark> is the best teacher.
  */
-const markRegex = /^==(?=\S)([\s\S]*?\S)==/
+const markRegex = /==(?=\S)([\s\S]*?\S)==/
 Smarkdown.setRule(markRegex, function(execArr) {
   return `<mark>${this.output(execArr[1])}</mark>`
 })
@@ -183,7 +181,7 @@ Smarkdown.setRule(markRegex, function(execArr) {
  * #tag
  * <span class="hashtag">tag</span>
  */
-const hashtagRegex = /^#([^\s#]+)((?:\b)|(?=\s|$))/
+const hashtagRegex = /#([^\s#]+)((?:\b)|(?=\s|$))/
 Smarkdown.setRule(
   hashtagRegex,
   function(execArr) {
@@ -202,7 +200,7 @@ Smarkdown.setRule(
  * [注音]{zhuyin}
  * <ruby>注音<rt>zhuyin</rt></ruby>
  */
-const rubyAnnotationRegex = /^\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
+const rubyAnnotationRegex = /\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
 Smarkdown.setRule(
   rubyAnnotationRegex,
   function(execArr) {
@@ -218,7 +216,7 @@ Smarkdown.setRule(
  *
  * --small text-- => <span class="small-text">small text</span>
  */
-const smallTextRegex = /^--(?=\S)([\s\S]*?\S)--/
+const smallTextRegex = /--(?=\S)([\s\S]*?\S)--/
 Smarkdown.setRule(smallTextRegex, function(execArr) {
   return `<span class="small-text">${execArr[1]}</span>`
 })
@@ -230,7 +228,7 @@ Smarkdown.setRule(smallTextRegex, function(execArr) {
  * +++large text+++ => <span class="large-text is-2">large text</span>
  * ++++large text++++ => <span class="large-text is-3">large text</span>
  */
-const largeTextRegex = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
+const largeTextRegex = /(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
 Smarkdown.setRule(largeTextRegex, function(execArr) {
   let size = execArr[1].length - 1
 
@@ -246,7 +244,7 @@ Smarkdown.setRule(largeTextRegex, function(execArr) {
 
 ```js
 // block container
-const extRegex = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
+const extRegex = /::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
 Smarkdown.setRule(extRegex, execArr => {
   return `<div class="${execArr[1]}">${execArr[2]}</div>`
 })

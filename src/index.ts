@@ -57,16 +57,20 @@ export default class Smarkdown {
     this.resetOptions()
   }
 
+  protected static resolveRule(regExp: RegExp) {
+    let newRegExp = regExp
+    if (!newRegExp.source.startsWith('^')) {
+      newRegExp = new RegExp('^' + newRegExp.source)
+    }
+    return newRegExp
+  }
+
   static setRule(
     regExp: RegExp,
     renderer: NewRenderer,
     options: InlineRuleOptions | BlockRuleOptions = {}
   ) {
-    if (!regExp.source.startsWith('^')) {
-      throw new Error(
-        `[setRule] RegExp MUST start with '^', please check: '${regExp.source}'`
-      )
-    }
+    regExp = this.resolveRule(regExp)
 
     if (isBlockRule(regExp)) {
       BlockLexer.setRule(regExp, renderer, options)
@@ -76,6 +80,8 @@ export default class Smarkdown {
   }
 
   static unsetRule(regExp: RegExp) {
+    regExp = this.resolveRule(regExp)
+
     if (isBlockRule(regExp)) {
       BlockLexer.unsetRule(regExp)
     } else {

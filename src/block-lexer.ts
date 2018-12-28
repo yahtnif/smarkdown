@@ -3,7 +3,7 @@ import {
   Align,
   BaseBlockRules,
   BlockRenderer,
-  BlockRuleOption,
+  BlockRuleOptions,
   BlockRule,
   BlockRulesType,
   BlockRulesTypes,
@@ -12,7 +12,7 @@ import {
   LexerReturns,
   Links,
   NewRenderer,
-  Option,
+  Options,
   PedanticBlockRules,
   Token,
   TokenType,
@@ -35,31 +35,31 @@ export class BlockLexer {
   private isExtra: boolean
   private isGfm: boolean
   private links: Links = Object.create(null)
-  private option: Option
+  private options: Options
   private rules: BlockRulesTypes
   private tokens: Token[] = []
   static blockRenderers: BlockRenderer[] = []
   static newRules: BlockRule[] = []
 
-  constructor(protected self: typeof BlockLexer, option?: object) {
-    this.option = option
+  constructor(protected self: typeof BlockLexer, options?: object) {
+    this.options = options
     this.setRules()
   }
 
   // Accepts Markdown text and returns object with tokens and links.
   static lex(
     src: string,
-    option?: Option,
+    options?: Options,
     top?: boolean
   ): LexerReturns {
-    const lexer: BlockLexer = new this(this, option)
+    const lexer: BlockLexer = new this(this, options)
     return lexer.getTokens(src, top)
   }
 
   static setRule(
     regExp: RegExp,
     renderer: NewRenderer,
-    option: BlockRuleOption = {}
+    options: BlockRuleOptions = {}
   ) {
     const ruleType: string = getRuleType(regExp)
 
@@ -68,7 +68,7 @@ export class BlockLexer {
     }
 
     BlockLexer.newRules.push({
-      option,
+      options,
       rule: regExp,
       type: ruleType
     })
@@ -91,7 +91,7 @@ export class BlockLexer {
     if (this.baseRules) return this.baseRules
 
     const html: string =
-      '^ {0,3}(?:' + // optional indentation
+      '^ {0,3}(?:' + // optionsal indentation
       '<(script|pre|style)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)' + // (1)
       '|comment[^\\n]*(\\n+|$)' + // (2)
       '|<\\?[\\s\\S]*?\\?>\\n*' + // (3)
@@ -144,7 +144,7 @@ export class BlockLexer {
       'address|article|aside|base|basefont|blockquote|body|caption' +
       '|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption' +
       '|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe' +
-      '|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option' +
+      '|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|options' +
       '|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr' +
       '|track|ul'
     const attribute: RegExp = / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/
@@ -245,17 +245,17 @@ export class BlockLexer {
   }
 
   private setRules() {
-    if (this.option.pedantic) {
+    if (this.options.pedantic) {
       this.rules = this.self.getPedanticRules()
-    } else if (this.option.extra) {
+    } else if (this.options.extra) {
       this.rules = this.self.getExtraRules()
-    } else if (this.option.gfm) {
+    } else if (this.options.gfm) {
       this.rules = this.self.getGfmRules()
     } else {
       this.rules = this.self.getBaseRules()
     }
 
-    this.option.disabledRules.forEach(
+    this.options.disabledRules.forEach(
       (
         rule: BlockRulesType
       ) => {
@@ -275,10 +275,10 @@ export class BlockLexer {
     let execArr: RegExpExecArray
     const newRules: BlockRule[] = this.self.newRules || []
     const newRulesBefore: BlockRule[] = newRules.filter(
-      R => R.option.priority
-    ).sort((a, b) => b.option.priority - a.option.priority)
+      R => R.options.priority
+    ).sort((a, b) => b.options.priority - a.options.priority)
     const newRulesAfter: BlockRule[] = newRules.filter(
-      R => !R.option.priority
+      R => !R.options.priority
     )
 
     mainLoop: while (nextPart) {
@@ -312,7 +312,7 @@ export class BlockLexer {
 
         this.tokens.push({
           type: TokenType.code,
-          text: !this.option.pedantic ? this.option.rtrim(code, '\n') : code
+          text: !this.options.pedantic ? this.options.rtrim(code, '\n') : code
         })
         continue
       }
@@ -341,7 +341,7 @@ export class BlockLexer {
 
         const item: Token = {
           type: TokenType.footnote,
-          refname: this.option.slug(execArr[1]),
+          refname: this.options.slug(execArr[1]),
           text: execArr[2]
         }
 
@@ -476,14 +476,14 @@ export class BlockLexer {
           // Outdent whatever the list item contains. Hacky.
           if (item.indexOf('\n ') !== -1) {
             space -= item.length
-            item = !this.option.pedantic
+            item = !this.options.pedantic
               ? item.replace(new RegExp('^ {1,' + space + '}', 'gm'), '')
               : item.replace(/^ {1,4}/gm, '')
           }
 
           // Determine whether the next list item belongs here.
           // Backpedal if it does not belong in this list.
-          if (this.option.smartLists && i !== length - 1) {
+          if (this.options.smartLists && i !== length - 1) {
             blockBullet = this.self
               .getBaseRules()
               .bullet.exec(arr[i + 1])[0]
@@ -547,8 +547,8 @@ export class BlockLexer {
         const isPre: boolean = attr === 'pre' || attr === 'script' || attr === 'style'
 
         this.tokens.push({
-          type: this.option.sanitize ? TokenType.paragraph : TokenType.html,
-          pre: !this.option.sanitizer && isPre,
+          type: this.options.sanitize ? TokenType.paragraph : TokenType.html,
+          pre: !this.options.sanitizer && isPre,
           text: execArr[0]
         })
         continue

@@ -2,12 +2,12 @@ import { BlockLexer } from './block-lexer'
 import { isBlockRule } from './helpers'
 import { InlineLexer } from './inline-lexer'
 import {
-  BlockRuleOption,
-  InlineRuleOption,
+  BlockRuleOptions,
+  InlineRuleOptions,
   LexerReturns,
   Links,
   NewRenderer,
-  Option,
+  Options,
   Token
 } from './interfaces'
 import { Parser } from './parser'
@@ -16,46 +16,62 @@ import { Renderer } from './renderer'
 export default class Smarkdown {
   static BlockLexer: typeof BlockLexer = BlockLexer
   static InlineLexer: typeof InlineLexer = InlineLexer
-  static option: Option = new Option()
+  static options: Options = new Options()
   static Parser: typeof Parser = Parser
   static Renderer: typeof Renderer = Renderer
 
-  static getOption(option: Option): Option {
-    if (!option) {
-      return this.option
+  static getOptions(options: Options): Options {
+    if (!options) {
+      return this.options
     }
 
-    if (typeof option.renderer === 'function') {
-      option.renderer = new (<typeof Renderer>option.renderer)(this.option)
+    if (typeof options.renderer === 'function') {
+      options.renderer = new (<typeof Renderer>options.renderer)(this.options)
     }
 
     return {
-      ...this.option,
-      ...option
+      ...this.options,
+      ...options
     }
   }
 
-  static setOption(option: Option) {
-    this.option = this.getOption(option)
+  static setOptions(options: Options) {
+    this.options = this.getOptions(options)
+  }
+
+  static setOption(options: Options) {
+    console.warn(
+      'setOptions() is deprecated. Please use the setOption() instead.'
+    )
+    this.setOptions(options)
+  }
+
+  static resetOptions() {
+    this.options = new Options()
   }
 
   static resetOption() {
-    this.option = new Option()
+    console.warn(
+      'resetOption() is deprecated. Please use the resetOptions() instead.'
+    )
+    this.resetOptions()
   }
 
   static setRule(
     regExp: RegExp,
     renderer: NewRenderer,
-    option: InlineRuleOption | BlockRuleOption = {}
+    options: InlineRuleOptions | BlockRuleOptions = {}
   ) {
     if (!regExp.source.startsWith('^')) {
-      throw new Error(`[setRule] RegExp MUST start with '^', please check: '${regExp.source}'`)
+      throw new Error(
+        `[setRule] RegExp MUST start with '^', please check: '${regExp.source}'`
+      )
     }
 
     if (isBlockRule(regExp)) {
-      BlockLexer.setRule(regExp, renderer, option)
+      BlockLexer.setRule(regExp, renderer, options)
     } else {
-      InlineLexer.setRule(regExp, renderer, option)
+      InlineLexer.setRule(regExp, renderer, options)
     }
   }
 
@@ -67,17 +83,15 @@ export default class Smarkdown {
     }
   }
 
-  static inlineParse(src: string, option: Option): string {
-    return new InlineLexer(
-      InlineLexer,
-      {},
-      this.getOption(option)
-    ).output(src)
+  static inlineParse(src: string, options: Options): string {
+    return new InlineLexer(InlineLexer, {}, this.getOptions(options)).output(
+      src
+    )
   }
 
-  static parse(src: string, option?: Option): string {
+  static parse(src: string, options?: Options): string {
     try {
-      const opts: Option = this.getOption(option)
+      const opts: Options = this.getOptions(options)
       const { tokens, links } = this.callBlockLexer(src, opts)
 
       return this.callParser(tokens, links, opts)
@@ -88,10 +102,12 @@ export default class Smarkdown {
 
   protected static callBlockLexer(
     src: string = '',
-    option?: Option
+    options?: Options
   ): LexerReturns {
     if (typeof src !== 'string') {
-      throw new Error(`Expected that the 'src' parameter would have a 'string' type, got '${typeof src}'`)
+      throw new Error(
+        `Expected that the 'src' parameter would have a 'string' type, got '${typeof src}'`
+      )
     }
 
     // Preprocessing.
@@ -102,27 +118,30 @@ export default class Smarkdown {
       .replace(/\u2424/g, '\n')
       .replace(/^ +$/gm, '')
 
-    return BlockLexer.lex(src, option, true)
+    return BlockLexer.lex(src, options, true)
   }
 
   protected static callParser(
     tokens: Token[],
     links: Links,
-    option?: Option
+    options?: Options
   ): string {
     if (BlockLexer.blockRenderers.length) {
-      const parser: Parser = new Parser(option)
+      const parser: Parser = new Parser(options)
       parser.blockRenderers = BlockLexer.blockRenderers
 
       return parser.parse(links, tokens)
     } else {
-      return Parser.parse(tokens, links, option)
+      return Parser.parse(tokens, links, options)
     }
   }
 
   protected static callError(err: Error) {
-    if (this.option.silent) {
-      return `<p>An error occurred:</p><pre>${this.option.escape(err.message + '', true)}</pre>`
+    if (this.options.silent) {
+      return `<p>An error occurred:</p><pre>${this.options.escape(
+        err.message + '',
+        true
+      )}</pre>`
     }
 
     throw err

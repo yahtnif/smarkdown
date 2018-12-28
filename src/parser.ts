@@ -3,7 +3,7 @@ import {
   BlockRenderer,
   EmptyObject,
   Links,
-  Option,
+  Options,
   TablecellFlags,
   Token,
   TokenType,
@@ -17,26 +17,26 @@ export class Parser {
   private footnotes: EmptyObject = {}
   private inlineLexer: InlineLexer
   private inlineTextLexer: InlineLexer
-  private option: Option
+  private options: Options
   private renderer: Renderer
-  private textOption: Option
+  private textOptions: Options
   private token: Token
   private tokens: Token[]
   blockRenderers: BlockRenderer[] = []
 
-  constructor(option?: Option) {
+  constructor(options?: Options) {
     this.tokens = []
     this.token = null
-    this.option = option
-    this.renderer = this.option.renderer || new Renderer(this.option)
-    this.renderer.option = this.option
-    this.textOption = Object.assign({}, this.option, {
+    this.options = options
+    this.renderer = this.options.renderer || new Renderer(this.options)
+    this.renderer.options = this.options
+    this.textOptions = Object.assign({}, this.options, {
       renderer: new TextRenderer()
     })
   }
 
-  static parse(tokens: Token[], links: Links, option?: Option): string {
-    const parser: Parser = new this(option)
+  static parse(tokens: Token[], links: Links, options?: Options): string {
+    const parser: Parser = new this(options)
     return parser.parse(links, tokens)
   }
 
@@ -44,13 +44,13 @@ export class Parser {
     this.inlineLexer = new InlineLexer(
       InlineLexer,
       links,
-      this.option,
+      this.options,
       this.renderer
     )
     this.inlineTextLexer = new InlineLexer(
       InlineLexer,
       links,
-      this.textOption
+      this.textOptions
     )
     this.tokens = tokens.reverse()
 
@@ -102,13 +102,13 @@ export class Parser {
         return this.renderer.paragraph(this.inlineLexer.output(this.token.text))
       }
       case TokenType.text: {
-        return this.option.nop ? this.parseText() : this.renderer.paragraph(this.parseText())
+        return this.options.nop ? this.parseText() : this.renderer.paragraph(this.parseText())
       }
       case TokenType.heading: {
         return this.renderer.heading(
           this.inlineLexer.output(this.token.text),
           this.token.depth,
-          this.option.unescape(this.inlineTextLexer.output(this.token.text)),
+          this.options.unescape(this.inlineTextLexer.output(this.token.text)),
           this.token.ends
         )
       }
@@ -218,7 +218,7 @@ export class Parser {
 
         const errMsg: string = `Token with "${this.token.type}" type was not found.`
 
-        if (this.option.silent) {
+        if (this.options.silent) {
           console.log(errMsg)
         } else {
           throw new Error(errMsg)

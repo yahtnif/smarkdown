@@ -1,17 +1,16 @@
-
 import fs from 'fs-extra'
 import klawSync from 'klaw-sync'
 import JSON5 from 'json5'
 import Smarkdown from '../src'
-import { Option } from '../src/interfaces'
+import { Options } from '../src/interfaces'
 
 interface testOption {
-  dir: string;
+  dir: string
   runAtFirstAndOnce?: Function
   title?: string
 }
 
-function testFunc (options: testOption) {
+function testFunc(options: testOption) {
   const { dir, runAtFirstAndOnce, title } = options
 
   const files = klawSync('__tests__/' + dir, { nodir: true })
@@ -23,7 +22,7 @@ function testFunc (options: testOption) {
     const data: string = fs.readFileSync(file.path, 'utf-8')
 
     let [option, text] = data.split('\n===\n')
-    let opt: Option
+    let opt: Options
 
     if (text) {
       option = option
@@ -31,7 +30,7 @@ function testFunc (options: testOption) {
         .split(/\n+/)
         .map(s => s + ',')
         .join('\n')
-        opt = JSON5.parse(`{${option}}`)
+      opt = JSON5.parse(`{${option}}`)
     } else {
       text = option
       option = null
@@ -66,7 +65,17 @@ const largeTextRegex: RegExp = /^(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
 
 const extRegex: RegExp = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
 
-const rules = [subRegex, supRegex, markRegex, hashtagRegex, rubyAnnotationRegex, smallTextRegex, largeTextRegex, extRegex, extRegex]
+const rules = [
+  subRegex,
+  supRegex,
+  markRegex,
+  hashtagRegex,
+  rubyAnnotationRegex,
+  smallTextRegex,
+  largeTextRegex,
+  extRegex,
+  extRegex
+]
 
 function setExtensions() {
   /**
@@ -165,7 +174,7 @@ Lorem ipsum...
 :::`
    * <div class="warning">Lorem ipsum...</div>
    */
-  Smarkdown.setRule(extRegex, (execArr) => {
+  Smarkdown.setRule(extRegex, execArr => {
     return `<div class="${execArr[1]}">${execArr[2]}</div>`
   })
 

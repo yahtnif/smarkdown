@@ -8,25 +8,22 @@
 
 > Markdown parser, simplicity and extensibility. Fork of [marked](https://github.com/markedjs/marked) and [marked-ts](https://github.com/KostyaTretyak/marked-ts).
 
-
 ## Features
 
-* **Awesome:** ES6, TypeScript, Rollup, Jest...
-* **Extensible:** Add your own [extensions](#extensions)
-* **Fast:** Low-level compiler for parsing markdown without caching or blocking for long periods of time
-* **Lightweight:** It's 9kb of minified and gzipped
-
+- **Awesome:** ES6, TypeScript, Rollup, Jest...
+- **Extensible:** Add your own [extensions](#extensions)
+- **Fast:** Low-level compiler for parsing markdown without caching or blocking for long periods of time
+- **Lightweight:** It's 9kb of minified and gzipped
 
 ## Table of contents
 
-* [Install](#install)
-* [Usage](#usage)
-* [Option](#option)
-* [Extension](#extension)
-* [Renderer](#renderer)
-* [Comparison](#comparison)
-* [License](#license)
-
+- [Install](#install)
+- [Usage](#usage)
+- [Options](#options)
+- [Extension](#extension)
+- [Renderer](#renderer)
+- [Comparison](#comparison)
+- [License](#license)
 
 ## Install
 
@@ -37,7 +34,6 @@ npm install smarkdown
 ```
 
 **browser (CDN):** [jsDelivr](https://www.jsdelivr.com/package/npm/smarkdown) | [unpkg](https://unpkg.com/smarkdown/)
-
 
 ## Usage
 
@@ -56,11 +52,11 @@ Or import the library with a script tag:
 Example:
 
 ```js
-// Resetting option
-Smarkdown.resetOption()
+// Resetting options
+Smarkdown.resetOptions()
 
-// Setting option
-Smarkdown.setOption({
+// Setting options
+Smarkdown.setOptions({
   breaks: true
 })
 
@@ -75,77 +71,75 @@ console.log(Smarkdown.parse(str, { nop: true }))
 
 ### Syntax highlighting
 
-````js
+```js
 // highlight.js
 import Smarkdown from 'smarkdown'
 import { highlight } from 'highlight.js'
 
-Smarkdown.setOption({
+Smarkdown.setOptions({
   highlight: (code, lang) => {
     return lang && highlight.getLanguage(lang)
       ? highlight.highlight(lang, code).value
       : highlight.highlightAuto(code).value
   }
 })
-````
+```
 
-````js
+```js
 // prismjs
 import Smarkdown from 'smarkdown'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-markdown'
 
-Smarkdown.setOption({
+Smarkdown.setOptions({
   highlight: (code, lang) => {
     const language = Prism.languages[lang] ? lang : 'markdown'
 
     return Prism.highlight(code, Prism.languages[language], language)
   }
 })
-````
+```
 
+## Options
 
-## Option
-
-| Name | Type | Default | Note |
-| :-: | :-: | :-: | :-: |
-| baseUrl | String | null | A prefix url for any relative link. |
-| breaks | Boolean | false | If true, add `<br>` on a single line break (copies GitHub). Requires `gfm` be `true`. |
-| disabledRules | Array | [] | If set to `['lheading']`, will disable headers of an underline-ish style. |
-| extra | Boolean | false | If true, enable `footnote`. Requires `gfm` be `true`. |
-| gfm | Boolean | true | If true, use approved [GitHub Flavored Markdown (GFM) specification](https://github.github.com/gfm/). |
-| headerId | Boolean \| String | false | Include an `id` attribute when emitting headings.<br>If true, for all headings.<br>If set to `on`, for “non-close” atx-style headings (## h2, etc).<br>If set to `off`, for “close” atx-style headings (## h2 ##, etc).|
-| headerPrefix | String | '' | A string to prefix the id attribute when emitting headings. |
-| highlight | Function | (code, lang) => string | A function to highlight code blocks, see [Syntax highlighting](#syntax-highlighting) |
-| langAttribute | Boolean | false | If `true`, add `data-lang` attribute to highlight block code. |
-| langPrefix | String | 'language-' | A string to prefix the className in a `<code>` block. Useful for syntax highlighting. |
-| linksInNewTab | Boolean \| Function | false | If true, open links in new tabs. |
-| mangle | Boolean | true | If true, autolinked email address is escaped with HTML character references. |
-| nop | Boolean | false | If `true`, an inline text will not be taken in paragraph. |
-| pedantic | Boolean | false | If true, conform to the original `markdown.pl` as much as possible. Don't fix original markdown bugs or behavior. Turns off and overrides `gfm`. |
-| renderer | Renderer | Renderer | An object containing functions to render tokens to HTML. See [Renderer](#renderer) for more details. |
-| sanitize | Boolean | false | If true, sanitize the HTML passed into `markdownString` with the `sanitizer` function. |
-| sanitizer | Function | null | A function to sanitize the HTML passed into `markdownString`. |
-| silent | Boolean | false | If true, the parser does not throw any exception. |
-| slug | Function | str => built_in_slug(str) | Slugify `id` attribute for heading and footnote. |
-| smartLists | Boolean | false | If true, use smarter list behavior than those found in `markdown.pl`. |
-| smartypants | Boolean | false | If true, use "smart" typographic punctuation for things like quotes and dashes. |
-| trimLinkText | Function | null | Useful for text truncation. |
-| xhtml | Boolean | false | Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.) with a "/" as required by XHTML. |
-
+|     Name      |        Type         |          Default          |                                                                                                          Note                                                                                                           |
+| :-----------: | :-----------------: | :-----------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|    baseUrl    |       String        |           null            |                                                                                           A prefix url for any relative link.                                                                                           |
+|    breaks     |       Boolean       |           false           |                                                                  If true, add `<br>` on a single line break (copies GitHub). Requires `gfm` be `true`.                                                                  |
+| disabledRules |        Array        |            []             |                                                                        If set to `['lheading']`, will disable headers of an underline-ish style.                                                                        |
+|     extra     |       Boolean       |           false           |                                                                                  If true, enable `footnote`. Requires `gfm` be `true`.                                                                                  |
+|      gfm      |       Boolean       |           true            |                                                          If true, use approved [GitHub Flavored Markdown (GFM) specification](https://github.github.com/gfm/).                                                          |
+|   headerId    |  Boolean \| String  |           false           | Include an `id` attribute when emitting headings.<br>If true, for all headings.<br>If set to `on`, for “non-close” atx-style headings (## h2, etc).<br>If set to `off`, for “close” atx-style headings (## h2 ##, etc). |
+| headerPrefix  |       String        |            ''             |                                                                               A string to prefix the id attribute when emitting headings.                                                                               |
+|   highlight   |      Function       |  (code, lang) => string   |                                                                  A function to highlight code blocks, see [Syntax highlighting](#syntax-highlighting)                                                                   |
+| langAttribute |       Boolean       |           false           |                                                                              If `true`, add `data-lang` attribute to highlight block code.                                                                              |
+|  langPrefix   |       String        |        'language-'        |                                                                  A string to prefix the className in a `<code>` block. Useful for syntax highlighting.                                                                  |
+| linksInNewTab | Boolean \| Function |           false           |                                                                                            If true, open links in new tabs.                                                                                             |
+|    mangle     |       Boolean       |           true            |                                                                      If true, autolinked email address is escaped with HTML character references.                                                                       |
+|      nop      |       Boolean       |           false           |                                                                                If `true`, an inline text will not be taken in paragraph.                                                                                |
+|   pedantic    |       Boolean       |           false           |                                    If true, conform to the original `markdown.pl` as much as possible. Don't fix original markdown bugs or behavior. Turns off and overrides `gfm`.                                     |
+|   renderer    |      Renderer       |         Renderer          |                                                          An object containing functions to render tokens to HTML. See [Renderer](#renderer) for more details.                                                           |
+|   sanitize    |       Boolean       |           false           |                                                                 If true, sanitize the HTML passed into `markdownString` with the `sanitizer` function.                                                                  |
+|   sanitizer   |      Function       |           null            |                                                                              A function to sanitize the HTML passed into `markdownString`.                                                                              |
+|    silent     |       Boolean       |           false           |                                                                                    If true, the parser does not throw any exception.                                                                                    |
+|     slug      |      Function       | str => built_in_slug(str) |                                                                                    Slugify `id` attribute for heading and footnote.                                                                                     |
+|  smartLists   |       Boolean       |           false           |                                                                          If true, use smarter list behavior than those found in `markdown.pl`.                                                                          |
+|  smartypants  |       Boolean       |           false           |                                                                     If true, use "smart" typographic punctuation for things like quotes and dashes.                                                                     |
+| trimLinkText  |      Function       |           null            |                                                                                               Useful for text truncation.                                                                                               |
+|     xhtml     |       Boolean       |           false           |                                                        Self-close the tags for void elements (&lt;br/&gt;, &lt;img/&gt;, etc.) with a "/" as required by XHTML.                                                         |
 
 ## Extension
 
-Using `Smarkdown.setRule(regExp, callback, [, option])`, which takes a regular expression as the first argument, and returns result `regExp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
+Using `Smarkdown.setRule(regExp, callback, [, options])`, which takes a regular expression as the first argument, and returns result `regExp.exec(string)` to `callback(execArr)`, which can be passed as a second argument.
 
 `regExp` **MUST** start with `^`.
 
-Extension option:
+Extension options:
 
-| Name | Type | Default | inline | block |
-| :-: | :-: | :-: | :-: | :-: |
-| priority | Number | null | ✓ | ✓ |
-| checkPreChar | Function | null | ✓ | |
+|     Name     |   Type   | Default | inline | block |
+| :----------: | :------: | :-----: | :----: | :---: |
+|   priority   |  Number  |  null   |   ✓    |   ✓   |
+| checkPreChar | Function |  null   |   ✓    |       |
 
 ### Inline
 
@@ -194,8 +188,9 @@ Smarkdown.setRule(
   hashtagRegex,
   function(execArr) {
     return `<span class="hashtag">${execArr[1]}</span>`
-  }, {
-    checkPreChar (char) {
+  },
+  {
+    checkPreChar(char) {
       return !char || /\s|\B/.test(char)
     }
   }
@@ -252,7 +247,7 @@ Smarkdown.setRule(largeTextRegex, function(execArr) {
 ```js
 // block container
 const extRegex = /^::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
-Smarkdown.setRule(extRegex, (execArr) => {
+Smarkdown.setRule(extRegex, execArr => {
   return `<div class="${execArr[1]}">${execArr[2]}</div>`
 })
 
@@ -270,7 +265,6 @@ console.log(Smarkdown.parse(str))
 ```js
 Smarkdown.unsetRule(regExp)
 ```
-
 
 ## Renderer
 
@@ -344,19 +338,17 @@ ${body}</table>
   }
 }
 
-Smarkdown.setOption({ renderer: NewRenderer })
-// or pass new option to new Renderer
-Smarkdown.setOption({ renderer: new NewRenderer(NewOption) })
+Smarkdown.setOptions({ renderer: NewRenderer })
+// or pass new options to new Renderer
+Smarkdown.setOptions({ renderer: new NewRenderer(NewOptions) })
 ```
-
 
 ## Comparison
 
-| | Smarkdown | Marked | markdown-it |
-| :-: | :-: | :-: | :-: |
-| Version | [![npm](https://badgen.net/npm/v/smarkdown)](https://www.npmjs.com/package/smarkdown) | [![npm](https://badgen.net/npm/v/marked)](https://www.npmjs.com/package/marked) | [![npm](https://badgen.net/npm/v/markdown-it)](https://www.npmjs.com/package/markdown-it) |
+|                    |                                                                                      Smarkdown                                                                                       |                                                                             Marked                                                                             |                                                                                         markdown-it                                                                                          |
+| :----------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|      Version       |                                                [![npm](https://badgen.net/npm/v/smarkdown)](https://www.npmjs.com/package/smarkdown)                                                 |                                        [![npm](https://badgen.net/npm/v/marked)](https://www.npmjs.com/package/marked)                                         |                                                  [![npm](https://badgen.net/npm/v/markdown-it)](https://www.npmjs.com/package/markdown-it)                                                   |
 | Minified & Gzipped | [![gzip size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js) | [![gzip size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/marked/marked.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/marked/marked.min.js) | [![gzip size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js) |
-
 
 ## License
 

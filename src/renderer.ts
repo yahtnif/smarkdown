@@ -1,12 +1,12 @@
-import { Option, TablecellFlags } from './interfaces'
+import { Options, TablecellFlags } from './interfaces'
 
 export class Renderer {
   private _footnotes: string[] = []
   _headings: string[] = []
-  option: Option
+  options: Options
 
-  constructor(option?: Option) {
-    this.option = option || {}
+  constructor(options?: Options) {
+    this.options = options || {}
   }
 
   //*** Block level renderer methods. ***
@@ -18,8 +18,8 @@ ${quote}</blockquote>
   }
 
   code(code: string, lang?: string, escaped?: boolean): string {
-    if (this.option.highlight) {
-      const out: string = this.option.highlight(code, lang)
+    if (this.options.highlight) {
+      const out: string = this.options.highlight(code, lang)
 
       if (out !== null && out !== code) {
         escaped = true
@@ -28,17 +28,17 @@ ${quote}</blockquote>
     }
 
     if (!lang) {
-      return `<pre><code>${escaped ? code : this.option.escape(code, true)}</code></pre>`
+      return `<pre><code>${escaped ? code : this.options.escape(code, true)}</code></pre>`
     }
 
-    const dataLang: string = this.option.langAttribute
-      ? ` data-lang="${this.option.escape(lang, true)}"`
+    const dataLang: string = this.options.langAttribute
+      ? ` data-lang="${this.options.escape(lang, true)}"`
       : ''
 
-    return `<pre${dataLang}><code class="${this.option.langPrefix}${this.option.escape(
+    return `<pre${dataLang}><code class="${this.options.langPrefix}${this.options.escape(
       lang,
       true
-    )}">${escaped ? code : this.option.escape(code, true)}</code></pre>
+    )}">${escaped ? code : this.options.escape(code, true)}</code></pre>
 `
   }
 
@@ -60,7 +60,7 @@ ${quote}</blockquote>
   }
 
   heading(text: string, level: number, raw: string, ends: string): string {
-    const { headerId } = this.option
+    const { headerId } = this.options
     let attr: string = ''
 
     if (
@@ -68,12 +68,12 @@ ${quote}</blockquote>
       (headerId === 'off' && ends) ||
       (headerId === 'on' && !ends)
     ) {
-      let id: string = this.option.slug(raw)
+      let id: string = this.options.slug(raw)
       const count: number = this._headings.filter((h) => h === raw).length
       if (count > 0) {
         id += `-${count}`
       }
-      attr += ` id="${this.option.headerPrefix}${id}"`
+      attr += ` id="${this.options.headerPrefix}${id}"`
       this._headings.push(raw)
     }
 
@@ -82,7 +82,7 @@ ${quote}</blockquote>
   }
 
   hr(): string {
-    return this.option.xhtml ? '<hr/>\n' : '<hr>\n'
+    return this.options.xhtml ? '<hr/>\n' : '<hr>\n'
   }
 
   html(html: string): string {
@@ -141,7 +141,7 @@ ${content}</tr>
   //*** Inline level renderer methods. ***
 
   br(): string {
-    return this.option.xhtml ? '<br/>' : '<br>'
+    return this.options.xhtml ? '<br/>' : '<br>'
   }
 
   codespan(text: string): string {
@@ -167,7 +167,7 @@ ${content}</tr>
   }
 
   image(href: string, title: string, text: string): string {
-    href = this.option.cleanUrl(this.option.sanitize, this.option.baseUrl, href)
+    href = this.options.cleanUrl(this.options.sanitize, this.options.baseUrl, href)
 
     if (href === null) return text
 
@@ -177,23 +177,23 @@ ${content}</tr>
       out += ' title="' + title + '"'
     }
 
-    out += this.option.xhtml ? '/>' : '>'
+    out += this.options.xhtml ? '/>' : '>'
 
     return out
   }
 
   link(href: string, title: string, text: string): string {
-    href = this.option.cleanUrl(this.option.sanitize, this.option.baseUrl, href)
+    href = this.options.cleanUrl(this.options.sanitize, this.options.baseUrl, href)
 
     if (href === null) return text
 
-    let out: string = '<a href="' + this.option.escape(href) + '"'
+    let out: string = '<a href="' + this.options.escape(href) + '"'
 
     if (title) {
       out += ' title="' + title + '"'
     }
 
-    const { linksInNewTab, trimLinkText } = this.option
+    const { linksInNewTab, trimLinkText } = this.options
     const targetBlank: boolean =
       linksInNewTab === true ||
       (typeof linksInNewTab === 'function' && linksInNewTab.call(this, href))

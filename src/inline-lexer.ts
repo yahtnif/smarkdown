@@ -5,13 +5,13 @@ import {
   ExtraInlineRules,
   GfmInlineRules,
   InlineRule,
-  InlineRuleOption,
+  InlineRuleOptions,
   InlineRulesType,
   InlineRulesTypes,
   Link,
   Links,
   NewRenderer,
-  Option,
+  Options,
   PedanticInlineRules,
 } from './interfaces'
 import { Renderer } from './renderer'
@@ -50,11 +50,11 @@ export class InlineLexer {
   constructor(
     protected self: typeof InlineLexer,
     protected links: Links = {},
-    protected option: Option,
+    protected options: Options,
     renderer?: Renderer
   ) {
-    this.renderer = renderer || this.option.renderer || new Renderer(this.option)
-    this.renderer.option = this.option
+    this.renderer = renderer || this.options.renderer || new Renderer(this.options)
+    this.renderer.options = this.options
 
     this.setRules()
   }
@@ -62,15 +62,15 @@ export class InlineLexer {
   /**
    * Static Lexing/Compiling Method.
    */
-  static output(src: string, links: Links, option: Option): string {
-    const inlineLexer: InlineLexer = new this(this, links, option)
+  static output(src: string, links: Links, options: Options): string {
+    const inlineLexer: InlineLexer = new this(this, links, options)
     return inlineLexer.output(src)
   }
 
   static setRule(
     regExp: RegExp,
     renderer: NewRenderer,
-    option: InlineRuleOption = {}
+    options: InlineRuleOptions = {}
   ) {
     const ruleType: string = getRuleType(regExp)
 
@@ -80,7 +80,7 @@ export class InlineLexer {
 
     this.newRules.push({
       breakChar: getBreakChar(regExp),
-      option,
+      options,
       render: renderer,
       rule: regExp,
       type: ruleType
@@ -245,10 +245,10 @@ export class InlineLexer {
     })
   }
 
-  private static getExtraRules(option: Option): ExtraInlineRules {
+  private static getExtraRules(options: Options): ExtraInlineRules {
     if (this.extraRules) return this.extraRules
 
-    const rules: BreaksInlineRules | GfmInlineRules = option.breaks ? this.getBreaksRules() : this.getGfmRules()
+    const rules: BreaksInlineRules | GfmInlineRules = options.breaks ? this.getBreaksRules() : this.getGfmRules()
 
     return (this.extraRules = {
       ...rules,
@@ -261,12 +261,12 @@ export class InlineLexer {
   }
 
   private setRules() {
-    if (this.option.pedantic) {
+    if (this.options.pedantic) {
       this.rules = this.self.getPedanticRules()
-    } else if (this.option.extra) {
-      this.rules = this.self.getExtraRules(this.option)
-    } else if (this.option.gfm) {
-      this.rules = this.option.breaks
+    } else if (this.options.extra) {
+      this.rules = this.self.getExtraRules(this.options)
+    } else if (this.options.gfm) {
+      this.rules = this.options.breaks
         ? this.self.getBreaksRules()
         : this.self.getGfmRules()
     } else {
@@ -289,7 +289,7 @@ export class InlineLexer {
       this.rules.text = new RegExp(textRuleStr.replace(this.defaultTextBreak, textBreak))
     }
 
-    this.option.disabledRules.forEach(
+    this.options.disabledRules.forEach(
       (
         rule: InlineRulesType
       ) => {
@@ -305,7 +305,7 @@ export class InlineLexer {
     return text ? text.replace(this.rules._escapes, '$1') : text
   }
 
-  private sortByPriority = (a: InlineRule, b: InlineRule) => b.option.priority - a.option.priority
+  private sortByPriority = (a: InlineRule, b: InlineRule) => b.options.priority - a.options.priority
 
   /**
    * Lexing/Compiling.
@@ -319,7 +319,7 @@ export class InlineLexer {
     const newRulesAfter: InlineRule[] = []
 
     for (const R of newRules) {
-      if (R.option.priority) {
+      if (R.options.priority) {
         newRulesBefore.push(R)
       } else {
         newRulesAfter.push(R)
@@ -339,7 +339,7 @@ export class InlineLexer {
         if ((execArr = R.rule.exec(nextPart))) {
           preParts[0] = preParts[1]
           preParts[1] = nextPart
-          if (!R.option.checkPreChar || R.option.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
+          if (!R.options.checkPreChar || R.options.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
             nextPart = nextPart.substring(execArr[0].length)
             out += R.render.call(this, execArr)
             continue mainLoop
@@ -363,10 +363,10 @@ export class InlineLexer {
 
         nextPart = nextPart.substring(execArr[0].length)
 
-        out += this.option.sanitize
-          ? this.option.sanitizer
-            ? this.option.sanitizer.call(this, execArr[0])
-            : this.option.escape(execArr[0])
+        out += this.options.sanitize
+          ? this.options.sanitizer
+            ? this.options.sanitizer.call(this, execArr[0])
+            : this.options.escape(execArr[0])
           : execArr[0]
         continue
       }
@@ -379,7 +379,7 @@ export class InlineLexer {
         let href = execArr[2]
         let title
 
-        if (this.option.pedantic) {
+        if (this.options.pedantic) {
           const link = /^([^'"]*[^\s])\s+(['"])(.*)\2/.exec(href)
 
           if (link) {
@@ -408,7 +408,7 @@ export class InlineLexer {
         (execArr = (<ExtraInlineRules>this.rules).fnref.exec(nextPart))
       ) {
         nextPart = nextPart.substring(execArr[0].length)
-        out += this.renderer.fnref(this.option.slug(execArr[1]))
+        out += this.renderer.fnref(this.options.slug(execArr[1]))
         continue
       }
 
@@ -451,7 +451,7 @@ export class InlineLexer {
       if ((execArr = this.rules.code.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
         out += this.renderer.codespan(
-          this.option.escape(execArr[2].trim(), true)
+          this.options.escape(execArr[2].trim(), true)
         )
         continue
       }
@@ -478,10 +478,10 @@ export class InlineLexer {
         let text: string, href: string
         nextPart = nextPart.substring(execArr[0].length)
         if (execArr[2] === '@') {
-          text = this.option.escape(this.mangle(execArr[1]))
+          text = this.options.escape(this.mangle(execArr[1]))
           href = 'mailto:' + text
         } else {
-          text = this.option.escape(execArr[1])
+          text = this.options.escape(execArr[1])
           href = text
         }
 
@@ -498,7 +498,7 @@ export class InlineLexer {
         let text: string, href: string, prevCapZero: string
 
         if (execArr[2] === '@') {
-          text = this.option.escape(execArr[0])
+          text = this.options.escape(execArr[0])
           href = 'mailto:' + text
         } else {
           // do extended autolink path validation
@@ -507,7 +507,7 @@ export class InlineLexer {
             execArr[0] = (<GfmInlineRules>this.rules)._backpedal.exec(execArr[0])[0]
           } while (prevCapZero !== execArr[0])
 
-          text = this.option.escape(execArr[0])
+          text = this.options.escape(execArr[0])
 
           if (execArr[1] === 'www.') {
             href = 'http://' + text
@@ -527,7 +527,7 @@ export class InlineLexer {
         if ((execArr = R.rule.exec(nextPart))) {
           preParts[0] = preParts[1]
           preParts[1] = nextPart
-          if (!R.option.checkPreChar || R.option.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
+          if (!R.options.checkPreChar || R.options.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
             nextPart = nextPart.substring(execArr[0].length)
             out += R.render.call(this, execArr)
             continue mainLoop
@@ -542,7 +542,7 @@ export class InlineLexer {
         if (this.inRawBlock) {
           out += this.renderer.text(execArr[0])
         } else {
-          out += this.renderer.text(this.option.escape(this.smartypants(execArr[0])))
+          out += this.renderer.text(this.options.escape(this.smartypants(execArr[0])))
         }
 
         continue
@@ -561,18 +561,18 @@ export class InlineLexer {
    */
   private outputLink(execArr: RegExpExecArray, link: Link) {
     const href: string = link.href
-    const title: string | null = link.title ? this.option.escape(link.title) : null
+    const title: string | null = link.title ? this.options.escape(link.title) : null
 
     return execArr[0].charAt(0) !== '!'
       ? this.renderer.link(href, title, this.output(execArr[1]))
-      : this.renderer.image(href, title, this.option.escape(execArr[1]))
+      : this.renderer.image(href, title, this.options.escape(execArr[1]))
   }
 
   /**
    * Smartypants Transformations.
    */
   private smartypants(text: string) {
-    if (!this.option.smartypants) return text
+    if (!this.options.smartypants) return text
 
     return text
       // em-dashes
@@ -595,7 +595,7 @@ export class InlineLexer {
    * Mangle Links.
    */
   private mangle(text: string) {
-    if (!this.option.mangle) return text
+    if (!this.options.mangle) return text
 
     let out: string = ''
     for (let i = 0; i < text.length; i++) {

@@ -476,12 +476,14 @@ export class BlockLexer {
 
           // Determine whether the next list item belongs here.
           // Backpedal if it does not belong in this list.
-          if (this.options.smartLists && i !== length - 1) {
+          if (i !== length - 1) {
             blockBullet = this.self.getBaseRules().bullet.exec(arr[i + 1])[0]
 
             if (
-              bull !== blockBullet &&
-              !(bull.length > 1 && blockBullet.length > 1)
+              bull.length > 1
+                ? blockBullet.length === 1
+                : blockBullet.length > 1 ||
+                  (this.options.smartLists && blockBullet !== bull)
             ) {
               nextPart = arr.slice(i + 1).join('\n') + nextPart
               i = length - 1

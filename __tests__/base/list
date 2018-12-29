@@ -1,0 +1,16 @@
+* This should be
+* An unordered list
+
+1. This should be
+2. An unordered list
+
+
+
+<ul>
+<li>This should be</li>
+<li>An unordered list</li>
+</ul>
+<ol>
+<li>This should be</li>
+<li>An unordered list</li>
+</ol>

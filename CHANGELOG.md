@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- Make code fences compliant (+ fix marked#1058), marked#1387
+- Make code fences compliant (+ fix marked#1058). marked#1387
+- Fix handling of adjacent lists. marked#684
 
 ## [0.10.0](https://github.com/yahtnif/smarkdown/releases/tag/v0.10.0) - 2018-12-28
 
@@ -28,8 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Make autolinks case insensitive, marked#1384
-- Fix bold around autolink email address, marked#1385
+- Make autolinks case insensitive. marked#1384
+- Fix bold around autolink email address. marked#1385
 
 ## [0.8.0](https://github.com/yahtnif/smarkdown/releases/tag/v0.8.0) - 2018-12-06
 
@@ -44,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix emphasis followed by a punctuation, marked#1383
+- Fix emphasis followed by a punctuation. marked#1383
 - Ensure RegExp in setRule MUST start with '^'
 
 ## [0.7.0](https://github.com/yahtnif/smarkdown/releases/tag/v0.7.0) - 2018-12-05
@@ -109,7 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Make URL handling consistent between links and images, marked#1359
+- Make URL handling consistent between links and images. marked#1359
 - Update tsconfig
 
 ## [0.4.8](https://github.com/yahtnif/smarkdown/releases/tag/v0.4.8) - 2018-10-19
@@ -134,7 +135,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix breakText when a marked subexpression at the beginning
-- Fix emphasis closing by single \_ (part of left-flanking run), marked#1351
+- Fix emphasis closing by single \_ (part of left-flanking run). marked#1351
 
 ## [0.4.6](https://github.com/yahtnif/smarkdown/releases/tag/v0.4.6) - 2018-10-14
 
@@ -161,19 +162,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix inline code regex, marked#1337
+- Fix inline code regex. marked#1337
 
 ## [0.4.3](https://github.com/yahtnif/smarkdown/releases/tag/v0.4.3) - 2018-09-19
 
 ### Fixed
 
-- Fix auto-linking email, marked#1338
+- Fix auto-linking email. marked#1338
 
 ## [0.4.2](https://github.com/yahtnif/smarkdown/releases/tag/v0.4.2) - 2018-09-18
 
 ### Fixed
 
-- Fix typographic substitution in (pre|code|kbd|script) blocks when smartypants=true, marked#1335
+- Fix typographic substitution in (pre|code|kbd|script) blocks when smartypants=true. marked#1335
 
 ## [0.4.1](https://github.com/yahtnif/smarkdown/releases/tag/v0.4.1) - 2018-08-30
 
@@ -226,19 +227,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update tablecell
-- Add hard line break when backslash at EOL, marked#1303
-- Loose lists, marked#1304
-- Enable CommonMark spec 468, marked#1305
-- Updated inline grammar regexes for strong and em, marked#1315
+- Add hard line break when backslash at EOL. marked#1303
+- Loose lists. marked#1304
+- Enable CommonMark spec 468. marked#1305
+- Updated inline grammar regexes for strong and em. marked#1315
 
 ### Security
 
-- Security: use rtrim, not unsafe /X+\$/, marked#1260
+- Security: use rtrim, not unsafe /X+\$/. marked#1260
 
 ### Fixed
 
-- Strikethrough support for GFM, marked#1258
-- Fix gfm extended autolinking requiring multiple backpedals, marked #1293
+- Strikethrough support for GFM. marked#1258
+- Fix gfm extended autolinking requiring multiple backpedals. marked #1293
 
 ## [0.1.4](https://github.com/yahtnif/smarkdown/releases/tag/v0.1.4) - 2018-07-04
 
@@ -255,7 +256,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - GFM table compliance
-- Fix issues link references and prototypes, marked#1299
+- Fix issues link references and prototypes. marked#1299
 
 ## [0.1.2](https://github.com/yahtnif/smarkdown/releases/tag/v0.1.2) - 2018-06-24
 

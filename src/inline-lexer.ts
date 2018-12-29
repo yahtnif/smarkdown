@@ -344,7 +344,7 @@ export class InlineLexer {
       // escape
       if ((execArr = this.rules.escape.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
-        out += execArr[1]
+        out += this.options.escape(execArr[1])
         continue
       }
 

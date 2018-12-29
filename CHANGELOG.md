@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- Make code fences compliant (+ fix marked#1058), marked#1387
+
 ## [0.10.0](https://github.com/yahtnif/smarkdown/releases/tag/v0.10.0) - 2018-12-28
 
 ### Changed

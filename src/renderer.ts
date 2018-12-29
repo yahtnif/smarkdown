@@ -17,7 +17,8 @@ ${quote}</blockquote>
 `
   }
 
-  code(code: string, lang?: string, escaped?: boolean): string {
+  code(code: string, language?: string, escaped?: boolean): string {
+    const lang = (language || '').match(/\S*/)[0]
     if (this.options.highlight) {
       const out: string = this.options.highlight(code, lang)
 
@@ -28,17 +29,20 @@ ${quote}</blockquote>
     }
 
     if (!lang) {
-      return `<pre><code>${escaped ? code : this.options.escape(code, true)}</code></pre>`
+      return `<pre><code>${
+        escaped ? code : this.options.escape(code, true)
+      }</code></pre>`
     }
 
     const dataLang: string = this.options.langAttribute
       ? ` data-lang="${this.options.escape(lang, true)}"`
       : ''
 
-    return `<pre${dataLang}><code class="${this.options.langPrefix}${this.options.escape(
-      lang,
-      true
-    )}">${escaped ? code : this.options.escape(code, true)}</code></pre>
+    return `<pre${dataLang}><code class="${
+      this.options.langPrefix
+    }${this.options.escape(lang, true)}">${
+      escaped ? code : this.options.escape(code, true)
+    }</code></pre>
 `
   }
 
@@ -64,12 +68,12 @@ ${quote}</blockquote>
     let attr: string = ''
 
     if (
-      (headerId === true) ||
+      headerId === true ||
       (headerId === 'off' && ends) ||
       (headerId === 'on' && !ends)
     ) {
       let id: string = this.options.slug(raw)
-      const count: number = this._headings.filter((h) => h === raw).length
+      const count: number = this._headings.filter(h => h === raw).length
       if (count > 0) {
         id += `-${count}`
       }
@@ -89,18 +93,26 @@ ${quote}</blockquote>
     return html
   }
 
-  list(body: string, ordered?: boolean, start?: string | number, isTaskList?: boolean): string {
+  list(
+    body: string,
+    ordered?: boolean,
+    start?: string | number,
+    isTaskList?: boolean
+  ): string {
     const type: string = ordered ? 'ol' : 'ul'
-    const startatt: string = (ordered && start !== 1) ? (' start="' + start + '"') : ''
+    const startatt: string =
+      ordered && start !== 1 ? ' start="' + start + '"' : ''
 
     return `<${type}${startatt}>\n${body}</${type}>\n`
   }
 
   listitem(text: string, checked?: boolean | null): string {
-    return checked === null ? `<li>${text}</li>
-` : `<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" ${
-      checked ? 'checked ' : ''
-    } disabled> ${text}</li>
+    return checked === null
+      ? `<li>${text}</li>
+`
+      : `<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" ${
+          checked ? 'checked ' : ''
+        } disabled> ${text}</li>
 `
   }
 
@@ -126,10 +138,7 @@ ${content}</tr>
 `
   }
 
-  tablecell(
-    content: string,
-    flags: TablecellFlags
-  ): string {
+  tablecell(content: string, flags: TablecellFlags): string {
     const { header, align } = flags
     const type: string = header ? 'th' : 'td'
     const tag: string = align
@@ -167,7 +176,11 @@ ${content}</tr>
   }
 
   image(href: string, title: string, text: string): string {
-    href = this.options.cleanUrl(this.options.sanitize, this.options.baseUrl, href)
+    href = this.options.cleanUrl(
+      this.options.sanitize,
+      this.options.baseUrl,
+      href
+    )
 
     if (href === null) return text
 
@@ -183,7 +196,11 @@ ${content}</tr>
   }
 
   link(href: string, title: string, text: string): string {
-    href = this.options.cleanUrl(this.options.sanitize, this.options.baseUrl, href)
+    href = this.options.cleanUrl(
+      this.options.sanitize,
+      this.options.baseUrl,
+      href
+    )
 
     if (href === null) return text
 

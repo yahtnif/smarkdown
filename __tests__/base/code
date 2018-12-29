@@ -4,7 +4,19 @@
 import Smarkdown from 'smarkdown'
 ```
 
+Closing fences must lay on a new line:
+
+```
+hello()
+^```
+"this should still be in the code block!"
+```
+
 
 
 <p><code>/link-in-code/users?email=one@two.com</code></p>
 <pre><code class="language-js">import Smarkdown from &#39;smarkdown&#39;</code></pre>
+<p>Closing fences must lay on a new line:</p>
+<pre><code>hello()
+^```
+&quot;this should still be in the code block!&quot;</code></pre>

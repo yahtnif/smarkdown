@@ -1,4 +1,9 @@
-import { blockCommentRegex, ExtendRegexp, getRuleType, noopRegex } from './helpers'
+import {
+  blockCommentRegex,
+  ExtendRegexp,
+  getRuleType,
+  noopRegex
+} from './helpers'
 import {
   Align,
   BaseBlockRules,
@@ -15,7 +20,7 @@ import {
   Options,
   PedanticBlockRules,
   Token,
-  TokenType,
+  TokenType
 } from './interfaces'
 
 export class BlockLexer {
@@ -47,11 +52,7 @@ export class BlockLexer {
   }
 
   // Accepts Markdown text and returns object with tokens and links.
-  static lex(
-    src: string,
-    options?: Options,
-    top?: boolean
-  ): LexerReturns {
+  static lex(src: string, options?: Options, top?: boolean): LexerReturns {
     const lexer: BlockLexer = new this(this, options)
     return lexer.getTokens(src, top)
   }
@@ -207,7 +208,7 @@ export class BlockLexer {
     const gfm: GfmBlockRules = {
       ...base,
       ...{
-        fences: /^ *(`{3,}|~{3,})[ \.]*(\S+)? *\n([\s\S]*?)\n? *\1 *(?:\n+|$)/,
+        fences: /^ {0,3}(`{3,}|~{3,})([^`\n]*)\n(?:|([\s\S]*?)\n)(?: {0,3}\1[~`]* *(?:\n+|$)|$)/,
         checkbox: /^\[([ xX])\] +/,
         paragraph: /^/,
         heading: /^ *(#{1,6}) +([^\n]+?) *(#*) *(?:\n+|$)/,
@@ -255,13 +256,9 @@ export class BlockLexer {
       this.rules = this.self.getBaseRules()
     }
 
-    this.options.disabledRules.forEach(
-      (
-        rule: BlockRulesType
-      ) => {
-        this.rules[rule] = noopRegex
-      }
-    )
+    this.options.disabledRules.forEach((rule: BlockRulesType) => {
+      this.rules[rule] = noopRegex
+    })
 
     this.isGfm = (<GfmBlockRules>this.rules).fences !== undefined
     this.isExtra = (<ExtraBlockRules>this.rules).footnote !== undefined
@@ -274,12 +271,10 @@ export class BlockLexer {
     let nextPart: string = src
     let execArr: RegExpExecArray
     const newRules: BlockRule[] = this.self.newRules || []
-    const newRulesBefore: BlockRule[] = newRules.filter(
-      R => R.options.priority
-    ).sort((a, b) => b.options.priority - a.options.priority)
-    const newRulesAfter: BlockRule[] = newRules.filter(
-      R => !R.options.priority
-    )
+    const newRulesBefore: BlockRule[] = newRules
+      .filter(R => R.options.priority)
+      .sort((a, b) => b.options.priority - a.options.priority)
+    const newRulesAfter: BlockRule[] = newRules.filter(R => !R.options.priority)
 
     mainLoop: while (nextPart) {
       // newline
@@ -326,7 +321,7 @@ export class BlockLexer {
 
         this.tokens.push({
           type: TokenType.code,
-          lang: execArr[2],
+          lang: execArr[2] ? execArr[2].trim() : execArr[2],
           text: execArr[3] || ''
         })
         continue
@@ -373,9 +368,7 @@ export class BlockLexer {
           align: execArr[2]
             .replace(/^ *|\| *$/g, '')
             .split(/ *\| */) as Align[],
-          cells: execArr[3]
-            ? execArr[3].replace(/\n$/, '').split('\n')
-            : []
+          cells: execArr[3] ? execArr[3].replace(/\n$/, '').split('\n') : []
         }
 
         if (item.header.length === item.align.length) {
@@ -484,9 +477,7 @@ export class BlockLexer {
           // Determine whether the next list item belongs here.
           // Backpedal if it does not belong in this list.
           if (this.options.smartLists && i !== length - 1) {
-            blockBullet = this.self
-              .getBaseRules()
-              .bullet.exec(arr[i + 1])[0]
+            blockBullet = this.self.getBaseRules().bullet.exec(arr[i + 1])[0]
 
             if (
               bull !== blockBullet &&
@@ -544,7 +535,8 @@ export class BlockLexer {
       if ((execArr = this.rules.html.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
         const attr: string = execArr[1]
-        const isPre: boolean = attr === 'pre' || attr === 'script' || attr === 'style'
+        const isPre: boolean =
+          attr === 'pre' || attr === 'script' || attr === 'style'
 
         this.tokens.push({
           type: this.options.sanitize ? TokenType.paragraph : TokenType.html,
@@ -674,7 +666,11 @@ export class BlockLexer {
       }
 
       if (nextPart) {
-        throw new Error(`Infinite loop on byte: ${nextPart.charCodeAt(0)}, near text '${nextPart.slice(0, 30)}...'`)
+        throw new Error(
+          `Infinite loop on byte: ${nextPart.charCodeAt(
+            0
+          )}, near text '${nextPart.slice(0, 30)}...'`
+        )
       }
     }
 
@@ -685,20 +681,20 @@ export class BlockLexer {
     // ensure that every cell-delimiting pipe has a space
     // before it to distinguish it from an escaped pipe
     let row: string = tableRow.replace(/\|/g, function(match, offset, str) {
-        let escaped: boolean = false,
-          curr: number = offset
+      let escaped: boolean = false,
+        curr: number = offset
 
-        while (--curr >= 0 && str[curr] === '\\') escaped = !escaped
+      while (--curr >= 0 && str[curr] === '\\') escaped = !escaped
 
-        if (escaped) {
-          // odd number of slashes means | is escaped
-          // so we leave it alone
-          return '|'
-        } else {
-          // add space before unescaped |
-          return ' |'
-        }
-      })
+      if (escaped) {
+        // odd number of slashes means | is escaped
+        // so we leave it alone
+        return '|'
+      } else {
+        // add space before unescaped |
+        return ' |'
+      }
+    })
     let cells: string[] = row.split(/ \|/)
 
     if (cells.length > count) {

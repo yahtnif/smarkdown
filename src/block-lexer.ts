@@ -106,7 +106,7 @@ export class BlockLexer {
     const base: BaseBlockRules = {
       _comment: blockCommentRegex,
       blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
-      bullet: /(?:[*+-]|\d+\.)/,
+      bullet: /(?:[*+-]|\d{1,9}\.)/,
       code: /^( {4}[^\n]+\n*)+/,
       def: /^ {0,3}\[(label)\]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)(title))? *(?:\n+|$)/,
       heading: /^ *(#{1,6}) *([^\n]+?) *(#+ *)?(?:\n+|$)/,

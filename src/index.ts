@@ -41,7 +41,7 @@ export default class Smarkdown {
 
   static setOption(options: Options) {
     console.warn(
-      'setOptions() is deprecated. Please use the setOption() instead.'
+      'setOption() is deprecated. Please use the setOptions() instead.'
     )
     this.setOptions(options)
   }

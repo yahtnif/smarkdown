@@ -1,4 +1,10 @@
-import { blockCommentRegex, ExtendRegexp, getBreakChar, getRuleType, noopRegex } from './helpers'
+import {
+  blockCommentRegex,
+  ExtendRegexp,
+  getBreakChar,
+  getRuleType,
+  noopRegex
+} from './helpers'
 import {
   BaseInlineRules,
   BreaksInlineRules,
@@ -12,7 +18,7 @@ import {
   Links,
   NewRenderer,
   Options,
-  PedanticInlineRules,
+  PedanticInlineRules
 } from './interfaces'
 import { Renderer } from './renderer'
 
@@ -53,7 +59,8 @@ export class InlineLexer {
     protected options: Options,
     renderer?: Renderer
   ) {
-    this.renderer = renderer || this.options.renderer || new Renderer(this.options)
+    this.renderer =
+      renderer || this.options.renderer || new Renderer(this.options)
     this.renderer.options = this.options
 
     this.setRules()
@@ -100,12 +107,13 @@ export class InlineLexer {
   private static getBaseRules(): BaseInlineRules {
     if (this.baseRules) return this.baseRules
 
-    const tag: string = '^comment'
-      + '|^</[a-zA-Z][\\w:-]*\\s*>' // self-closing tag
-      + '|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>' // open tag
-      + '|^<\\?[\\s\\S]*?\\?>' // processing instruction, e.g. <?php ?>
-      + '|^<![a-zA-Z]+\\s[\\s\\S]*?>' // declaration, e.g. <!DOCTYPE html>
-      + '|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>' // CDATA section
+    const tag: string =
+      '^comment' +
+      '|^</[a-zA-Z][\\w:-]*\\s*>' + // self-closing tag
+      '|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>' + // open tag
+      '|^<\\?[\\s\\S]*?\\?>' + // processing instruction, e.g. <?php ?>
+      '|^<![a-zA-Z]+\\s[\\s\\S]*?>' + // declaration, e.g. <!DOCTYPE html>
+      '|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>' // CDATA section
 
     /**
      * Inline-Level Grammar.
@@ -121,7 +129,7 @@ export class InlineLexer {
       link: /^!?\[(label)\]\(href(?:\s+(title))?\s*\)/,
       nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
       reflink: /^!?\[(label)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
-      strong: /^__([^\s])__(?!_)|^\*\*([^\s])\*\*(?!\*)|^__([^\s][\s\S]*?[^\s])__(?!_)|^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)/,
+      strong: /^__([^\s_])__(?!_)|^\*\*([^\s*])\*\*(?!\*)|^__([^\s][\s\S]*?[^\s])__(?!_)|^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)/,
       tag: new RegExp(tag),
       text: /^(`+|[^`])[\s\S]*?(?=[\\<!\[`*]|\b_| {2,}\n|$)/
     }
@@ -169,7 +177,9 @@ export class InlineLexer {
     const linkRegex: RegExp = new ExtendRegexp(/^!?\[(label)\]\((.*?)\)/)
       .setGroup('label', base._label)
       .getRegex()
-    const reflinkRegex: RegExp = new ExtendRegexp(/^!?\[(label)\]\s*\[([^\]]*)\]/)
+    const reflinkRegex: RegExp = new ExtendRegexp(
+      /^!?\[(label)\]\s*\[([^\]]*)\]/
+    )
       .setGroup('label', base._label)
       .getRegex()
 
@@ -248,7 +258,9 @@ export class InlineLexer {
   private static getExtraRules(options: Options): ExtraInlineRules {
     if (this.extraRules) return this.extraRules
 
-    const rules: BreaksInlineRules | GfmInlineRules = options.breaks ? this.getBreaksRules() : this.getGfmRules()
+    const rules: BreaksInlineRules | GfmInlineRules = options.breaks
+      ? this.getBreaksRules()
+      : this.getGfmRules()
 
     return (this.extraRules = {
       ...rules,
@@ -280,32 +292,33 @@ export class InlineLexer {
         this.defaultTextBreak = textRuleStr.match(/\?=\[(.+?)\]/)[1]
       }
 
-      const textBreak: string = this.defaultTextBreak + InlineLexer.newRules
-        .filter(R => this.defaultTextBreak.indexOf(R.breakChar) === -1)
-        .map(R => R.breakChar)
-        // remove dulplicate
-        .filter((v, i, a) => a.indexOf(v) === i)
-        .join('')
-      this.rules.text = new RegExp(textRuleStr.replace(this.defaultTextBreak, textBreak))
+      const textBreak: string =
+        this.defaultTextBreak +
+        InlineLexer.newRules
+          .filter(R => this.defaultTextBreak.indexOf(R.breakChar) === -1)
+          .map(R => R.breakChar)
+          // remove dulplicate
+          .filter((v, i, a) => a.indexOf(v) === i)
+          .join('')
+      this.rules.text = new RegExp(
+        textRuleStr.replace(this.defaultTextBreak, textBreak)
+      )
     }
 
-    this.options.disabledRules.forEach(
-      (
-        rule: InlineRulesType
-      ) => {
-        this.rules[rule] = noopRegex
-      }
-    )
+    this.options.disabledRules.forEach((rule: InlineRulesType) => {
+      this.rules[rule] = noopRegex
+    })
 
     this.isGfm = (<GfmInlineRules>this.rules).url !== undefined
     this.isExtra = (<ExtraInlineRules>this.rules).fnref !== undefined
   }
 
-  private escapes (text: string) {
+  private escapes(text: string) {
     return text ? text.replace(this.rules._escapes, '$1') : text
   }
 
-  private sortByPriority = (a: InlineRule, b: InlineRule) => b.options.priority - a.options.priority
+  private sortByPriority = (a: InlineRule, b: InlineRule) =>
+    b.options.priority - a.options.priority
 
   /**
    * Lexing/Compiling.
@@ -314,7 +327,8 @@ export class InlineLexer {
     let execArr: RegExpExecArray
     let out: string = ''
     const preParts: string[] = [nextPart, nextPart]
-    const newRules: InlineRule[] = this.self.newRules.sort(this.sortByPriority) || []
+    const newRules: InlineRule[] =
+      this.self.newRules.sort(this.sortByPriority) || []
     const newRulesBefore: InlineRule[] = []
     const newRulesAfter: InlineRule[] = []
 
@@ -339,7 +353,12 @@ export class InlineLexer {
         if ((execArr = R.rule.exec(nextPart))) {
           preParts[0] = preParts[1]
           preParts[1] = nextPart
-          if (!R.options.checkPreChar || R.options.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
+          if (
+            !R.options.checkPreChar ||
+            R.options.checkPreChar(
+              preParts[0].charAt(preParts[0].length - nextPart.length - 1)
+            )
+          ) {
             nextPart = nextPart.substring(execArr[0].length)
             out += R.render.call(this, execArr)
             continue mainLoop
@@ -355,9 +374,15 @@ export class InlineLexer {
           this.inLink = false
         }
 
-        if (!this.inRawBlock && /^<(pre|code|kbd|script)(\s|>)/i.test(execArr[0])) {
+        if (
+          !this.inRawBlock &&
+          /^<(pre|code|kbd|script)(\s|>)/i.test(execArr[0])
+        ) {
           this.inRawBlock = true
-        } else if (this.inRawBlock && /^<\/(pre|code|kbd|script)(\s|>)/i.test(execArr[0])) {
+        } else if (
+          this.inRawBlock &&
+          /^<\/(pre|code|kbd|script)(\s|>)/i.test(execArr[0])
+        ) {
           this.inRawBlock = false
         }
 
@@ -391,7 +416,7 @@ export class InlineLexer {
         } else {
           title = execArr[3] ? execArr[3].slice(1, -1) : ''
         }
-        href = href.trim().replace(/^<([\s\S]*)>$/, '$1');
+        href = href.trim().replace(/^<([\s\S]*)>$/, '$1')
 
         out += this.outputLink(execArr, {
           href: this.escapes(href),
@@ -436,14 +461,25 @@ export class InlineLexer {
       // strong
       if ((execArr = this.rules.strong.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
-        out += this.renderer.strong(this.output(execArr[4] || execArr[3] || execArr[2] || execArr[1]))
+        out += this.renderer.strong(
+          this.output(execArr[4] || execArr[3] || execArr[2] || execArr[1])
+        )
         continue
       }
 
       // em
       if ((execArr = this.rules.em.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
-        out += this.renderer.em(this.output(execArr[6] || execArr[5] || execArr[4] || execArr[3] || execArr[2] || execArr[1]))
+        out += this.renderer.em(
+          this.output(
+            execArr[6] ||
+              execArr[5] ||
+              execArr[4] ||
+              execArr[3] ||
+              execArr[2] ||
+              execArr[1]
+          )
+        )
         continue
       }
 
@@ -504,7 +540,9 @@ export class InlineLexer {
           // do extended autolink path validation
           do {
             prevCapZero = execArr[0]
-            execArr[0] = (<GfmInlineRules>this.rules)._backpedal.exec(execArr[0])[0]
+            execArr[0] = (<GfmInlineRules>this.rules)._backpedal.exec(
+              execArr[0]
+            )[0]
           } while (prevCapZero !== execArr[0])
 
           text = this.options.escape(execArr[0])
@@ -527,7 +565,12 @@ export class InlineLexer {
         if ((execArr = R.rule.exec(nextPart))) {
           preParts[0] = preParts[1]
           preParts[1] = nextPart
-          if (!R.options.checkPreChar || R.options.checkPreChar(preParts[0].charAt(preParts[0].length - nextPart.length - 1))) {
+          if (
+            !R.options.checkPreChar ||
+            R.options.checkPreChar(
+              preParts[0].charAt(preParts[0].length - nextPart.length - 1)
+            )
+          ) {
             nextPart = nextPart.substring(execArr[0].length)
             out += R.render.call(this, execArr)
             continue mainLoop
@@ -542,7 +585,9 @@ export class InlineLexer {
         if (this.inRawBlock) {
           out += this.renderer.text(execArr[0])
         } else {
-          out += this.renderer.text(this.options.escape(this.smartypants(execArr[0])))
+          out += this.renderer.text(
+            this.options.escape(this.smartypants(execArr[0]))
+          )
         }
 
         continue
@@ -561,7 +606,9 @@ export class InlineLexer {
    */
   private outputLink(execArr: RegExpExecArray, link: Link) {
     const href: string = link.href
-    const title: string | null = link.title ? this.options.escape(link.title) : null
+    const title: string | null = link.title
+      ? this.options.escape(link.title)
+      : null
 
     return execArr[0].charAt(0) !== '!'
       ? this.renderer.link(href, title, this.output(execArr[1]))
@@ -574,21 +621,23 @@ export class InlineLexer {
   private smartypants(text: string) {
     if (!this.options.smartypants) return text
 
-    return text
-      // em-dashes
-      .replace(/---/g, '\u2014')
-      // en-dashes
-      .replace(/--/g, '\u2013')
-      // opening singles
-      .replace(/(^|[-\u2014/(\[{"\s])'/g, '$1\u2018')
-      // closing singles & apostrophes
-      .replace(/'/g, '\u2019')
-      // opening doubles
-      .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, '$1\u201c')
-      // closing doubles
-      .replace(/"/g, '\u201d')
-      // ellipses
-      .replace(/\.{3}/g, '\u2026')
+    return (
+      text
+        // em-dashes
+        .replace(/---/g, '\u2014')
+        // en-dashes
+        .replace(/--/g, '\u2013')
+        // opening singles
+        .replace(/(^|[-\u2014/(\[{"\s])'/g, '$1\u2018')
+        // closing singles & apostrophes
+        .replace(/'/g, '\u2019')
+        // opening doubles
+        .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, '$1\u201c')
+        // closing doubles
+        .replace(/"/g, '\u201d')
+        // ellipses
+        .replace(/\.{3}/g, '\u2026')
+    )
   }
 
   /**

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix handling of adjacent lists. marked#684
 - Limit ordered list marker length. marked#1391
 - Fix empty list items. marked#1395
+- Fix strong tag. marked#1400
 
 ## [0.10.0](https://github.com/yahtnif/smarkdown/releases/tag/v0.10.0) - 2018-12-28
 

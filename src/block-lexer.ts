@@ -112,7 +112,7 @@ export class BlockLexer {
       heading: /^ *(#{1,6}) *([^\n]+?) *(#+ *)?(?:\n+|$)/,
       hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
       html: new RegExp(html),
-      item: /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/,
+      item: /^( *)(bull) ?[^\n]*(?:\n(?!\1bull ?)[^\n]*)*/,
       lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,
       list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
       newline: /^\n+/,
@@ -447,15 +447,17 @@ export class BlockLexer {
         let next: boolean = false,
           space: number,
           blockBullet: string,
-          loose: boolean
+          loose: boolean,
+          item: string,
+          checked: boolean | null
 
         for (let i = 0; i < length; i++) {
-          let item: string = arr[i]
-          let checked: boolean | null = null
+          item = arr[i]
+          checked = null
 
           // Remove the list item's bullet, so it is seen as the next token.
           space = item.length
-          item = item.replace(/^ *([*+-]|\d+\.) +/, '')
+          item = item.replace(/^ *([*+-]|\d+\.) */, '')
 
           // Check for task list items
           if (

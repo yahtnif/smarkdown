@@ -5,6 +5,11 @@
 2. An unordered list
 
 
+1. foo
+2.
+3. bar
+
+
 1234567890. should not be a ordered list
 
 
@@ -16,5 +21,10 @@
 <ol>
 <li>This should be</li>
 <li>An unordered list</li>
+</ol>
+<ol>
+<li>foo</li>
+<li></li>
+<li>bar</li>
 </ol>
 <p>1234567890. should not be a ordered list</p>

@@ -120,7 +120,7 @@ export class InlineLexer {
      */
     const base: BaseInlineRules = {
       _escapes: /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g,
-      _label: /(?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|[^\[\]\\])*?/,
+      _label: /(?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|`(?!`)|[^\[\]\\`])*?/,
       autolink: /^<(scheme:[^\s\x00-\x1f<>]*|email)>/,
       br: /^( {2,}|\\)\n(?!\s*$)/,
       code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
@@ -420,9 +420,10 @@ export class InlineLexer {
       if ((execArr = this.rules.link.exec(nextPart))) {
         const lastParenIndex = this.findClosingBracket(execArr[2], '()')
         if (lastParenIndex > -1) {
-          const removeChars = execArr[2].length - lastParenIndex
+          const linkLen = execArr[0].length - (execArr[2].length - lastParenIndex) - (execArr[3] || '').length
           execArr[2] = execArr[2].substring(0, lastParenIndex)
-          execArr[0] = execArr[0].substring(0, execArr[0].length - removeChars)
+          execArr[0] = execArr[0].substring(0, linkLen).trim()
+          execArr[3] = ''
         }
 
         nextPart = nextPart.substring(execArr[0].length)

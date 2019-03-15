@@ -21,7 +21,10 @@ export function escape(html: string, encode?: boolean): string {
       return html.replace(escapeReplaceRegex, (ch: string) => replacements[ch])
     }
   } else if (escapeTestNoEncodeRegex.test(html)) {
-    return html.replace(escapeReplaceNoEncodeRegex, (ch: string) => replacements[ch])
+    return html.replace(
+      escapeReplaceNoEncodeRegex,
+      (ch: string) => replacements[ch]
+    )
   }
 
   return html
@@ -46,20 +49,40 @@ export function unescape(html: string): string {
 }
 
 const htmlTagsRegex: RegExp = /<(?:.|\n)*?>/gm
-const specialCharsRegex: RegExp = /[!\"#$%&'\(\)\*\+,\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g
+const specialCharsRegex: RegExp = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,./:;<=>?@[\]^`{|}~]/g
 const dotSpaceRegex: RegExp = /(\s|\.)/g
 
-export function slug(str: string): string {
-  return str
-    // Remove html tags
-    .replace(htmlTagsRegex, '')
-    // Remove special characters
-    .replace(specialCharsRegex, '')
-    // Replace dots and spaces with a separator
-    .replace(dotSpaceRegex, '-')
-    // Make the whole thing lowercase
-    .toLowerCase()
+class Slugger {
+  seen: EmptyObject = {}
+
+  slug(value: string, isUnique?: boolean): string {
+    let slug = value
+      .trim()
+      // Remove html tags
+      .replace(htmlTagsRegex, '')
+      // Remove special characters
+      .replace(specialCharsRegex, '')
+      // Replace dots and spaces with a separator
+      .replace(dotSpaceRegex, '-')
+      // Make the whole thing lowercase
+      .toLowerCase()
+
+    if (isUnique !== false) {
+      if (this.seen.hasOwnProperty(slug)) {
+        const originalSlug = slug
+        do {
+          this.seen[originalSlug]++
+          slug = originalSlug + '-' + this.seen[originalSlug]
+        } while (this.seen.hasOwnProperty(slug))
+      }
+      this.seen[slug] = 0
+    }
+
+    return slug
+  }
 }
+
+export const slugger = new Slugger()
 
 // Remove trailing 'c's. Equivalent to str.replace(/c*$/, '').
 // /c*$/ is vulnerable to REDOS.
@@ -120,7 +143,11 @@ export function resolveUrl(base: string, href: string): string {
   }
 }
 
-export function cleanUrl(sanitize: boolean, base: string, href: string): string {
+export function cleanUrl(
+  sanitize: boolean,
+  base: string,
+  href: string
+): string {
   if (sanitize) {
     let prot: string
 

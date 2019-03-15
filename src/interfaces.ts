@@ -3,7 +3,7 @@ import {
   escape,
   resolveUrl,
   rtrim,
-  slug,
+  slugger,
   unescape
 } from './helpers'
 import { Renderer } from './renderer'
@@ -165,7 +165,7 @@ export class Options {
   xhtml?: boolean = false
   escape?: (html: string, encode?: boolean) => string = escape
   unescape?: (html: string) => string = unescape
-  slug?: (str: string) => string = slug
+  slug?: (str: string, isUnique?: boolean) => string = (str: string, isUnique?: boolean): string => slugger.slug(str, isUnique)
   rtrim?: (str: string, c: string, invert?: boolean) => string = rtrim
   resolveUrl?: (base: string, href: string) => string = resolveUrl
   cleanUrl?: (sanitize: boolean, base: string, href: string) => string = cleanUrl
@@ -187,7 +187,7 @@ export interface LexerReturns {
 }
 
 export interface EmptyObject {
-  [key: string]: string
+  [key: string]: any
 }
 
 export type NewRenderer = (execArr?: RegExpExecArray) => string
@@ -223,4 +223,8 @@ export interface BlockRule {
 export interface TablecellFlags {
   align?: Align
   header?: boolean
+}
+
+export interface Footnotes {
+  [key: string]: string
 }

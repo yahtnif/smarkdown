@@ -1,4 +1,4 @@
-import { Options, TablecellFlags } from './interfaces'
+import { Footnotes, Options, TablecellFlags } from './interfaces'
 
 export class Renderer {
   private _footnotes: string[] = []
@@ -46,7 +46,7 @@ ${quote}</blockquote>
 `
   }
 
-  footnote(footnotes: { [key: string]: string }): string {
+  footnote(footnotes: Footnotes): string {
     let out: string = `<div class="footnotes" role="doc-endnotes">${this.hr()}<ol>`
 
     for (const refname of this._footnotes) {

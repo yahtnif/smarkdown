@@ -336,7 +336,7 @@ export class BlockLexer {
 
         const item: Token = {
           type: TokenType.footnote,
-          refname: this.options.slug(execArr[1]),
+          refname: this.options.slug(execArr[1], false),
           text: execArr[2]
         }
 

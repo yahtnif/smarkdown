@@ -358,7 +358,6 @@ export class BlockLexer {
 
       // table no leading pipe (gfm)
       if (
-        top &&
         this.isGfm &&
         (execArr = (<GfmBlockRules>this.rules).nptable.exec(nextPart))
       ) {
@@ -570,7 +569,6 @@ export class BlockLexer {
 
       // table (gfm)
       if (
-        top &&
         this.isGfm &&
         (execArr = (<GfmBlockRules>this.rules).table.exec(nextPart))
       ) {

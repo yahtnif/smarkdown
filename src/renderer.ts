@@ -100,8 +100,11 @@ ${quote}</blockquote>
     isTaskList?: boolean
   ): string {
     const type: string = ordered ? 'ol' : 'ul'
-    const startatt: string =
+    let startatt: string =
       ordered && start !== 1 ? ' start="' + start + '"' : ''
+    if (isTaskList) {
+      startatt += ' class="task-list"'
+    }
 
     return `<${type}${startatt}>\n${body}</${type}>\n`
   }
@@ -110,8 +113,8 @@ ${quote}</blockquote>
     return checked === null
       ? `<li>${text}</li>
 `
-      : `<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" ${
-          checked ? 'checked ' : ''
+      : `<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"${
+          checked ? ' checked' : ''
         } disabled> ${text}</li>
 `
   }

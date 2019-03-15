@@ -136,7 +136,7 @@ export class InlineLexer {
 
     const _attribute: RegExp = /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/
     const _email: RegExp = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/
-    const _href: RegExp = /\s*(<(?:\\[<>]?|[^\s<>\\])*>|(?:\\[()]?|\([^\s\x00-\x1f\\]*\)|[^\s\x00-\x1f()\\])*?)/
+    const _href: RegExp = /\s*(<(?:\\[<>]?|[^\s<>\\])*>|[^\s\x00-\x1f]*)/
     const _punctuation: string = '!"#$%&\'()*+,\\-./:;<=>?@\\[^_{|}~'
     const _scheme: RegExp = /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/
     const _title: RegExp = /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/
@@ -317,6 +317,26 @@ export class InlineLexer {
     return text ? text.replace(this.rules._escapes, '$1') : text
   }
 
+  private findClosingBracket(str: string, b: string): number {
+    if (str.indexOf(b[1]) === -1) {
+      return -1
+    }
+    let level = 0
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === '\\') {
+        i++
+      } else if (str[i] === b[0]) {
+        level++
+      } else if (str[i] === b[1]) {
+        level--
+        if (level < 0) {
+          return i
+        }
+      }
+    }
+    return -1
+  }
+
   private sortByPriority = (a: InlineRule, b: InlineRule) =>
     b.options.priority - a.options.priority
 
@@ -398,6 +418,13 @@ export class InlineLexer {
 
       // link
       if ((execArr = this.rules.link.exec(nextPart))) {
+        const lastParenIndex = this.findClosingBracket(execArr[2], '()')
+        if (lastParenIndex > -1) {
+          const removeChars = execArr[2].length - lastParenIndex
+          execArr[2] = execArr[2].substring(0, lastParenIndex)
+          execArr[0] = execArr[0].substring(0, execArr[0].length - removeChars)
+        }
+
         nextPart = nextPart.substring(execArr[0].length)
         this.inLink = true
 

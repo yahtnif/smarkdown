@@ -271,10 +271,10 @@ export class BlockLexer {
     let nextPart: string = src
     let execArr: RegExpExecArray
     const newRules: BlockRule[] = this.self.newRules || []
-    const newRulesBefore: BlockRule[] = newRules
+    const newRulesTop: BlockRule[] = newRules
       .filter(R => R.options.priority)
       .sort((a, b) => b.options.priority - a.options.priority)
-    const newRulesAfter: BlockRule[] = newRules.filter(R => !R.options.priority)
+    const newRulesBottom: BlockRule[] = newRules.filter(R => !R.options.priority)
 
     mainLoop: while (nextPart) {
       // newline
@@ -289,7 +289,7 @@ export class BlockLexer {
       }
 
       // new rules before
-      for (const R of newRulesBefore) {
+      for (const R of newRulesTop) {
         if ((execArr = R.rule.exec(nextPart))) {
           nextPart = nextPart.substring(execArr[0].length)
           this.tokens.push({
@@ -615,7 +615,7 @@ export class BlockLexer {
       }
 
       // new rules
-      for (const R of newRulesAfter) {
+      for (const R of newRulesBottom) {
         if ((execArr = R.rule.exec(nextPart))) {
           nextPart = nextPart.substring(execArr[0].length)
           this.tokens.push({

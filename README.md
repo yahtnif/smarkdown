@@ -41,7 +41,7 @@ npm install smarkdown
 Import the library as a module:
 
 ```js
-import Smarkdown from 'smarkdown'
+const Smarkdown = require('smarkdown')
 ```
 
 Or import the library with a script tag:
@@ -74,8 +74,8 @@ console.log(Smarkdown.parse(str, { nop: true }))
 
 ```js
 // highlight.js
-import Smarkdown from 'smarkdown'
-import { highlight } from 'highlight.js'
+const Smarkdown = require('smarkdown')
+const { highlight } = require('highlight.js')
 
 Smarkdown.setOptions({
   highlight: (code, lang) => {
@@ -88,9 +88,9 @@ Smarkdown.setOptions({
 
 ```js
 // prismjs
-import Smarkdown from 'smarkdown'
-import Prism from 'prismjs'
-import 'prismjs/components/prism-markdown'
+const Smarkdown = require('smarkdown')
+const Prism = require('prismjs')
+require('prismjs/components/prism-markdown')
 
 Smarkdown.setOptions({
   highlight: (code, lang) => {
@@ -320,7 +320,7 @@ text(text)
 ### Overriding Renderer methods
 
 ```js
-import Smarkdown from 'smarkdown'
+const Smarkdown = require('smarkdown')
 
 class NewRenderer extends Smarkdown.Renderer {
   // Overriding parent method.

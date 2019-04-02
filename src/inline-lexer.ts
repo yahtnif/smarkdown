@@ -349,14 +349,14 @@ export class InlineLexer {
     const preParts: string[] = [nextPart, nextPart]
     const newRules: InlineRule[] =
       this.self.newRules.sort(this.sortByPriority) || []
-    const newRulesBefore: InlineRule[] = []
-    const newRulesAfter: InlineRule[] = []
+    const newRulesTop: InlineRule[] = []
+    const newRulesBottom: InlineRule[] = []
 
     for (const R of newRules) {
       if (R.options.priority) {
-        newRulesBefore.push(R)
+        newRulesTop.push(R)
       } else {
-        newRulesAfter.push(R)
+        newRulesBottom.push(R)
       }
     }
 
@@ -369,7 +369,7 @@ export class InlineLexer {
       }
 
       // new rules before
-      for (const R of newRulesBefore) {
+      for (const R of newRulesTop) {
         if ((execArr = R.rule.exec(nextPart))) {
           preParts[0] = preParts[1]
           preParts[1] = nextPart
@@ -589,7 +589,7 @@ export class InlineLexer {
       }
 
       // new rules after
-      for (const R of newRulesAfter) {
+      for (const R of newRulesBottom) {
         if ((execArr = R.rule.exec(nextPart))) {
           preParts[0] = preParts[1]
           preParts[1] = nextPart

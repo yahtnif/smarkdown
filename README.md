@@ -1,5 +1,6 @@
 # Smarkdown
 
+[![996ICU Licence](<https://img.shields.io/badge/license-NPL%20(The%20996%20Prohibited%20License)-blue.svg>)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 [![npm](https://badgen.net/npm/v/smarkdown)](https://www.npmjs.com/package/smarkdown)
 [![gzip size](https://img.badgesize.io/https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js?compression=gzip)](https://cdn.jsdelivr.net/npm/smarkdown/dist/smarkdown.min.js)
 [![install size](https://badgen.net/packagephobia/install/smarkdown)](https://packagephobia.now.sh/result?p=smarkdown)
@@ -350,4 +351,4 @@ Smarkdown.setOptions({ renderer: new NewRenderer(NewOptions) })
 
 ## License
 
-[MIT](./LICENSE)
+[996ICU](./LICENSE)

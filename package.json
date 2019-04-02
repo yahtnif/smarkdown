@@ -10,7 +10,7 @@
   "typings": "dist/src/index.d.ts",
   "repository": "yahtnif/smarkdown",
   "homepage": "https://github.com/yahtnif/smarkdown",
-  "license": "MIT",
+  "license": "996ICU",
   "keywords": [
     "commonmark",
     "smarkdown",

@@ -1,6 +1,6 @@
 <div align="center">
 	<div>
-		<img width="300" height="300" src="https://github.com/yahtnif/static/raw/master/logo/smarkdown.svg?sanitize=true" alt="smarkdown">
+		<img width="300" src="https://github.com/yahtnif/static/raw/master/logo/smarkdown.svg?sanitize=true" alt="smarkdown">
 	</div>
 </div>
 
@@ -355,4 +355,4 @@ Smarkdown.setOptions({ renderer: new NewRenderer(NewOptions) })
 
 ## License
 
-[996ICU](./LICENSE)
+[Anti 996](./LICENSE)

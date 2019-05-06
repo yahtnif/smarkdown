@@ -274,7 +274,9 @@ export class BlockLexer {
     const newRulesTop: BlockRule[] = newRules
       .filter(R => R.options.priority)
       .sort((a, b) => b.options.priority - a.options.priority)
-    const newRulesBottom: BlockRule[] = newRules.filter(R => !R.options.priority)
+    const newRulesBottom: BlockRule[] = newRules.filter(
+      R => !R.options.priority
+    )
 
     mainLoop: while (nextPart) {
       // newline
@@ -367,7 +369,7 @@ export class BlockLexer {
           align: execArr[2]
             .replace(/^ *|\| *$/g, '')
             .split(/ *\| */) as Align[],
-          cells: execArr[3] ? execArr[3].replace(/\n$/, '').split('\n') : []
+          cells: []
         }
 
         if (item.header.length === item.align.length) {
@@ -385,10 +387,12 @@ export class BlockLexer {
             }
           }
 
-          let td: string[] = execArr[3].replace(/\n$/, '').split('\n')
+          const cells = execArr[3]
+            ? execArr[3].replace(/\n$/, '').split('\n')
+            : []
 
-          for (let i = 0; i < td.length; i++) {
-            item.cells[i] = this.splitCells(td[i], item.header.length)
+          for (let i = 0; i < cells.length; i++) {
+            item.cells[i] = this.splitCells(cells[i], item.header.length)
           }
 
           this.tokens.push(item)
@@ -578,9 +582,7 @@ export class BlockLexer {
           align: execArr[2]
             .replace(/^ *|\| *$/g, '')
             .split(/ *\| */) as Align[],
-          cells: execArr[3]
-            ? execArr[3].replace(/(?: *\| *)?\n$/, '').split('\n')
-            : []
+          cells: []
         }
 
         if (item.header.length === item.align.length) {
@@ -598,13 +600,13 @@ export class BlockLexer {
             }
           }
 
-          const td: string[] = execArr[3]
-            .replace(/(?: *\| *)?\n$/, '')
-            .split('\n')
+          const cells = execArr[3]
+            ? execArr[3].replace(/\n$/, '').split('\n')
+            : []
 
-          for (let i = 0; i < td.length; i++) {
+          for (let i = 0; i < cells.length; i++) {
             item.cells[i] = this.splitCells(
-              td[i].replace(/^ *\| *| *\| *$/g, ''),
+              cells[i].replace(/^ *\| *| *\| *$/g, ''),
               item.header.length
             )
           }
@@ -679,7 +681,7 @@ export class BlockLexer {
     return { tokens: this.tokens, links: this.links }
   }
 
-  private splitCells(tableRow: string, count?: number) {
+  private splitCells(tableRow: string, count?: number): string[] {
     // ensure that every cell-delimiting pipe has a space
     // before it to distinguish it from an escaped pipe
     let row: string = tableRow.replace(/\|/g, function(match, offset, str) {

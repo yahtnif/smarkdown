@@ -40,7 +40,7 @@ export interface ExtraBlockRules extends GfmBlockRules {
 
 export type BlockRulesTypes = BaseBlockRules | GfmBlockRules | ExtraBlockRules
 
-export type BlockRulesType = keyof(BlockRulesTypes)
+export type BlockRulesType = keyof (BlockRulesTypes)
 
 export interface Link {
   href: string
@@ -68,14 +68,14 @@ export enum TokenType {
   paragraph,
   space,
   table,
-  text,
+  text
 }
 
 export type Align = 'center' | 'left' | 'right'
 
 export interface Token {
   align?: Align[]
-  cells?: string[] | string[][]
+  cells?: string[][]
   depth?: number
   ends?: string
   escaped?: boolean
@@ -133,9 +133,14 @@ export interface ExtraInlineRules extends BreaksInlineRules {
   fnref: RegExp
 }
 
-export type InlineRulesTypes = BaseInlineRules | PedanticInlineRules | GfmInlineRules | BreaksInlineRules | ExtraInlineRules
+export type InlineRulesTypes =
+  | BaseInlineRules
+  | PedanticInlineRules
+  | GfmInlineRules
+  | BreaksInlineRules
+  | ExtraInlineRules
 
-export type InlineRulesType = keyof(InlineRulesTypes)
+export type InlineRulesType = keyof (InlineRulesTypes)
 
 export class Options {
   baseUrl?: string = null
@@ -165,10 +170,17 @@ export class Options {
   xhtml?: boolean = false
   escape?: (html: string, encode?: boolean) => string = escape
   unescape?: (html: string) => string = unescape
-  slug?: (str: string, isUnique?: boolean) => string = (str: string, isUnique?: boolean): string => slugger.slug(str, isUnique)
+  slug?: (str: string, isUnique?: boolean) => string = (
+    str: string,
+    isUnique?: boolean
+  ): string => slugger.slug(str, isUnique)
   rtrim?: (str: string, c: string, invert?: boolean) => string = rtrim
   resolveUrl?: (base: string, href: string) => string = resolveUrl
-  cleanUrl?: (sanitize: boolean, base: string, href: string) => string = cleanUrl
+  cleanUrl?: (
+    sanitize: boolean,
+    base: string,
+    href: string
+  ) => string = cleanUrl
   /**
    * If set to `true`, an inline text will not be taken in paragraph.
    *

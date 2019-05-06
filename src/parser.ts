@@ -74,7 +74,8 @@ export class Parser {
    * Next Token
    */
   protected next(): Token {
-    return (this.token = this.tokens.pop())
+    this.token = this.tokens.pop()
+    return this.token
   }
 
   /**

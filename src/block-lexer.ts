@@ -113,7 +113,7 @@ export class BlockLexer {
       hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
       html: new RegExp(html),
       item: /^( *)(bull) ?[^\n]*(?:\n(?!\1bull ?)[^\n]*)*/,
-      lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,
+      lheading: /^([^\n]+)\n {0,3}(=|-){2,} *(?:\n+|$)/,
       list: /^( {0,3})(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
       newline: /^\n+/,
       paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading| {0,3}>|<\/?(?:tag)(?: +|\n|\/?>)|<(?:script|pre|style|!--))[^\n]+)*)/,
@@ -304,13 +304,20 @@ export class BlockLexer {
 
       // code
       if ((execArr = this.rules.code.exec(nextPart))) {
+        const lastToken = this.tokens[this.tokens.length - 1]
         nextPart = nextPart.substring(execArr[0].length)
-        const code: string = execArr[0].replace(/^ {4}/gm, '')
 
-        this.tokens.push({
-          type: TokenType.code,
-          text: !this.options.pedantic ? this.options.rtrim(code, '\n') : code
-        })
+        // An indented code block cannot interrupt a paragraph.
+        if (lastToken && lastToken.type === 'paragraph') {
+          lastToken.text += `\n${execArr[0].trimRight()}`
+        } else {
+          const code = execArr[0].replace(/^ {4}/gm, '')
+          this.tokens.push({
+            type: TokenType.code,
+            codeBlockStyle: 'indented',
+            text: !this.options.pedantic ? this.options.rtrim(code, '\n') : code
+          })
+        }
         continue
       }
 

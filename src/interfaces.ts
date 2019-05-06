@@ -98,6 +98,7 @@ export interface Token {
   footnote?: string
   footnotes?: string[]
   refname?: string
+  codeBlockStyle?: string
 }
 
 export interface BaseInlineRules {

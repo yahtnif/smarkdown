@@ -6,7 +6,7 @@ import {
   Options,
   TablecellFlags,
   Token,
-  TokenType,
+  TokenType
 } from './interfaces'
 import { Renderer, TextRenderer } from './renderer'
 
@@ -35,23 +35,22 @@ export class Parser {
     })
   }
 
+  /**
+   * Parse Loop
+   */
   static parse(tokens: Token[], links: Links, options?: Options): string {
     const parser: Parser = new this(options)
     return parser.parse(links, tokens)
   }
 
-  parse(links: Links, tokens: Token[]) {
+  parse(links: Links, tokens: Token[]): string {
     this.inlineLexer = new InlineLexer(
       InlineLexer,
       links,
       this.options,
       this.renderer
     )
-    this.inlineTextLexer = new InlineLexer(
-      InlineLexer,
-      links,
-      this.textOptions
-    )
+    this.inlineTextLexer = new InlineLexer(InlineLexer, links, this.textOptions)
     this.tokens = tokens.reverse()
 
     let out: string = ''
@@ -71,29 +70,37 @@ export class Parser {
     return out
   }
 
-  protected next() {
+  /**
+   * Next Token
+   */
+  protected next(): Token {
     return (this.token = this.tokens.pop())
   }
 
-  protected getNextElement() {
-    return this.tokens[this.tokens.length - 1]
+  /**
+   * Preview Next Token
+   */
+  protected peek(): Token {
+    return this.tokens[this.tokens.length - 1] || { type: '' }
   }
 
-  protected parseText() {
+  /**
+   * Parse Text Tokens
+   */
+  protected parseText(): string {
     let body: string = this.token.text
-    let nextElement: Token
 
-    while (
-      (nextElement = this.getNextElement()) &&
-      nextElement.type == TokenType.text
-    ) {
+    while (this.peek().type == TokenType.text) {
       body += '\n' + this.next().text
     }
 
     return this.inlineLexer.output(body)
   }
 
-  protected tok() {
+  /**
+   * Parse Current Token
+   */
+  protected tok(): string {
     switch (this.token.type) {
       case TokenType.space: {
         return ''
@@ -102,7 +109,9 @@ export class Parser {
         return this.renderer.paragraph(this.inlineLexer.output(this.token.text))
       }
       case TokenType.text: {
-        return this.options.nop ? this.parseText() : this.renderer.paragraph(this.parseText())
+        return this.options.nop
+          ? this.parseText()
+          : this.renderer.paragraph(this.parseText())
       }
       case TokenType.heading: {
         return this.renderer.heading(
@@ -134,9 +143,10 @@ export class Parser {
         const checked: boolean = this.token.checked
 
         while (this.next().type !== TokenType.listItemEnd) {
-          body += !loose && this.token.type === <number>TokenType.text
-            ? this.parseText()
-            : this.tok()
+          body +=
+            !loose && this.token.type === <number>TokenType.text
+              ? this.parseText()
+              : this.tok()
         }
 
         return this.renderer.listitem(body, checked)
@@ -191,13 +201,27 @@ export class Parser {
         return this.renderer.table(header, body)
       }
       case TokenType.blockquoteStart: {
+        let count = 1
+        while (this.peek().type === TokenType.blockquoteStart) {
+          this.next()
+          count++
+        }
+
         let body: string = ''
 
         while (this.next().type !== TokenType.blockquoteEnd) {
           body += this.tok()
         }
 
-        return this.renderer.blockquote(body)
+        while (this.peek().type === TokenType.blockquoteEnd) {
+          this.next()
+        }
+
+        for (let i = 0; i < count; i++) {
+          body = this.renderer.blockquote(body)
+        }
+
+        return body
       }
       case TokenType.hr: {
         return this.renderer.hr()
@@ -209,14 +233,13 @@ export class Parser {
       default: {
         for (const sr of this.blockRenderers) {
           if (this.token.type === sr.type) {
-            return sr.renderer.call(
-              this.renderer,
-              this.token.execArr
-            )
+            return sr.renderer.call(this.renderer, this.token.execArr)
           }
         }
 
-        const errMsg: string = `Token with "${this.token.type}" type was not found.`
+        const errMsg: string = `Token with "${
+          this.token.type
+        }" type was not found.`
 
         if (this.options.silent) {
           console.log(errMsg)

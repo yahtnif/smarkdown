@@ -415,15 +415,25 @@ export class BlockLexer {
         this.tokens.push({
           type: TokenType.blockquoteStart
         })
-        const str: string = execArr[0].replace(/^ *> ?/gm, '')
+        let blockquote: string = execArr[0].replace(/^ *> ?/gm, '')
+        let count = 1
+        while (blockquote.match(/^ {0,3}>/)) {
+          count++
+          this.tokens.push({
+            type: TokenType.blockquoteStart
+          })
+          blockquote = blockquote.replace(/^ *> ?/gm, '')
+        }
 
         // Pass `top` to keep the current
         // "toplevel" state. This is exactly
         // how markdown.pl works.
-        this.getTokens(str)
-        this.tokens.push({
-          type: TokenType.blockquoteEnd
-        })
+        this.getTokens(blockquote)
+        for (let i = 0; i < count; i++) {
+          this.tokens.push({
+            type: TokenType.blockquoteEnd
+          })
+        }
         continue
       }
 

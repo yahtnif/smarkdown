@@ -131,7 +131,7 @@ export class InlineLexer {
       reflink: /^!?\[(label)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
       strong: /^__([^\s_])__(?!_)|^\*\*([^\s*])\*\*(?!\*)|^__([^\s][\s\S]*?[^\s])__(?!_)|^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)/,
       tag: new RegExp(tag),
-      text: /^(`+|[^`])[\s\S]*?(?=[\\<!\[`*]|\b_| {2,}\n|$)/
+      text: /^(`+|[^`])(?:[\s\S]*?(?:(?=[\\<!\[`*]|\b_|$)|[^ ](?= {2,}\n))|(?= {2,}\n))/
     }
 
     const _attribute: RegExp = /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/
@@ -221,13 +221,7 @@ export class InlineLexer {
      */
     const del: RegExp = /^~~(?=\S)([\s\S]*?\S)~~/
 
-    const text: RegExp = new ExtendRegexp(base.text)
-      .setGroup(']|', '~]|')
-      .setGroup(
-        '|$',
-        "|https?://|ftp://|www\\.|[a-zA-Z0-9.!#$%&'*+/=?^_`{\\|}~-]+@|$"
-      )
-      .getRegex()
+    const text = /^(`+|[^`])(?:[\s\S]*?(?:(?=[\\<!\[`*~]|\b_|https?:\/\/|ftp:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@))|(?= {2,}\n|[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@))/
 
     return (this.gfmRules = {
       ...base,
@@ -250,7 +244,7 @@ export class InlineLexer {
       ...gfm,
       ...{
         br: new ExtendRegexp(gfm.br).setGroup('{2,}', '*').getRegex(),
-        text: new ExtendRegexp(gfm.text).setGroup('{2,}', '*').getRegex()
+        text: new ExtendRegexp(gfm.text).setGroup(/\{2,\}/g, '*').getRegex()
       }
     })
   }
@@ -420,7 +414,10 @@ export class InlineLexer {
       if ((execArr = this.rules.link.exec(nextPart))) {
         const lastParenIndex = this.findClosingBracket(execArr[2], '()')
         if (lastParenIndex > -1) {
-          const linkLen = execArr[0].length - (execArr[2].length - lastParenIndex) - (execArr[3] || '').length
+          const linkLen =
+            execArr[0].length -
+            (execArr[2].length - lastParenIndex) -
+            (execArr[3] || '').length
           execArr[2] = execArr[2].substring(0, lastParenIndex)
           execArr[0] = execArr[0].substring(0, linkLen).trim()
           execArr[3] = ''

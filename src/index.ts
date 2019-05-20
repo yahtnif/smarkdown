@@ -41,7 +41,7 @@ export default class Smarkdown {
 
   static setOption(options: Options) {
     console.warn(
-      'setOption() is deprecated. Please use the setOptions() instead.'
+      'Smarkdown: setOption() is deprecated. Please use the setOptions() instead.'
     )
     this.setOptions(options)
   }
@@ -52,7 +52,7 @@ export default class Smarkdown {
 
   static resetOption() {
     console.warn(
-      'resetOption() is deprecated. Please use the resetOptions() instead.'
+      'Smarkdown: resetOption() is deprecated. Please use the resetOptions() instead.'
     )
     this.resetOptions()
   }
@@ -112,7 +112,7 @@ export default class Smarkdown {
   ): LexerReturns {
     if (typeof src !== 'string') {
       throw new Error(
-        `Expected that the 'src' parameter would have a 'string' type, got '${typeof src}'`
+        `Smarkdown: Expected that the 'src' parameter would have a 'string' type, got '${typeof src}'`
       )
     }
 

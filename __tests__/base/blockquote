@@ -43,6 +43,12 @@ A block quote can be empty:
 >>> foo
 
 
+> foo
+>> foo
+
+out of blockquote
+
+
 
 <blockquote>
 <p>Blockquote</p>
@@ -82,3 +88,10 @@ foo</p>
 </blockquote>
 </blockquote>
 </blockquote>
+<blockquote>
+<p>foo</p>
+<blockquote>
+<p>foo</p>
+</blockquote>
+</blockquote>
+<p>out of blockquote</p>

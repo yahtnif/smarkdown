@@ -91,7 +91,7 @@ export class Parser {
   protected parseText(): string {
     let body: string = this.token.text
 
-    while (this.peek().type == TokenType.text) {
+    while (this.peek().type === TokenType.text) {
       body += '\n' + this.next().text
     }
 
@@ -202,27 +202,31 @@ export class Parser {
         return this.renderer.table(header, body)
       }
       case TokenType.blockquoteStart: {
-        let count = 1
-        while (this.peek().type === TokenType.blockquoteStart) {
-          this.next()
-          count++
-        }
+        // let count = 1
+        // while (this.peek().type === TokenType.blockquoteStart) {
+        //   this.next()
+        //   count++
+        // }
 
         let body: string = ''
 
-        while (this.next().type !== TokenType.blockquoteEnd) {
+        let nextToken: Token
+        while (
+          (nextToken = this.next()) &&
+          nextToken.type !== TokenType.blockquoteEnd
+        ) {
           body += this.tok()
         }
+        return this.renderer.blockquote(body)
+        // while (this.peek().type === TokenType.blockquoteEnd) {
+        //   this.next()
+        // }
 
-        while (this.peek().type === TokenType.blockquoteEnd) {
-          this.next()
-        }
+        // for (let i = 0; i < count; i++) {
+        //   body = this.renderer.blockquote(body)
+        // }
 
-        for (let i = 0; i < count; i++) {
-          body = this.renderer.blockquote(body)
-        }
-
-        return body
+        // return body
       }
       case TokenType.hr: {
         return this.renderer.hr()
@@ -238,7 +242,7 @@ export class Parser {
           }
         }
 
-        const errMsg: string = `Token with "${
+        const errMsg: string = `Smarkdown: token with "${
           this.token.type
         }" type was not found.`
 

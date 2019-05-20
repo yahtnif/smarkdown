@@ -36,9 +36,9 @@ function testFunc(options: testOption) {
       option = null
     }
 
-    let [actual, expected] = text.split(/\n{4,}/)
+    const [actual, expected] = text.split(/\n{4,}/)
 
-    let testTitle: string = title ? `${title} - ${filename}` : filename
+    const testTitle: string = title ? `${title} - ${filename}` : filename
 
     test(testTitle, function() {
       if (runAtFirstAndOnce && !isInit) {

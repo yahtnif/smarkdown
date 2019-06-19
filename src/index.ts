@@ -39,25 +39,11 @@ export default class Smarkdown {
     this.options = this.getOptions(options)
   }
 
-  static setOption(options: Options) {
-    console.warn(
-      'Smarkdown: setOption() is deprecated. Please use the setOptions() instead.'
-    )
-    this.setOptions(options)
-  }
-
   static resetOptions() {
     this.options = new Options()
   }
 
-  static resetOption() {
-    console.warn(
-      'Smarkdown: resetOption() is deprecated. Please use the resetOptions() instead.'
-    )
-    this.resetOptions()
-  }
-
-  protected static resolveRule(regExp: RegExp) {
+  protected static resolveRule(regExp: RegExp): RegExp {
     let newRegExp = regExp
     if (!newRegExp.source.startsWith('^')) {
       newRegExp = new RegExp('^' + newRegExp.source)
@@ -142,7 +128,7 @@ export default class Smarkdown {
     }
   }
 
-  protected static callError(err: Error) {
+  protected static callError(err: Error): string {
     if (this.options.silent) {
       return `<p>An error occurred:</p><pre>${this.options.escape(
         err.message + '',

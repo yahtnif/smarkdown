@@ -57,10 +57,10 @@ Or import the library with a script tag:
 Example:
 
 ```js
-// Resetting options
-Smarkdown.resetOptions()
+// Reset options
+// Smarkdown.resetOptions()
 
-// Setting options
+// Set options
 Smarkdown.setOptions({
   breaks: true
 })

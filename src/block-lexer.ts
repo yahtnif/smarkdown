@@ -411,7 +411,8 @@ export class BlockLexer {
       if ((execArr = this.rules.hr.exec(nextPart))) {
         nextPart = nextPart.substring(execArr[0].length)
         this.tokens.push({
-          type: TokenType.hr
+          type: TokenType.hr,
+          text: execArr[0]
         })
         continue
       }

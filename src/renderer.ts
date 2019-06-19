@@ -85,7 +85,8 @@ ${quote}</blockquote>
 `
   }
 
-  hr(): string {
+  hr(text?: string): string {
+    // NOTE text.length => <hr> style
     return this.options.xhtml ? '<hr/>\n' : '<hr>\n'
   }
 

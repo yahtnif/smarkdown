@@ -229,7 +229,7 @@ export class Parser {
         // return body
       }
       case TokenType.hr: {
-        return this.renderer.hr()
+        return this.renderer.hr(this.token.text)
       }
       case TokenType.html: {
         // TODO parse inline content if parameter markdown=1

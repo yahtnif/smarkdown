@@ -284,7 +284,7 @@ footnote(footnotes)
 
 heading(text, level, raw, ends)
 
-hr()
+hr(text)
 
 html(html)
 

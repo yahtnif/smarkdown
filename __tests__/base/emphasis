@@ -4,6 +4,30 @@ _test_. _test_: _test_! _test_? _test_-
 foo _____
 
 
+- code bold italic
+  - [***`named link`***][some-url]
+  - ***[`named link`][some-url]***
+  - [___`named link`___][some-url]
+  - ___[`named link`][some-url]___
+  - [*__`named link`__*][some-url]
+  - [__*`named link`*__][some-url]
+  - __*[`named link`][some-url]*__
+
+[some-url]: https://www.google.com
+
+
 
 <p><em>test</em>. <em>test</em>: <em>test</em>! <em>test</em>? <em>test</em>-</p>
 <p>foo _____</p>
+<ul>
+<li>code bold italic<ul>
+<li><a href="https://www.google.com"><strong><em><code>named link</code></em></strong></a></li>
+<li><strong><em><a href="https://www.google.com"><code>named link</code></a></em></strong></li>
+<li><a href="https://www.google.com"><strong><em><code>named link</code></em></strong></a></li>
+<li><strong><em><a href="https://www.google.com"><code>named link</code></a></em></strong></li>
+<li><a href="https://www.google.com"><em><strong><code>named link</code></strong></em></a></li>
+<li><a href="https://www.google.com"><strong><em><code>named link</code></em></strong></a></li>
+<li><strong><em><a href="https://www.google.com"><code>named link</code></a></em></strong></li>
+</ul>
+</li>
+</ul>

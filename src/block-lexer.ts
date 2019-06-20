@@ -424,15 +424,6 @@ export class BlockLexer {
           type: TokenType.blockquoteStart
         })
         let blockquote: string = execArr[0].replace(/^ *> ?/gm, '')
-        // TODO nested blockquote test
-        // let count = 1
-        // while (blockquote.match(/^ {0,3}>/)) {
-        //   count++
-        //   this.tokens.push({
-        //     type: TokenType.blockquoteStart
-        //   })
-        //   blockquote = blockquote.replace(/^ *> ?/gm, '')
-        // }
 
         // Pass `top` to keep the current
         // "toplevel" state. This is exactly
@@ -442,11 +433,7 @@ export class BlockLexer {
         this.tokens.push({
           type: TokenType.blockquoteEnd
         })
-        // for (let i = 0; i < count; i++) {
-        //   this.tokens.push({
-        //     type: TokenType.blockquoteEnd
-        //   })
-        // }
+
         continue
       }
 

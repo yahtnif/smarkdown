@@ -202,12 +202,6 @@ export class Parser {
         return this.renderer.table(header, body)
       }
       case TokenType.blockquoteStart: {
-        // let count = 1
-        // while (this.peek().type === TokenType.blockquoteStart) {
-        //   this.next()
-        //   count++
-        // }
-
         let body: string = ''
 
         let nextToken: Token
@@ -218,15 +212,6 @@ export class Parser {
           body += this.tok()
         }
         return this.renderer.blockquote(body)
-        // while (this.peek().type === TokenType.blockquoteEnd) {
-        //   this.next()
-        // }
-
-        // for (let i = 0; i < count; i++) {
-        //   body = this.renderer.blockquote(body)
-        // }
-
-        // return body
       }
       case TokenType.hr: {
         return this.renderer.hr(this.token.text)

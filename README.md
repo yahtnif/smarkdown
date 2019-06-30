@@ -85,7 +85,3 @@ console.log(Smarkdown.parse(str, { nop: true }))
 ## License
 
 [Anti 996](./LICENSE)
-
-```
-
-```

@@ -244,7 +244,10 @@ export class InlineLexer {
       ...gfm,
       ...{
         br: new ExtendRegexp(gfm.br).setGroup('{2,}', '*').getRegex(),
-        text: new ExtendRegexp(gfm.text).setGroup(/\{2,\}/g, '*').getRegex()
+        text: new ExtendRegexp(gfm.text)
+          .setGroup('\\b_', '\\b_| {2,}\\n')
+          .setGroup(/\{2,\}/g, '*')
+          .getRegex()
       }
     })
   }

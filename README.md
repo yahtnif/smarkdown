@@ -20,17 +20,6 @@
 - **Fast:** Low-level compiler for parsing markdown without caching or blocking for long periods of time
 - **Lightweight:** It's 9kb of minified and gzipped
 
-## Table of contents
-
-- [Install](#install)
-- [Usage](#usage)
-- [Syntax highlighting](./docs/syntax-highlighting.md)
-- [Options](./docs/options.md)
-- [Extension](./docs/extension.md)
-- [Renderer](./docs/renderer.md)
-- [Comparison](#comparison)
-- [License](#license)
-
 ## Install
 
 ```sh
@@ -74,6 +63,13 @@ console.log(Smarkdown.parse(str))
 console.log(Smarkdown.parse(str, { nop: true }))
 // I am using <strong>Smarkdown</strong>.
 ```
+
+## More
+
+- [Syntax highlighting](docs/syntax-highlighting.md)
+- [Options](docs/options.md)
+- [Extension](docs/extension.md)
+- [Renderer](docs/renderer.md)
 
 ## Comparison
 

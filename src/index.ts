@@ -84,6 +84,13 @@ export default class Smarkdown {
   static parse(src: string, options?: Options): string {
     try {
       const opts: Options = this.getOptions(options)
+
+      if (opts && opts.sanitize && !opts.silent) {
+        console.warn(
+          'Smarkdown: sanitize and sanitizer parameters are deprecated since version 0.15.0, should not be used and will be removed in the future. Read more here: https://github.com/yahtnif/smarkdown/blob/master/docs/options.md'
+        )
+      }
+
       const { tokens, links } = this.callBlockLexer(src, opts)
 
       return this.callParser(tokens, links, opts)

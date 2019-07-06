@@ -611,7 +611,13 @@ export class InlineLexer {
         nextPart = nextPart.substring(execArr[0].length)
 
         if (this.inRawBlock) {
-          out += this.renderer.text(execArr[0])
+          out += this.renderer.text(
+            this.options.sanitize
+              ? this.options.sanitizer
+                ? this.options.sanitizer(execArr[0])
+                : escape(execArr[0])
+              : execArr[0]
+          )
         } else {
           out += this.renderer.text(
             this.options.escape(this.smartypants(execArr[0]))

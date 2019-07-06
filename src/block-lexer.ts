@@ -558,7 +558,7 @@ export class BlockLexer {
         this.tokens.push({
           type: this.options.sanitize ? TokenType.paragraph : TokenType.html,
           pre: !this.options.sanitizer && isPre,
-          text: execArr[0]
+          text: this.options.sanitize ? (this.options.sanitizer ? this.options.sanitizer(execArr[0]) : escape(execArr[0])) : execArr[0]
         })
         continue
       }

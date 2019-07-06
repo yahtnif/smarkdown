@@ -47,14 +47,6 @@ Or import the library with a script tag:
 Example:
 
 ```js
-// Reset options
-// Smarkdown.resetOptions()
-
-// Set options
-Smarkdown.setOptions({
-  breaks: true
-})
-
 const str = 'I am using **Smarkdown**.'
 
 console.log(Smarkdown.parse(str))

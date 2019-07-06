@@ -13,6 +13,15 @@ bold around autolink: __test@test.com__
 hTtP://fOo.CoM
 
 
+Link parenthesis:
+
+([one](http://example.com/1)) ([two](http://example.com/2))
+
+([one](http://example.com/1))  ([two](http://example.com/2))
+
+([one](http://example.com/1 "a")) ([two](http://example.com/2 "b"))
+
+
 
 <p>autolink: <a href="https://example.com">https://example.com</a></p>
 <p>Link: <a href="https://example.com/">constructor</a>.</p>
@@ -20,3 +29,7 @@ hTtP://fOo.CoM
 <p>((<a href="https://example.com">https://example.com</a>))</p>
 <p>bold around autolink: <strong><a href="mailto:test@test.com">test@test.com</a></strong></p>
 <p><a href="hTtP://fOo.CoM">hTtP://fOo.CoM</a></p>
+<p>Link parenthesis:</p>
+<p>(<a href="http://example.com/1">one</a>) (<a href="http://example.com/2">two</a>)</p>
+<p>(<a href="http://example.com/1">one</a>)  (<a href="http://example.com/2">two</a>)</p>
+<p>(<a href="http://example.com/1" title="a">one</a>) (<a href="http://example.com/2" title="b">two</a>)</p>

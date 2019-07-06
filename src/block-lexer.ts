@@ -109,14 +109,17 @@ export class BlockLexer {
       bullet: /(?:[*+-]|\d{1,9}\.)/,
       code: /^( {4}[^\n]+\n*)+/,
       def: /^ {0,3}\[(label)\]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)(title))? *(?:\n+|$)/,
-      heading: /^ *(#{1,6}) *([^\n]+?) *(#+ *)?(?:\n+|$)/,
+      fences: /^ {0,3}(`{3,}|~{3,})([^`~\n]*)\n(?:|([\s\S]*?)\n)(?: {0,3}\1[~`]* *(?:\n+|$)|$)/,
+      heading: /^ {0,3}(#{1,6}) +([^\n]*?)(?: +#+)? *(?:\n+|$)/,
       hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
       html: new RegExp(html),
       item: /^( *)(bull) ?[^\n]*(?:\n(?!\1bull ?)[^\n]*)*/,
-      lheading: /^([^\n]+)\n {0,3}(=|-){2,} *(?:\n+|$)/,
+      lheading: /^([^\n]+)\n {0,3}(=+|-+) *(?:\n+|$)/,
       list: /^( {0,3})(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
       newline: /^\n+/,
-      paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading| {0,3}>|<\/?(?:tag)(?: +|\n|\/?>)|<(?:script|pre|style|!--))[^\n]+)*)/,
+      // regex template, placeholders will be replaced according to different paragraph
+      // interruption rules of commonmark and the original markdown spec:
+      _paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html)[^\n]+)*)/,
       text: /^[^\n]+/
     }
 
@@ -156,10 +159,14 @@ export class BlockLexer {
       .setGroup('attribute', attribute)
       .getRegex()
 
-    base.paragraph = new ExtendRegexp(base.paragraph)
+    base.paragraph = new ExtendRegexp(base._paragraph)
       .setGroup('hr', base.hr)
-      .setGroup('heading', base.heading)
-      .setGroup('lheading', base.lheading)
+      .setGroup('heading', ' {0,3}#{1,6} +')
+      .setGroup('|lheading', '') // setex headings don't interrupt commonmark paragraphs
+      .setGroup('blockquote', ' {0,3}>')
+      .setGroup('fences', ' {0,3}(?:`{3,}|~{3,})[^`\\n]*\\n')
+      .setGroup('list', ' {0,3}(?:[*+-]|1[.)]) ') // only lists starting from 1 can interrupt
+      .setGroup('html', '</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|!--)')
       .setGroup('tag', tag) // pars can be interrupted by type (6) html blocks
       .getRegex()
 
@@ -170,6 +177,7 @@ export class BlockLexer {
     return (this.baseRules = base)
   }
 
+  // Pedantic grammar (original John Gruber's loose markdown specification)
   private static getPedanticRules(): PedanticBlockRules {
     if (this.pedanticRules) return this.pedanticRules
 
@@ -193,6 +201,17 @@ export class BlockLexer {
       ...base,
       ...{
         def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,
+        heading: /^ *(#{1,6}) *([^\n]+?) *(?:#+ *)?(?:\n+|$)/,
+        fences: noopRegex, // fences not supported
+        paragraph: new ExtendRegexp(base._paragraph)
+          .setGroup('hr', base.hr)
+          .setGroup('heading', ' *#{1,6} *[^\n]')
+          .setGroup('lheading', base.lheading)
+          .setGroup('blockquote', ' {0,3}>')
+          .setGroup('|fences', '')
+          .setGroup('|list', '')
+          .setGroup('|html', '')
+          .getRegex(),
         html: htmlRegex
       }
     }
@@ -208,21 +227,11 @@ export class BlockLexer {
     const gfm: GfmBlockRules = {
       ...base,
       ...{
-        fences: /^ {0,3}(`{3,}|~{3,})([^`\n]*)\n(?:|([\s\S]*?)\n)(?: {0,3}\1[~`]* *(?:\n+|$)|$)/,
         checkbox: /^\[([ xX])\] +/,
-        paragraph: /^/,
-        heading: /^ *(#{1,6}) +([^\n]+?) *(#*) *(?:\n+|$)/,
         nptable: /^ *([^|\n ].*\|.*)\n *([-:]+ *\|[-| :]*)(?:\n((?:.*[^>\n ].*(?:\n|$))*)\n*|$)/,
         table: /^ *\|(.+)\n *\|?( *[-:]+[-| :]*)(?:\n((?: *[^>\n ].*(?:\n|$))*)\n*|$)/
       }
     }
-
-    const group1: string = gfm.fences.source.replace('\\1', '\\2')
-    const group2: string = base.list.source.replace('\\1', '\\3')
-
-    gfm.paragraph = new ExtendRegexp(base.paragraph)
-      .setGroup('(?!', `(?!${group1}|${group2}|`)
-      .getRegex()
 
     return (this.gfmRules = gfm)
   }
@@ -321,7 +330,7 @@ export class BlockLexer {
         continue
       }
 
-      // fences code (gfm)
+      // fences
       if (
         this.isGfm &&
         (execArr = (<GfmBlockRules>this.rules).fences.exec(nextPart))
@@ -558,7 +567,11 @@ export class BlockLexer {
         this.tokens.push({
           type: this.options.sanitize ? TokenType.paragraph : TokenType.html,
           pre: !this.options.sanitizer && isPre,
-          text: this.options.sanitize ? (this.options.sanitizer ? this.options.sanitizer(execArr[0]) : escape(execArr[0])) : execArr[0]
+          text: this.options.sanitize
+            ? this.options.sanitizer
+              ? this.options.sanitizer(execArr[0])
+              : escape(execArr[0])
+            : execArr[0]
         })
         continue
       }
@@ -644,7 +657,7 @@ export class BlockLexer {
 
         this.tokens.push({
           type: TokenType.heading,
-          depth: execArr[2] === '=' ? 1 : 2,
+          depth: execArr[2].charAt(0) === '=' ? 1 : 2,
           text: execArr[1]
         })
         continue

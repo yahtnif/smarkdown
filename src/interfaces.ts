@@ -14,6 +14,7 @@ export interface BaseBlockRules {
   bullet: RegExp
   code: RegExp
   def: RegExp
+  fences: RegExp
   heading: RegExp
   hr: RegExp
   html: RegExp
@@ -21,8 +22,9 @@ export interface BaseBlockRules {
   lheading: RegExp
   list: RegExp
   newline: RegExp
-  paragraph: RegExp
+  paragraph?: RegExp
   text: RegExp
+  _paragraph: RegExp
 }
 
 export interface PedanticBlockRules extends BaseBlockRules {}

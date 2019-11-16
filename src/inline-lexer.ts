@@ -419,7 +419,8 @@ export class InlineLexer {
       if ((execArr = this.rules.link.exec(nextPart))) {
         const lastParenIndex = this.findClosingBracket(execArr[2], '()');
         if (lastParenIndex > -1) {
-          const linkLen = 4 + execArr[1].length + lastParenIndex;
+          const start = execArr[0].indexOf('!') === 0 ? 5 : 4;
+          const linkLen = start + execArr[1].length + lastParenIndex;
           execArr[2] = execArr[2].substring(0, lastParenIndex);
           execArr[0] = execArr[0].substring(0, linkLen).trim();
           execArr[3] = '';

@@ -5,9 +5,19 @@
 [![image with link](a.png)](#link)
 
 
+image parentheses
+
+![](img1.svg) (or ![](img2.svg))
+
+![one](img1.svg) (or ![two](img2.svg))
+
+
 
 <p><img src="example.png" alt="">
 <img src="example.png" alt="" title="title">
 <img src="example.png" alt="alt">
 <img src="example.png" alt="alt" title="title">
 <a href="#link"><img src="a.png" alt="image with link"></a></p>
+<p>image parentheses</p>
+<p><img src="img1.svg" alt=""> (or <img src="img2.svg" alt="">)</p>
+<p><img src="img1.svg" alt="one"> (or <img src="img2.svg" alt="two">)</p>

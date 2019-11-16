@@ -2,8 +2,20 @@
 - [x] done
 
 
+- Loose Tasks
+- [x] Task1
+
+- [ ] **Task2**
+
+
 
 <ul class="task-list">
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled> todo</li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked disabled> done</li>
+</ul>
+<ul class="task-list">
+<li><p>Loose Tasks</p>
+</li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked disabled> Task1</li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled> <strong>Task2</strong></li>
 </ul>

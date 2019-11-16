@@ -148,6 +148,15 @@ export class Parser {
         let body: string = '';
         const loose: boolean = this.token.loose;
         const checked: boolean = this.token.checked;
+        const isTaskList: boolean = checked !== null;
+
+        if (isTaskList && loose) {
+          const nextToken = this.peek();
+          if (nextToken.type === TokenType.text) {
+            nextToken.text = this.inlineLexer.output(nextToken.text);
+            nextToken.type = TokenType.raw;
+          }
+        }
 
         while (this.next().type !== TokenType.listItemEnd) {
           body +=
@@ -225,6 +234,9 @@ export class Parser {
       case TokenType.html: {
         // TODO parse inline content if parameter markdown=1
         return this.renderer.html(this.token.text);
+      }
+      case TokenType.raw: {
+        return this.token.text;
       }
       default: {
         for (const sr of this.blockRenderers) {

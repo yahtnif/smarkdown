@@ -16,7 +16,7 @@
 ## Features
 
 - **Awesome:** ES6, TypeScript, Rollup, Jest...
-- **Extensible:** Add your own [extensions](#extensions)
+- **Extensible:** Add your own [extensions](docs/extension.md)
 - **Fast:** Low-level compiler for parsing markdown without caching or blocking for long periods of time
 - **Lightweight:** It's 10kb of minified and gzipped
 

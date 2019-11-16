@@ -68,6 +68,7 @@ export enum TokenType {
   looseItemEnd,
   looseItemStart,
   paragraph,
+  raw,
   space,
   table,
   text

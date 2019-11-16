@@ -18,7 +18,7 @@
 - **Awesome:** ES6, TypeScript, Rollup, Jest...
 - **Extensible:** Add your own [extensions](#extensions)
 - **Fast:** Low-level compiler for parsing markdown without caching or blocking for long periods of time
-- **Lightweight:** It's 9kb of minified and gzipped
+- **Lightweight:** It's 10kb of minified and gzipped
 
 ## Install
 
@@ -35,7 +35,7 @@ npm install smarkdown
 Import the library as a module:
 
 ```js
-const Smarkdown = require('smarkdown')
+const Smarkdown = require('smarkdown');
 ```
 
 Or import the library with a script tag:
@@ -47,12 +47,12 @@ Or import the library with a script tag:
 Example:
 
 ```js
-const str = 'I am using **Smarkdown**.'
+const str = 'I am using **Smarkdown**.';
 
-console.log(Smarkdown.parse(str))
+console.log(Smarkdown.parse(str));
 // <p>I am using <strong>Smarkdown</strong>.</p>
 
-console.log(Smarkdown.parse(str, { nop: true }))
+console.log(Smarkdown.parse(str, { nop: true }));
 // I am using <strong>Smarkdown</strong>.
 ```
 

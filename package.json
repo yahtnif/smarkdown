@@ -12,6 +12,7 @@
   "homepage": "https://github.com/yahtnif/smarkdown",
   "license": "Anti 996",
   "keywords": [
+    "extensions",
     "commonmark",
     "smarkdown",
     "markdown",
@@ -24,7 +25,8 @@
     "build": "rollup --c",
     "pass": "jest && rollup --c && size-limit",
     "test": "jest",
-    "version": "rollup --c"
+    "version": "rollup --c",
+    "lint": "prettier --write {src,__tests__}/{**/*,*}.{ts,js}"
   },
   "lint-staged": {
     "{src|__tests__}/**/*.{js,ts}": [
@@ -45,7 +47,7 @@
     }
   ],
   "prettier": {
-    "semi": false,
+    "semi": true,
     "singleQuote": true
   },
   "engines": {

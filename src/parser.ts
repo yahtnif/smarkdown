@@ -1,4 +1,4 @@
-import { InlineLexer } from './inline-lexer'
+import { InlineLexer } from './inline-lexer';
 import {
   BlockRenderer,
   EmptyObject,
@@ -7,40 +7,40 @@ import {
   TablecellFlags,
   Token,
   TokenType
-} from './interfaces'
-import { Renderer, TextRenderer } from './renderer'
+} from './interfaces';
+import { Renderer, TextRenderer } from './renderer';
 
 /**
  * Parsing & Compiling.
  */
 export class Parser {
-  private footnotes: EmptyObject = {}
-  private inlineLexer: InlineLexer
-  private inlineTextLexer: InlineLexer
-  private options: Options
-  private renderer: Renderer
-  private textOptions: Options
-  private token: Token
-  private tokens: Token[]
-  blockRenderers: BlockRenderer[] = []
+  private footnotes: EmptyObject = {};
+  private inlineLexer: InlineLexer;
+  private inlineTextLexer: InlineLexer;
+  private options: Options;
+  private renderer: Renderer;
+  private textOptions: Options;
+  private token: Token;
+  private tokens: Token[];
+  blockRenderers: BlockRenderer[] = [];
 
   constructor(options?: Options) {
-    this.tokens = []
-    this.token = null
-    this.options = options
-    this.renderer = this.options.renderer || new Renderer(this.options)
-    this.renderer.options = this.options
+    this.tokens = [];
+    this.token = null;
+    this.options = options;
+    this.renderer = this.options.renderer || new Renderer(this.options);
+    this.renderer.options = this.options;
     this.textOptions = Object.assign({}, this.options, {
       renderer: new TextRenderer()
-    })
+    });
   }
 
   /**
    * Parse Loop
    */
   static parse(tokens: Token[], links: Links, options?: Options): string {
-    const parser: Parser = new this(options)
-    return parser.parse(links, tokens)
+    const parser: Parser = new this(options);
+    return parser.parse(links, tokens);
   }
 
   parse(links: Links, tokens: Token[]): string {
@@ -49,53 +49,57 @@ export class Parser {
       links,
       this.options,
       this.renderer
-    )
-    this.inlineTextLexer = new InlineLexer(InlineLexer, links, this.textOptions)
-    this.tokens = tokens.reverse()
+    );
+    this.inlineTextLexer = new InlineLexer(
+      InlineLexer,
+      links,
+      this.textOptions
+    );
+    this.tokens = tokens.reverse();
 
-    let out: string = ''
+    let out: string = '';
 
     while (this.next()) {
-      out += this.tok()
+      out += this.tok();
     }
 
     if (Object.keys(this.footnotes).length) {
-      out += this.renderer.footnote(this.footnotes)
-      this.footnotes = {}
+      out += this.renderer.footnote(this.footnotes);
+      this.footnotes = {};
     }
 
     // Remove cached
-    this.renderer._headings = []
+    this.renderer._headings = [];
 
-    return out
+    return out;
   }
 
   /**
    * Next Token
    */
   protected next(): Token {
-    this.token = this.tokens.pop()
-    return this.token
+    this.token = this.tokens.pop();
+    return this.token;
   }
 
   /**
    * Preview Next Token
    */
   protected peek(): Token {
-    return this.tokens[this.tokens.length - 1] || { type: '' }
+    return this.tokens[this.tokens.length - 1] || { type: '' };
   }
 
   /**
    * Parse Text Tokens
    */
   protected parseText(): string {
-    let body: string = this.token.text
+    let body: string = this.token.text;
 
     while (this.peek().type === TokenType.text) {
-      body += '\n' + this.next().text
+      body += '\n' + this.next().text;
     }
 
-    return this.inlineLexer.output(body)
+    return this.inlineLexer.output(body);
   }
 
   /**
@@ -104,15 +108,17 @@ export class Parser {
   protected tok(): string {
     switch (this.token.type) {
       case TokenType.space: {
-        return ''
+        return '';
       }
       case TokenType.paragraph: {
-        return this.renderer.paragraph(this.inlineLexer.output(this.token.text))
+        return this.renderer.paragraph(
+          this.inlineLexer.output(this.token.text)
+        );
       }
       case TokenType.text: {
         return this.options.nop
           ? this.parseText()
-          : this.renderer.paragraph(this.parseText())
+          : this.renderer.paragraph(this.parseText());
       }
       case TokenType.heading: {
         return this.renderer.heading(
@@ -120,121 +126,119 @@ export class Parser {
           this.token.depth,
           this.options.unescape(this.inlineTextLexer.output(this.token.text)),
           this.token.ends
-        )
+        );
       }
       case TokenType.listStart: {
         let body: string = '',
           ordered: boolean = this.token.ordered,
           start: string | number = this.token.start,
-          isTaskList: boolean = false
+          isTaskList: boolean = false;
 
         while (this.next().type !== TokenType.listEnd) {
           if (this.token.checked !== null) {
-            isTaskList = true
+            isTaskList = true;
           }
 
-          body += this.tok()
+          body += this.tok();
         }
 
-        return this.renderer.list(body, ordered, start, isTaskList)
+        return this.renderer.list(body, ordered, start, isTaskList);
       }
       case TokenType.listItemStart: {
-        let body: string = ''
-        const loose: boolean = this.token.loose
-        const checked: boolean = this.token.checked
+        let body: string = '';
+        const loose: boolean = this.token.loose;
+        const checked: boolean = this.token.checked;
 
         while (this.next().type !== TokenType.listItemEnd) {
           body +=
             !loose && this.token.type === <number>TokenType.text
               ? this.parseText()
-              : this.tok()
+              : this.tok();
         }
 
-        return this.renderer.listitem(body, checked)
+        return this.renderer.listitem(body, checked);
       }
       case TokenType.footnote: {
         this.footnotes[this.token.refname] = this.inlineLexer.output(
           this.token.text
-        )
-        return ''
+        );
+        return '';
       }
       case TokenType.code: {
         return this.renderer.code(
           this.token.text,
           this.token.lang,
           this.token.escaped
-        )
+        );
       }
       case TokenType.table: {
         let header: string = '',
           body: string = '',
           cell: string = '',
-          row: string | string[]
+          row: string | string[];
 
         // header
         for (let i = 0; i < this.token.header.length; i++) {
           const flags: TablecellFlags = {
             header: true,
             align: this.token.align[i]
-          }
-          const out: string = this.inlineLexer.output(this.token.header[i])
+          };
+          const out: string = this.inlineLexer.output(this.token.header[i]);
 
-          cell += this.renderer.tablecell(out, flags)
+          cell += this.renderer.tablecell(out, flags);
         }
 
-        header += this.renderer.tablerow(cell)
+        header += this.renderer.tablerow(cell);
 
         for (let i = 0; i < this.token.cells.length; i++) {
-          row = this.token.cells[i]
+          row = this.token.cells[i];
 
-          cell = ''
+          cell = '';
 
           for (let j = 0; j < row.length; j++) {
             cell += this.renderer.tablecell(this.inlineLexer.output(row[j]), {
               header: false,
               align: this.token.align[j]
-            })
+            });
           }
 
-          body += this.renderer.tablerow(cell)
+          body += this.renderer.tablerow(cell);
         }
 
-        return this.renderer.table(header, body)
+        return this.renderer.table(header, body);
       }
       case TokenType.blockquoteStart: {
-        let body: string = ''
+        let body: string = '';
 
-        let nextToken: Token
+        let nextToken: Token;
         while (
           (nextToken = this.next()) &&
           nextToken.type !== TokenType.blockquoteEnd
         ) {
-          body += this.tok()
+          body += this.tok();
         }
-        return this.renderer.blockquote(body)
+        return this.renderer.blockquote(body);
       }
       case TokenType.hr: {
-        return this.renderer.hr(this.token.text)
+        return this.renderer.hr(this.token.text);
       }
       case TokenType.html: {
         // TODO parse inline content if parameter markdown=1
-        return this.renderer.html(this.token.text)
+        return this.renderer.html(this.token.text);
       }
       default: {
         for (const sr of this.blockRenderers) {
           if (this.token.type === sr.type) {
-            return sr.renderer.call(this.renderer, this.token.execArr)
+            return sr.renderer.call(this.renderer, this.token.execArr);
           }
         }
 
-        const errMsg: string = `Smarkdown: token with "${
-          this.token.type
-        }" type was not found.`
+        const errMsg: string = `Smarkdown: token with "${this.token.type}" type was not found.`;
 
         if (this.options.silent) {
-          console.log(errMsg)
+          console.log(errMsg);
         } else {
-          throw new Error(errMsg)
+          throw new Error(errMsg);
         }
       }
     }

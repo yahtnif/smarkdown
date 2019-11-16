@@ -1,69 +1,69 @@
-import fs from 'fs-extra'
-import klawSync from 'klaw-sync'
-import JSON5 from 'json5'
-import Smarkdown from '../src'
-import { Options } from '../src/interfaces'
+import fs from 'fs-extra';
+import klawSync from 'klaw-sync';
+import JSON5 from 'json5';
+import Smarkdown from '../src';
+import { Options } from '../src/interfaces';
 
 interface testOption {
-  dir: string
-  runAtFirstAndOnce?: Function
-  title?: string
+  dir: string;
+  runAtFirstAndOnce?: Function;
+  title?: string;
 }
 
 function testFunc(options: testOption) {
-  const { dir, runAtFirstAndOnce, title } = options
+  const { dir, runAtFirstAndOnce, title } = options;
 
-  const files = klawSync('__tests__/' + dir, { nodir: true })
-  let isInit = false
+  const files = klawSync('__tests__/' + dir, { nodir: true });
+  let isInit = false;
 
   for (const file of files) {
-    const filename: string = file.path.split('/').slice(-1)[0]
+    const filename: string = file.path.split('/').slice(-1)[0];
 
-    const data: string = fs.readFileSync(file.path, 'utf-8')
+    const data: string = fs.readFileSync(file.path, 'utf-8');
 
-    let [option, text] = data.split('\n===\n')
-    let opt: Options
+    let [option, text] = data.split('\n===\n');
+    let opt: Options;
 
     if (text) {
       option = option
         .trim()
         .split(/\n+/)
         .map(s => s + ',')
-        .join('\n')
-      opt = JSON5.parse(`{${option}}`)
+        .join('\n');
+      opt = JSON5.parse(`{${option}}`);
     } else {
-      text = option
-      option = null
+      text = option;
+      option = null;
     }
 
-    const [actual, expected] = text.split(/\n{4,}/)
+    const [actual, expected] = text.split(/\n{4,}/);
 
-    const testTitle: string = title ? `${title} - ${filename}` : filename
+    const testTitle: string = title ? `${title} - ${filename}` : filename;
 
     test(testTitle, function() {
       if (runAtFirstAndOnce && !isInit) {
-        runAtFirstAndOnce()
-        isInit = true
+        runAtFirstAndOnce();
+        isInit = true;
       }
-      expect(Smarkdown.parse(actual, opt).trim()).toBe(expected.trim())
-    })
+      expect(Smarkdown.parse(actual, opt).trim()).toBe(expected.trim());
+    });
   }
 }
 
 // ensure pre char is \s, \B or ''
 function checkPreChar(char: string): boolean {
-  return !char || /\s|\B/.test(char)
+  return !char || /\s|\B/.test(char);
 }
 
-const subRegex: RegExp = /~(?=\S)([\s\S]*?\S)~/
-const supRegex: RegExp = /\^(?=\S)([\s\S]*?\S)\^/
-const markRegex: RegExp = /==(?=\S)([\s\S]*?\S)==/
-const hashtagRegex: RegExp = /#([^\s#]+)((?:\b)|(?=\s|$))/
-const rubyAnnotationRegex: RegExp = /\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/
-const smallTextRegex: RegExp = /--(?=\S)([\s\S]*?\S)--/
-const largeTextRegex: RegExp = /(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
+const subRegex: RegExp = /~(?=\S)([\s\S]*?\S)~/;
+const supRegex: RegExp = /\^(?=\S)([\s\S]*?\S)\^/;
+const markRegex: RegExp = /==(?=\S)([\s\S]*?\S)==/;
+const hashtagRegex: RegExp = /#([^\s#]+)((?:\b)|(?=\s|$))/;
+const rubyAnnotationRegex: RegExp = /\[([^\[\]{}]+)\]\{([^\[\]{}]+)\}/;
+const smallTextRegex: RegExp = /--(?=\S)([\s\S]*?\S)--/;
+const largeTextRegex: RegExp = /(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/;
 
-const extRegex: RegExp = /::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/
+const extRegex: RegExp = /::: *([\w-_]+) *\n([\s\S]*?)\n:::\s?/;
 
 const rules = [
   subRegex,
@@ -75,7 +75,7 @@ const rules = [
   largeTextRegex,
   extRegex,
   extRegex
-]
+];
 
 function setExtensions() {
   /**
@@ -85,8 +85,8 @@ function setExtensions() {
    * H<sub>2</sub>O
    */
   Smarkdown.setRule(subRegex, function(execArr) {
-    return `<sub>${this.output(execArr[1])}</sub>`
-  })
+    return `<sub>${this.output(execArr[1])}</sub>`;
+  });
 
   /**
    * sup
@@ -95,8 +95,8 @@ function setExtensions() {
    * 1<sup>st</sup>
    */
   Smarkdown.setRule(supRegex, function(execArr) {
-    return `<sup>${this.output(execArr[1])}</sup>`
-  })
+    return `<sup>${this.output(execArr[1])}</sup>`;
+  });
 
   /**
    * mark
@@ -105,8 +105,8 @@ function setExtensions() {
    * <mark>Experience</mark> is the best teacher.
    */
   Smarkdown.setRule(markRegex, function(execArr) {
-    return `<mark>${execArr[1]}</mark>`
-  })
+    return `<mark>${execArr[1]}</mark>`;
+  });
 
   /**
    * hashtag
@@ -117,10 +117,10 @@ function setExtensions() {
   Smarkdown.setRule(
     hashtagRegex,
     function(execArr) {
-      return `<span class="hashtag">${execArr[1]}</span>`
+      return `<span class="hashtag">${execArr[1]}</span>`;
     },
     { checkPreChar }
-  )
+  );
 
   /**
    * ruby annotation
@@ -131,22 +131,22 @@ function setExtensions() {
   Smarkdown.setRule(
     rubyAnnotationRegex,
     function(execArr) {
-      return `<ruby>${execArr[1]}<rt>${execArr[2]}</rt></ruby>`
+      return `<ruby>${execArr[1]}<rt>${execArr[2]}</rt></ruby>`;
     },
     {
       priority: 1
     }
-  )
+  );
 
   /**
    * small text
    *
    * --small text-- => <span class="small-text">small text</span>
    */
-  const smallTextRegex = /--(?=\S)([\s\S]*?\S)--/
+  const smallTextRegex = /--(?=\S)([\s\S]*?\S)--/;
   Smarkdown.setRule(smallTextRegex, function(execArr) {
-    return `<span class="small-text">${execArr[1]}</span>`
-  })
+    return `<span class="small-text">${execArr[1]}</span>`;
+  });
 
   /**
    * large text
@@ -155,16 +155,16 @@ function setExtensions() {
    * +++large text+++ => <span class="large-text is-2">large text</span>
    * ++++large text++++ => <span class="large-text is-3">large text</span>
    */
-  const largeTextRegex = /(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/
+  const largeTextRegex = /(\+{2,})(?=\S)([\s\S]*?\S)\+{2,}/;
   Smarkdown.setRule(largeTextRegex, function(execArr) {
-    let size = execArr[1].length - 1
+    let size = execArr[1].length - 1;
 
     if (size > 3) {
-      size = 3
+      size = 3;
     }
 
-    return `<span class="large-text is-${size}">${execArr[2]}</span>`
-  })
+    return `<span class="large-text is-${size}">${execArr[2]}</span>`;
+  });
 
   /**
    * block container
@@ -175,56 +175,56 @@ Lorem ipsum...
    * <div class="warning">Lorem ipsum...</div>
    */
   Smarkdown.setRule(extRegex, execArr => {
-    return `<div class="${execArr[1]}">${execArr[2]}</div>`
-  })
+    return `<div class="${execArr[1]}">${execArr[2]}</div>`;
+  });
 
-  return Smarkdown
+  return Smarkdown;
 }
 
 function unsetExtensions() {
   rules.forEach(R => {
-    Smarkdown.unsetRule(R)
-  })
+    Smarkdown.unsetRule(R);
+  });
 }
 
 describe('Smarkdown', () => {
   describe('base', () => {
     testFunc({
       dir: 'base'
-    })
-  })
+    });
+  });
 
   describe('option', () => {
     testFunc({
       dir: 'option'
-    })
-  })
+    });
+  });
 
   describe('extensions', () => {
     testFunc({
       dir: 'extensions',
       runAtFirstAndOnce() {
-        setExtensions()
+        setExtensions();
       }
-    })
+    });
 
     testFunc({
       dir: 'unset-extensions',
       runAtFirstAndOnce() {
-        unsetExtensions()
+        unsetExtensions();
       }
-    })
+    });
 
     it('no-duplicate-rule', function() {
-      const testRegex: RegExp = /\n$/
+      const testRegex: RegExp = /\n$/;
 
-      Smarkdown.setRule(testRegex, () => 'old')
-      Smarkdown.setRule(testRegex, () => 'new')
+      Smarkdown.setRule(testRegex, () => 'old');
+      Smarkdown.setRule(testRegex, () => 'new');
 
-      expect(Smarkdown.BlockLexer.blockRenderers[0].renderer()).toEqual('new')
-      expect(Smarkdown.BlockLexer.blockRenderers.length).toBe(1)
+      expect(Smarkdown.BlockLexer.blockRenderers[0].renderer()).toEqual('new');
+      expect(Smarkdown.BlockLexer.blockRenderers.length).toBe(1);
 
-      Smarkdown.unsetRule(testRegex)
-    })
-  })
-})
+      Smarkdown.unsetRule(testRegex);
+    });
+  });
+});

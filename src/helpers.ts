@@ -112,6 +112,8 @@ export function rtrim(str: string, c: string, invert: boolean = false): string {
 
 const originIndependentUrlRegex: RegExp = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i;
 const noLastSlashUrlRegex: RegExp = /^[^:]+:\/*[^/]*$/;
+const protocolRegex: RegExp = /^([^:]+:)[\s\S]*$/;
+const domainRegex: RegExp = /^([^:]+:\/*[^/]*)[\s\S]*$/;
 const baseUrls: EmptyObject = {};
 
 // Render image/link URLs relative to a base url.
@@ -139,16 +141,18 @@ export function resolveUrl(base: string, href: string): string {
     if (relativeBase) {
       return href;
     }
-    return base.replace(/^([^:]+:)[\s\S]*$/, '$1') + href;
+    return base.replace(protocolRegex, '$1') + href;
   } else if (href.charAt(0) === '/') {
     if (relativeBase) {
       return href;
     }
-    return base.replace(/^([^:]+:\/*[^/]*)[\s\S]*$/, '$1') + href;
+    return base.replace(domainRegex, '$1') + href;
   } else {
     return base + href;
   }
 }
+
+const nonWordAndColonRegex = /[^\w:]/g;
 
 export function cleanUrl(
   sanitize: boolean,
@@ -160,7 +164,7 @@ export function cleanUrl(
 
     try {
       prot = decodeURIComponent(unescape(href))
-        .replace(/[^\w:]/g, '')
+        .replace(nonWordAndColonRegex, '')
         .toLowerCase();
     } catch (e) {
       return null;

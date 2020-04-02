@@ -137,11 +137,28 @@ const pedanticBlockRules: PedanticBlockRules = {
 /**
  * gfmBlockRules
  */
+const gfmBlockNptable = new ExtendRegexp(
+  new RegExp(
+    '^ *([^|\\n ].*\\|.*)\\n' + // Header
+    ' *([-:]+ *\\|[-| :]*)' + // Align
+      '(?:\\n((?:(?!\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)' // Cells
+  )
+)
+  .setGroup('hr', baseBlockRules.hr)
+  .setGroup('heading', ' {0,3}#{1,6} ')
+  .setGroup('blockquote', ' {0,3}>')
+  .setGroup('code', ' {4}[^\\n]')
+  .setGroup('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
+  .setGroup('list', ' {0,3}(?:[*+-]|1[.)]) ') // only lists starting from 1 can interrupt
+  .setGroup('html', '</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|!--)')
+  .setGroup('tag', baseBlockTag) // tables can be interrupted by type (6) html blocks
+  .getRegex();
+
 const gfmBlockTable = new ExtendRegexp(
   new RegExp(
     '^ *\\|(.+)\\n' + // Header
     ' *\\|?( *[-:]+[-| :]*)' + // Align
-      '(?:\\n((?:(?!^|>|\\n| |hr|heading|lheading|code|fences|list|html).*(?:\\n|$))*)\\n*|$)' // Cells
+      '(?:\\n *((?:(?!\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)' // Cells
   )
 )
   .setGroup('hr', baseBlockRules.hr)
@@ -159,7 +176,7 @@ const gfmBlockRules: GfmBlockRules = {
   ...baseBlockRules,
   ...{
     checkbox: /^\[([ xX])\] +/,
-    nptable: /^ *([^|\n ].*\|.*)\n *([-:]+ *\|[-| :]*)(?:\n((?:.*[^>\n ].*(?:\n|$))*)\n*|$)/,
+    nptable: gfmBlockNptable,
     table: gfmBlockTable
   }
 };

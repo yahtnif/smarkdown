@@ -241,8 +241,12 @@ ${content}</tr>
   }
 }
 export class TextRenderer {
-  br() {
+  br(): string {
     return '';
+  }
+
+  html(html: string): string {
+    return html;
   }
 
   codespan(text: string): string {

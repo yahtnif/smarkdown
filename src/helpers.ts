@@ -48,7 +48,7 @@ export function unescape(html: string): string {
   });
 }
 
-const htmlTagsRegex: RegExp = /<(?:.|\n)*?>/gm;
+const htmlTagsRegex: RegExp = /<[!\/a-z](?:.|\n)*?>/gim;
 const specialCharsRegex: RegExp = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,./:;<=>?@[\]^`{|}~]/g;
 const dotSpaceRegex: RegExp = /(\s|\.)/g;
 
@@ -58,14 +58,14 @@ class Slugger {
   slug(value: string, isUnique?: boolean): string {
     let slug = value
       .trim()
+      .toLowerCase()
       // Remove html tags
       .replace(htmlTagsRegex, '')
       // Remove special characters
       .replace(specialCharsRegex, '')
       // Replace dots and spaces with a separator
-      .replace(dotSpaceRegex, '-')
-      // Make the whole thing lowercase
-      .toLowerCase();
+      .replace(dotSpaceRegex, '-');
+    // Make the whole thing lowercase
 
     if (isUnique !== false) {
       if (this.seen.hasOwnProperty(slug)) {

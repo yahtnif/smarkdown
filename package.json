@@ -2,7 +2,7 @@
   "name": "smarkdown",
   "description": "Markdown parser, simplicity and extensibility.",
   "author": "Yahtnif <yahtnif@gmail.com>",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "dist/smarkdown.js",
   "module": "dist/smarkdown.es.js",
   "jsnext:main": "dist/smarkdown.es.js",

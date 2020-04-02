@@ -189,6 +189,8 @@ export function cleanUrl(
   return href;
 }
 
+const caretRegex = /(^|[^\[])\^/g;
+
 export class ExtendRegexp {
   private source: string;
   private flags: string;
@@ -208,7 +210,7 @@ export class ExtendRegexp {
     let newRegexp: string =
       typeof groupRegexp === 'string' ? groupRegexp : groupRegexp.source;
 
-    newRegexp = newRegexp.replace(/(^|[^\[])\^/g, '$1');
+    newRegexp = newRegexp.replace(caretRegex, '$1');
 
     // Extend regexp.
     this.source = this.source.replace(groupName, newRegexp);

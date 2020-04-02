@@ -83,7 +83,7 @@ baseBlockRules.html = new ExtendRegexp(baseBlockRules.html, 'i')
 
 baseBlockRules.paragraph = new ExtendRegexp(baseBlockRules._paragraph)
   .setGroup('hr', baseBlockRules.hr)
-  .setGroup('heading', ' {0,3}#{1,6} +')
+  .setGroup('heading', ' {0,3}#{1,6} ')
   .setGroup('|lheading', '') // setex headings don't interrupt commonmark paragraphs
   .setGroup('blockquote', ' {0,3}>')
   .setGroup('fences', ' {0,3}(?:`{3,}|~{3,})[^`\\n]*\\n')
@@ -137,12 +137,30 @@ const pedanticBlockRules: PedanticBlockRules = {
 /**
  * gfmBlockRules
  */
+const gfmBlockTable = new ExtendRegexp(
+  new RegExp(
+    '^ *\\|(.+)\\n' + // Header
+    ' *\\|?( *[-:]+[-| :]*)' + // Align
+      '(?:\\n((?:(?!^|>|\\n| |hr|heading|lheading|code|fences|list|html).*(?:\\n|$))*)\\n*|$)' // Cells
+  )
+)
+  .setGroup('hr', baseBlockRules.hr)
+  .setGroup('heading', ' {0,3}#{1,6} ')
+  .setGroup('lheading', '([^\\n]+)\\n {0,3}(=+|-+) *(?:\\n+|$)')
+  .setGroup('blockquote', ' {0,3}>')
+  .setGroup('code', ' {4}[^\\n]')
+  .setGroup('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
+  .setGroup('list', ' {0,3}(?:[*+-]|1[.)]) ') // only lists starting from 1 can interrupt
+  .setGroup('html', '</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|!--)')
+  .setGroup('tag', baseBlockTag)
+  .getRegex(); // pars can be interrupted by type (6) html blocks;
+
 const gfmBlockRules: GfmBlockRules = {
   ...baseBlockRules,
   ...{
     checkbox: /^\[([ xX])\] +/,
     nptable: /^ *([^|\n ].*\|.*)\n *([-:]+ *\|[-| :]*)(?:\n((?:.*[^>\n ].*(?:\n|$))*)\n*|$)/,
-    table: /^ *\|(.+)\n *\|?( *[-:]+[-| :]*)(?:\n((?: *[^>\n ].*(?:\n|$))*)\n*|$)/
+    table: gfmBlockTable
   }
 };
 

@@ -40,6 +40,16 @@ Cell 1  |Cell 2  |Cell 3  |Cell 4
   value1  | value2
   value3  | value4
 
+* table + block-level
+
+| abc | def |
+| --- | --- |
+| bar | foo |
+| baz | boo |
+```
+foobar()
+```
+
 
 
 <table>
@@ -186,4 +196,24 @@ Cell 1  |Cell 2  |Cell 3  |Cell 4
 </tr>
 </tbody></table>
 </li>
+<li><p>table + block-level</p>
+</li>
 </ul>
+
+<table>
+<thead>
+<tr>
+<th>abc</th>
+<th>def</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bar</td>
+<td>foo</td>
+</tr>
+<tr>
+<td>baz</td>
+<td>boo</td>
+</tr>
+</tbody></table>
+<pre><code>foobar()</code></pre>

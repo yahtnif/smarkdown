@@ -280,11 +280,13 @@ export class InlineLexer {
 
         nextPart = nextPart.substring(execArr[0].length);
 
-        out += this.options.sanitize
-          ? this.options.sanitizer
-            ? this.options.sanitizer.call(this, execArr[0])
-            : this.options.escape(execArr[0])
-          : execArr[0];
+        out += this.renderer.html(
+          this.options.sanitize
+            ? this.options.sanitizer
+              ? this.options.sanitizer.call(this, execArr[0])
+              : this.options.escape(execArr[0])
+            : execArr[0]
+        );
         continue;
       }
 

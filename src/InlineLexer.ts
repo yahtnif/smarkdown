@@ -1,10 +1,4 @@
-import {
-  blockCommentRegex,
-  ExtendRegexp,
-  getBreakChar,
-  getRuleType,
-  noopRegex
-} from './helpers';
+import { getBreakChar, getRuleType, noopRegex } from './helpers';
 import {
   BaseInlineRules,
   BreaksInlineRules,
@@ -21,6 +15,13 @@ import {
   PedanticInlineRules
 } from './Interfaces';
 import { Renderer } from './Renderer';
+import {
+  baseInlineRules,
+  pedanticInlineRules,
+  gfmInlineRules,
+  breaksInlineRules,
+  extraInlineRules
+} from './rules';
 
 /**
  * Inline Lexer & Compiler.
@@ -109,149 +110,25 @@ export class InlineLexer {
   private static getBaseRules(): BaseInlineRules {
     if (this.baseRules) return this.baseRules;
 
-    const tag: string =
-      '^comment' +
-      '|^</[a-zA-Z][\\w:-]*\\s*>' + // self-closing tag
-      '|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>' + // open tag
-      '|^<\\?[\\s\\S]*?\\?>' + // processing instruction, e.g. <?php ?>
-      '|^<![a-zA-Z]+\\s[\\s\\S]*?>' + // declaration, e.g. <!DOCTYPE html>
-      '|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>'; // CDATA section
-
-    /**
-     * Inline-Level Grammar.
-     */
-    const base: BaseInlineRules = {
-      _escapes: /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g,
-      _label: /(?:\[[^\[\]]*\]|\\.|`[^`]*`|[^\[\]\\`])*?/,
-      autolink: /^<(scheme:[^\s\x00-\x1f<>]*|email)>/,
-      br: /^( {2,}|\\)\n(?!\s*$)/,
-      code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
-      em: /^_([^\s_])_(?!_)|^\*([^\s*<\[])\*(?!\*)|^_([^\s<][\s\S]*?[^\s_])_(?!_|[^\spunctuation])|^_([^\s_<][\s\S]*?[^\s])_(?!_|[^\spunctuation])|^\*([^\s<"][\s\S]*?[^\s\*])\*(?!\*|[^\spunctuation])|^\*([^\s*"<\[][\s\S]*?[^\s])\*(?!\*)/,
-      escape: /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,
-      link: /^!?\[(label)\]\(\s*(href)(?:\s+(title))?\s*\)/,
-      nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
-      reflink: /^!?\[(label)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
-      strong: /^__([^\s_])__(?!_)|^\*\*([^\s*])\*\*(?!\*)|^__([^\s][\s\S]*?[^\s])__(?!_)|^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)/,
-      tag: new RegExp(tag),
-      text: /^(`+|[^`])(?:[\s\S]*?(?:(?=[\\<!\[`*]|\b_|$)|[^ ](?= {2,}\n))|(?= {2,}\n))/
-    };
-
-    const _attribute: RegExp = /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/;
-    const _email: RegExp = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/;
-    const _href: RegExp = /<(?:\\[<>]?|[^\s<>\\])*>|[^\s\x00-\x1f]*/;
-    const _punctuation: string = '!"#$%&\'()*+,\\-./:;<=>?@\\[^_{|}~';
-    const _scheme: RegExp = /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/;
-    const _title: RegExp = /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/;
-
-    // list of punctuation marks from common mark spec
-    // without ` and ] to workaround Rule 17 (inline code blocks/links)
-    base.em = new ExtendRegexp(base.em)
-      .setGroup(/punctuation/g, _punctuation)
-      .getRegex();
-
-    base.autolink = new ExtendRegexp(base.autolink)
-      .setGroup('scheme', _scheme)
-      .setGroup('email', _email)
-      .getRegex();
-
-    base.tag = new ExtendRegexp(base.tag)
-      .setGroup('comment', blockCommentRegex)
-      .setGroup('attribute', _attribute)
-      .getRegex();
-
-    base.link = new ExtendRegexp(base.link)
-      .setGroup('label', base._label)
-      .setGroup('href', _href)
-      .setGroup('title', _title)
-      .getRegex();
-
-    base.reflink = new ExtendRegexp(base.reflink)
-      .setGroup('label', base._label)
-      .getRegex();
-
-    return (this.baseRules = base);
+    return (this.baseRules = baseInlineRules);
   }
 
   private static getPedanticRules(): PedanticInlineRules {
     if (this.pedanticRules) return this.pedanticRules;
 
-    const base: BaseInlineRules = this.getBaseRules();
-    const linkRegex: RegExp = new ExtendRegexp(/^!?\[(label)\]\((.*?)\)/)
-      .setGroup('label', base._label)
-      .getRegex();
-    const reflinkRegex: RegExp = new ExtendRegexp(
-      /^!?\[(label)\]\s*\[([^\]]*)\]/
-    )
-      .setGroup('label', base._label)
-      .getRegex();
-
-    return (this.pedanticRules = {
-      ...base,
-      ...{
-        em: /^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/,
-        link: linkRegex,
-        reflink: reflinkRegex,
-        strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/
-      }
-    });
+    return (this.pedanticRules = pedanticInlineRules);
   }
 
   private static getGfmRules(): GfmInlineRules {
     if (this.gfmRules) return this.gfmRules;
 
-    const base: BaseInlineRules = this.getBaseRules();
-
-    const escape: RegExp = new ExtendRegexp(base.escape)
-      .setGroup('])', '~|])')
-      .getRegex();
-
-    const _extended_email: RegExp = /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/;
-    const _url: RegExp = /^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/;
-    const url: RegExp = new ExtendRegexp(_url, 'i')
-      .setGroup('email', _extended_email)
-      .getRegex();
-
-    const _backpedal: RegExp = /(?:[^?!.,:;*_~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_~)]+(?!$))+/;
-
-    /**
-     * [GFM Strikethrough](https://github.github.com/gfm/#strikethrough-extension-)
-     * Strikethrough text is any text wrapped in two tildes (~).
-     * For now, gfm allows strikethrough text wrapped in single tilde on github, it's conflict with subscript extension.
-     * [Single tilde in GFM spec](https://github.com/github/cmark/issues/99)
-     *
-     * const del = /^~+(?=\S)([\s\S]*?\S)~+/
-     */
-    const del: RegExp = /^~~(?=\S)([\s\S]*?\S)~~/;
-
-    const text = /^(`+|[^`])(?:[\s\S]*?(?:(?=[\\<!\[`*~]|\b_|https?:\/\/|ftp:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@))|(?= {2,}\n|[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@))/;
-
-    return (this.gfmRules = {
-      ...base,
-      ...{
-        _backpedal,
-        del,
-        escape,
-        text,
-        url
-      }
-    });
+    return (this.gfmRules = gfmInlineRules);
   }
 
   private static getBreaksRules(): BreaksInlineRules {
     if (this.breaksRules) return this.breaksRules;
 
-    const gfm: GfmInlineRules = this.getGfmRules();
-
-    return (this.breaksRules = {
-      ...gfm,
-      ...{
-        br: new ExtendRegexp(gfm.br).setGroup('{2,}', '*').getRegex(),
-        text: new ExtendRegexp(gfm.text)
-          .setGroup('\\b_', '\\b_| {2,}\\n')
-          .setGroup(/\{2,\}/g, '*')
-          .getRegex()
-      }
-    });
+    return (this.breaksRules = breaksInlineRules);
   }
 
   private static getExtraRules(options: Options): ExtraInlineRules {
@@ -263,11 +140,7 @@ export class InlineLexer {
 
     return (this.extraRules = {
       ...rules,
-      ...{
-        fnref: new ExtendRegexp(/^!?\[\^(label)\]/)
-          .setGroup('label', rules._label)
-          .getRegex()
-      }
+      ...extraInlineRules
     });
   }
 

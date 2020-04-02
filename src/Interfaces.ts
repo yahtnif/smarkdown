@@ -137,6 +137,10 @@ export interface ExtraInlineRules extends BreaksInlineRules {
   fnref: RegExp;
 }
 
+export interface ExtraMoreInlineRules {
+  fnref: RegExp;
+}
+
 export type InlineRulesTypes =
   | BaseInlineRules
   | PedanticInlineRules

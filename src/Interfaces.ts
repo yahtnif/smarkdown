@@ -6,7 +6,7 @@ import {
   slugger,
   unescape
 } from './helpers';
-import { Renderer } from './renderer';
+import { Renderer } from './Renderer';
 
 export interface BaseBlockRules {
   _comment: RegExp;

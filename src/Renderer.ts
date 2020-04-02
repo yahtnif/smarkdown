@@ -1,4 +1,4 @@
-import { Footnotes, Options, TablecellFlags } from './interfaces';
+import { Footnotes, Options, TablecellFlags } from './Interfaces';
 
 export class Renderer {
   private _footnotes: string[] = [];

@@ -21,7 +21,7 @@ import {
   PedanticBlockRules,
   Token,
   TokenType
-} from './interfaces';
+} from './Interfaces';
 
 export class BlockLexer {
   private static baseRules: BaseBlockRules;

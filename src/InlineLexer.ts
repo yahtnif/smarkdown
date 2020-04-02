@@ -19,8 +19,8 @@ import {
   NewRenderer,
   Options,
   PedanticInlineRules
-} from './interfaces';
-import { Renderer } from './renderer';
+} from './Interfaces';
+import { Renderer } from './Renderer';
 
 /**
  * Inline Lexer & Compiler.

@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import klawSync from 'klaw-sync';
 import JSON5 from 'json5';
 import Smarkdown from '../src';
-import { Options } from '../src/interfaces';
+import { Options } from '../src/Interfaces';
 
 interface testOption {
   dir: string;

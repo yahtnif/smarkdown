@@ -1,4 +1,4 @@
-import { EmptyObject } from './interfaces';
+import { EmptyObject } from './Interfaces';
 
 const escapeTestRegex: RegExp = /[&<>"']/;
 const escapeReplaceRegex: RegExp = /[&<>"']/g;

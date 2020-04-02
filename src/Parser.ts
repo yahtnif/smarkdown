@@ -1,4 +1,4 @@
-import { InlineLexer } from './inline-lexer';
+import { InlineLexer } from './InlineLexer';
 import {
   BlockRenderer,
   EmptyObject,
@@ -7,8 +7,8 @@ import {
   TablecellFlags,
   Token,
   TokenType
-} from './interfaces';
-import { Renderer, TextRenderer } from './renderer';
+} from './Interfaces';
+import { Renderer, TextRenderer } from './Renderer';
 
 /**
  * Parsing & Compiling.
